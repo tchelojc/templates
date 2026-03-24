@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🏀 SISTEMA HEDGE DINÂMICO – Basquete (Demonstração Simplificada)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #1a237e;
+            --secondary: #3949ab;
+            --success: #43a047;
+            --warning: #ff9800;
+            --danger: #e53935;
+            --info: #00bcd4;
+            --bg-dark: #0c1e25;
+            --bg-card: rgba(0, 0, 0, 0.7);
+            --text-light: #f0f4fa;
+            --text-muted: #90a4ae;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c1e25, #1a2b3a);
+            color: var(--text-light);
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid var(--secondary);
+        }
+
+        .quantum-title {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #4fc3f7, #bb86fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .demo-badge {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffcc44;
+            border-radius: 40px;
+            padding: 6px 18px;
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 0.8rem;
+        }
+
+        .status-quantum {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 15px;
+        }
+
+        .status-item {
+            background: rgba(30, 30, 46, 0.7);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .status-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .status-valor {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #4fc3f7;
+        }
+
+        .nav-principal {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn.active {
+            background: rgba(79, 195, 247, 0.2);
+            border: 1px solid #4fc3f7;
+            box-shadow: 0 0 12px rgba(79, 195, 247, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fade 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(79, 195, 247, 0.2);
+        }
+
+        .panel-title {
+            font-size: 1.4rem;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+            border-left: 4px solid #4fc3f7;
+            padding-left: 14px;
+        }
+
+        .grid-2cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card-demo {
+            background: rgba(30, 30, 46, 0.6);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            margin: 8px 0;
+        }
+
+        .btn-demo {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--success);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-light);
+            margin-top: 12px;
+        }
+
+        .btn-demo:hover {
+            background: rgba(0, 255, 136, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .demo-message-area {
+            background: rgba(0, 30, 20, 0.6);
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 15px;
+            border-left: 4px solid var(--warning);
+            font-size: 0.9rem;
+        }
+
+        .cenario-categoria {
+            margin-bottom: 30px;
+            border-left: 4px solid;
+            padding-left: 16px;
+        }
+
+        .cenario-categoria.favorito { border-left-color: #2ecc71; }
+        .cenario-categoria.azarao { border-left-color: #e74c3c; }
+        .cenario-categoria.total { border-left-color: #f1c40f; }
+
+        .cenario-lista {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cenario-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .cenario-nome {
+            flex: 1;
+            color: #bbdefb;
+        }
+
+        .cenario-valor {
+            font-weight: 700;
+            color: #ff9800;
+            margin-left: 15px;
+        }
+
+        .categoria-total {
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 8px 0 15px 0;
+            display: inline-block;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .categoria-titulo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 700px) {
+            .nav-principal { flex-direction: column; align-items: center; }
+            .nav-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="demo-header">
+        <h1 class="quantum-title">🏀 SISTEMA HEDGE DINÂMICO – Basquete</h1>
+        <p class="quantum-subtitle">Demonstração educativa – conceitos de proteção e diversificação</p>
+        <div class="demo-badge">🎓 MODO TUTORIAL · DADOS FICTÍCIOS</div>
+
+        <div class="status-quantum">
+            <div class="status-item"><div class="status-label">CAPITAL TOTAL</div><div class="status-valor">R$ 1.000</div></div>
+            <div class="status-item"><div class="status-label">MARGEM DE ERRO</div><div class="status-valor">R$ 2,00</div></div>
+            <div class="status-item"><div class="status-label">RETORNO MÍNIMO</div><div class="status-valor">R$ 1.020</div></div>
+            <div class="status-item"><div class="status-label">APOSTAS ATIVAS</div><div class="status-valor">6</div></div>
+        </div>
+    </div>
+
+    <!-- Navegação principal -->
+    <div class="nav-principal">
+        <button class="nav-btn active" data-tab="distribuicao">📊 DISTRIBUIÇÃO</button>
+        <button class="nav-btn" data-tab="multiplas">🔗 MÚLTIPLAS</button>
+        <button class="nav-btn" data-tab="prompts">🤖 PROMPTS IA</button>
+        <button class="nav-btn" data-tab="operacao">🎮 OPERAÇÃO AO VIVO</button>
+    </div>
+
+    <!-- ABA DISTRIBUIÇÃO (simplificada) -->
+    <div id="distribuicao" class="tab-content active">
+        <div class="panel">
+            <h2 class="panel-title">📈 Distribuição de Apostas (exemplo ilustrativo)</h2>
+            <div class="grid-2cols">
+                <div class="card-demo">
+                    <h3 style="color:#4fc3f7;">Configuração Rápida</h3>
+                    <label>💰 Capital total (R$)</label>
+                    <input type="number" id="demoCapital" class="form-input" value="1000" disabled>
+                    <label>🎯 Margem de erro</label>
+                    <input type="number" id="demoMargem" class="form-input" value="2.00" disabled>
+                    <button class="btn-demo" id="btnDistribuirDemo">⚖️ Exemplo de distribuição</button>
+                    <div class="demo-message-area" id="msgDistribuicao">
+                        💡 Clique no botão para ver uma alocação de capital de exemplo.
+                    </div>
+                </div>
+                <div class="card-demo">
+                    <h3 style="color:#4fc3f7;">Apostas exemplo (valores fictícios)</h3>
+                    <ul style="list-style: none; margin-top: 10px;">
+                        <li>🏀 Favorito vence – R$ 200,00 @ 1.50</li>
+                        <li>🏀 Azarão vence – R$ 80,00 @ 2.50</li>
+                        <li>🏀 Handicap -5.5 (Favorito) – R$ 120,00 @ 1.85</li>
+                        <li>🏀 Total de pontos +200.5 – R$ 150,00 @ 1.90</li>
+                        <li>🏀 Total de pontos -200.5 – R$ 130,00 @ 1.90</li>
+                        <li>🏀 Par ou Ímpar (cobertura) – R$ 40,00 @ 1.90</li>
+                    </ul>
+                    <div class="demo-message-area" style="margin-top: 12px;">
+                        ⚠️ Valores meramente ilustrativos. No sistema real, a alocação é ajustada para proteger diferentes cenários.
+                    </div>
+                </div>
+            </div>
+            <div class="demo-message-area" style="margin-top: 20px;">
+                🧠 <strong>Como funciona:</strong> O sistema distribui o capital entre apostas correlacionadas negativamente (favorito x azarão, over x under) para que, independentemente do resultado principal, o retorno seja próximo do investido, minimizando perdas.
+            </div>
+        </div>
+
+        <!-- PAINEL DE CENÁRIOS (simplificado) -->
+        <div class="panel">
+            <h2 class="panel-title">🎯 Cenários de resultado (retornos exemplificados)</h2>
+            <div id="cenariosDinamicos"></div>
+            <div class="demo-message-area">
+                📊 Os retornos mostram quanto o investidor receberia se aquele cenário ocorresse, considerando a distribuição de exemplo acima.
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA MÚLTIPLAS (exemplo reduzido) -->
+    <div id="multiplas" class="tab-content">
+        <div class="panel">
+            <h2 class="panel-title">🔗 Múltiplas (ilustração)</h2>
+            <div class="grid-2cols">
+                <div class="card-demo">
+                    <h3>Jogo 1: 20:00 – Lakers x Celtics</h3>
+                    <ul>
+                        <li>Favorito ganha @ 1.60</li>
+                        <li>Total de pontos +200.5 @ 1.90</li>
+                    </ul>
+                </div>
+                <div class="card-demo">
+                    <h3>Jogo 2: 22:30 – Warriors x Bucks</h3>
+                    <ul>
+                        <li>Azarão +5.5 @ 1.85</li>
+                        <li>Total de pontos -200.5 @ 1.95</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="demo-message-area">
+                🔗 <strong>Exemplo de múltipla:</strong> "Favorito ganha (J1) + Total +200.5 (J2)" – Odd combinada 3.04 – Stake R$ 20,00 – Retorno R$ 60,80.<br>
+                O sistema pode gerar combinações automáticas para distribuir o risco.
+            </div>
+            <button class="btn-demo" id="btnGerarMultiplasDemo">⚙️ Gerar múltiplas de exemplo</button>
+        </div>
+    </div>
+
+    <!-- ABA PROMPTS IA (simplificado) -->
+    <div id="prompts" class="tab-content">
+        <div class="panel">
+            <h2 class="panel-title">🤖 Prompts para análise</h2>
+            <div class="grid-2cols">
+                <div class="card-demo">
+                    <h3>📝 Exemplo de prompt</h3>
+                    <textarea class="form-input" rows="6" id="promptExemplo" readonly>
+Analise a seguinte distribuição de apostas para basquete:
+
+Capital total: R$ 1.000
+Apostas:
+- Favorito (1.50): R$ 200
+- Azarão (2.50): R$ 80
+- Handicap -5.5 favorito (1.85): R$ 120
+- Total +200.5 (1.90): R$ 150
+- Total -200.5 (1.90): R$ 130
+- Par/Ímpar (1.90): R$ 40
+
+Qual é o retorno esperado em cada cenário (favorito, azarão, over, under)? Proponha ajustes para melhorar o equilíbrio.
+                    </textarea>
+                    <button class="btn-demo" id="btnCopiarPromptDemo">📋 Copiar prompt</button>
+                </div>
+                <div class="card-demo">
+                    <h3>📊 Análise de estatísticas</h3>
+                    <p><strong>Posse de bola:</strong> 58% vs 42%<br>
+                    <strong>Arremessos certos:</strong> 7 vs 3<br>
+                    <strong>Rebotes:</strong> 5 vs 2<br>
+                    <strong>Média de pontos:</strong> 210.5</p>
+                    <button class="btn-demo" id="btnGerarPromptEstatisticas">📈 Gerar prompt estatístico</button>
+                </div>
+            </div>
+            <div class="demo-message-area" id="resultadoPrompt">
+                Copie o prompt e cole em sua IA favorita para recomendações.
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA OPERAÇÃO AO VIVO (estático) -->
+    <div id="operacao" class="tab-content">
+        <div class="panel">
+            <h2 class="panel-title">🎮 Simulação de operação ao vivo</h2>
+            <div class="grid-2cols">
+                <div class="card-demo">
+                    <h3>⏱️ Tempo e placar (exemplo)</h3>
+                    <div style="font-size: 2rem; text-align: center;">1º quarto | 5'</div>
+                    <div style="font-size: 1.5rem; text-align: center;">12 x 10</div>
+                    <div class="demo-message-area">
+                        💡 Controles desabilitados na versão estática.
+                    </div>
+                </div>
+                <div class="card-demo">
+                    <h3>🛡️ Proteções automáticas (conceito)</h3>
+                    <ul style="list-style: none;">
+                        <li>🔹 Pontos rápidos → ativar "Mais de 50.5 no 1º quarto"</li>
+                        <li>🔹 Handicap favorito → ajustar totais</li>
+                        <li>🔹 Baixa pontuação → reservar capital para segundo tempo</li>
+                    </ul>
+                    <div class="demo-message-area" id="logOperacaoDemo">
+                        📝 Sistema pronto para monitorar eventos.
+                    </div>
+                </div>
+            </div>
+            <div class="demo-message-area">
+                💡 <strong>Estratégias de hedge:</strong> Combinar apostas de handicap com totais para garantir retorno em diferentes desfechos.
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-demo" disabled>🔄 Handicap anula favorito</button>
+                <button class="btn-demo" disabled>🛡️ Total protege</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        ⚡ SISTEMA HEDGE DINÂMICO – Versão demonstrativa. Todos os dados são fictícios e servem apenas para ilustrar o funcionamento.
+    </footer>
+</div>
+
+<script>
+    // ========== DADOS SIMPLIFICADOS DAS APOSTAS ==========
+    const bets = [
+        { id: 1, nome: "Favorito vence", valor: 200, odd: 1.50 },
+        { id: 2, nome: "Azarão vence", valor: 80, odd: 2.50 },
+        { id: 3, nome: "Handicap -5.5 (Favorito)", valor: 120, odd: 1.85 },
+        { id: 4, nome: "Total +200.5", valor: 150, odd: 1.90 },
+        { id: 5, nome: "Total -200.5", valor: 130, odd: 1.90 },
+        { id: 6, nome: "Par/Ímpar", valor: 40, odd: 1.90 }
+    ];
+
+    // Mapeamento de cenários (apenas os principais)
+    const scenarioMap = {
+        "Favorito ganha (qualquer margem)": [1, 3, 4],
+        "Azarão ganha": [2, 5],
+        "Mais de 200.5 pontos": [4, 1, 3],
+        "Menos de 200.5 pontos": [5, 2],
+        "Par total": [6],
+        "Ímpar total": [6]
+    };
+
+    // Categorias de cenários
+    const categories = {
+        favorito: {
+            title: "⭐ FAVORITO GANHA",
+            scenarios: ["Favorito ganha (qualquer margem)"]
+        },
+        azarao: {
+            title: "⚠️ AZARÃO GANHA",
+            scenarios: ["Azarão ganha"]
+        },
+        totais: {
+            title: "📊 TOTAIS",
+            scenarios: ["Mais de 200.5 pontos", "Menos de 200.5 pontos", "Par total", "Ímpar total"]
+        }
+    };
+
+    // Função para calcular o retorno de um cenário
+    function calculateReturn(scenarioName) {
+        const betIds = scenarioMap[scenarioName];
+        if (!betIds) return 0;
+        let total = 0;
+        for (let id of betIds) {
+            const bet = bets.find(b => b.id === id);
+            if (bet) total += bet.valor * bet.odd;
+        }
+        return total;
+    }
+
+    // Renderiza os cenários de forma simplificada
+    function renderCenarios() {
+        const container = document.getElementById('cenariosDinamicos');
+        if (!container) return;
+
+        let html = '';
+        for (let [catKey, catData] of Object.entries(categories)) {
+            let totalCategoria = 0;
+            let scenariosHtml = '';
+
+            for (let scenario of catData.scenarios) {
+                const ret = calculateReturn(scenario);
+                totalCategoria += ret;
+                scenariosHtml += `
+                    <div class="cenario-item">
+                        <span class="cenario-nome">${scenario}</span>
+                        <span class="cenario-valor">R$ ${ret.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            let classeCat = '';
+            if (catKey === 'favorito') classeCat = 'favorito';
+            else if (catKey === 'azarao') classeCat = 'azarao';
+            else classeCat = 'total';
+
+            html += `
+                <div class="cenario-categoria ${classeCat}">
+                    <div class="categoria-titulo">${catData.title}</div>
+                    <div class="categoria-total">Retorno total da categoria: R$ ${totalCategoria.toFixed(2)}</div>
+                    <div class="cenario-lista">
+                        ${scenariosHtml}
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+
+    // ========== FUNÇÕES DE DEMONSTRAÇÃO ==========
+    function demoMessage(msg, tipo = "info") {
+        alert(`🔮 DEMO (${tipo.toUpperCase()}):\n${msg}`);
+    }
+
+    // Abas de navegação
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    // Distribuição demo (simples, apenas exibe valores)
+    document.getElementById('btnDistribuirDemo')?.addEventListener('click', () => {
+        const msgDiv = document.getElementById('msgDistribuicao');
+        msgDiv.innerHTML = `✅ Exemplo de alocação de capital (R$ 1.000):<br>
+        • Favorito: R$ 200<br>
+        • Azarão: R$ 80<br>
+        • Handicap -5.5: R$ 120<br>
+        • Over 200.5: R$ 150<br>
+        • Under 200.5: R$ 130<br>
+        • Par/Ímpar: R$ 40<br>
+        Total aplicado: R$ 720 – Reserva de capital: R$ 280.`;
+        demoMessage("Distribuição de exemplo aplicada.", "success");
+    });
+
+    // Múltiplas demo
+    document.getElementById('btnGerarMultiplasDemo')?.addEventListener('click', () => {
+        demoMessage("Exemplo de múltiplas geradas:\n• Favorito (J1) + Over (J2) @ 3.04\n• Azarão +5.5 (J1) + Under (J2) @ 3.61\nStake por combinação: R$ 25,00.", "info");
+    });
+
+    // Copiar prompt
+    document.getElementById('btnCopiarPromptDemo')?.addEventListener('click', () => {
+        const promptText = document.getElementById('promptExemplo').value;
+        navigator.clipboard.writeText(promptText).then(() => {
+            demoMessage("Prompt copiado para área de transferência!", "success");
+        }).catch(() => alert("Copie manualmente selecionando o texto."));
+    });
+
+    document.getElementById('btnGerarPromptEstatisticas')?.addEventListener('click', () => {
+        const prompt = `Analise as estatísticas e sugira a melhor estratégia de hedge para basquete:
+
+Posse: 58% vs 42%
+Arremessos certos: 7 vs 3
+Rebotes: 5 vs 2
+Média de pontos: 210.5
+
+Com base nesses dados, qual distribuição de apostas oferece maior proteção?`;
+        navigator.clipboard.writeText(prompt);
+        demoMessage("Prompt estatístico copiado!", "success");
+    });
+
+    // Inicializa os cenários
+    renderCenarios();
+</script>
+</body>
+</html>

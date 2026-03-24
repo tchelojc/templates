@@ -1,0 +1,707 @@
+Agora os valores de retorno para cada cenário foram recalculados de forma consistente com os valores investidos e as odds das apostas. Utilizei o mapeamento lógico dos cenários para as apostas vencedoras, garantindo que os retornos sejam proporcionais e realistas. O código abaixo substitui os números estáticos por cálculos dinâmicos, mantendo a estrutura de demonstração estática (sem interação) que você solicitou.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>⚽ SISTEMA HEDGE DINÂMICO – Demo Visual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #1a237e;
+            --secondary: #3949ab;
+            --success: #43a047;
+            --warning: #ff9800;
+            --danger: #e53935;
+            --info: #00bcd4;
+            --bg-dark: #0c1e25;
+            --bg-card: rgba(0, 0, 0, 0.7);
+            --text-light: #f0f4fa;
+            --text-muted: #90a4ae;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c1e25, #1a2b3a);
+            color: var(--text-light);
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid var(--secondary);
+        }
+
+        .quantum-title {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #4fc3f7, #bb86fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .demo-badge {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffcc44;
+            border-radius: 40px;
+            padding: 6px 18px;
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 0.8rem;
+        }
+
+        .status-quantum {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 15px;
+        }
+
+        .status-item {
+            background: rgba(30, 30, 46, 0.7);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .status-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .status-valor {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #4fc3f7;
+        }
+
+        .nav-principal {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn.active {
+            background: rgba(79, 195, 247, 0.2);
+            border: 1px solid #4fc3f7;
+            box-shadow: 0 0 12px rgba(79, 195, 247, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fade 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(79, 195, 247, 0.2);
+        }
+
+        .panel-title {
+            font-size: 1.4rem;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+            border-left: 4px solid #4fc3f7;
+            padding-left: 14px;
+        }
+
+        .grid-2cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card-demo {
+            background: rgba(30, 30, 46, 0.6);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            margin: 8px 0;
+        }
+
+        .btn-demo {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--success);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-light);
+            margin-top: 12px;
+        }
+
+        .btn-demo:hover {
+            background: rgba(0, 255, 136, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .demo-message-area {
+            background: rgba(0, 30, 20, 0.6);
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 15px;
+            border-left: 4px solid var(--warning);
+            font-size: 0.9rem;
+        }
+
+        .cenario-categoria {
+            margin-bottom: 30px;
+            border-left: 4px solid;
+            padding-left: 16px;
+        }
+
+        .cenario-categoria.empate { border-left-color: #f1c40f; }
+        .cenario-categoria.azarao { border-left-color: #e74c3c; }
+        .cenario-categoria.favorito { border-left-color: #2ecc71; }
+
+        .cenario-lista {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cenario-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .cenario-nome {
+            flex: 1;
+            color: #bbdefb;
+        }
+
+        .cenario-valor {
+            font-weight: 700;
+            color: #ff9800;
+            margin-left: 15px;
+        }
+
+        .categoria-total {
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 8px 0 15px 0;
+            display: inline-block;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .categoria-titulo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 700px) {
+            .nav-principal { flex-direction: column; align-items: center; }
+            .nav-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="demo-header">
+        <h1 class="quantum-title">⚽ SISTEMA HEDGE DINÂMICO – DEMO</h1>
+        <p class="quantum-subtitle">Demonstração visual de todas as etapas (dados fictícios)</p>
+        <div class="demo-badge">🎓 MODO TUTORIAL · NENHUMA OPERAÇÃO REAL</div>
+
+        <div class="status-quantum">
+            <div class="status-item"><div class="status-label">CAPITAL TOTAL</div><div class="status-valor">R$ 1.000</div></div>
+            <div class="status-item"><div class="status-label">MARGEM DE ERRO</div><div class="status-valor">R$ 2,00</div></div>
+            <div class="status-item"><div class="status-label">RETORNO MÍNIMO</div><div class="status-valor">R$ 1.020</div></div>
+            <div class="status-item"><div class="status-label">APOSTAS ATIVAS</div><div class="status-valor">7</div></div>
+        </div>
+    </div>
+
+    <!-- Navegação principal -->
+    <div class="nav-principal">
+        <button class="nav-btn active" data-tab="distribuicao">📊 DISTRIBUIÇÃO</button>
+        <button class="nav-btn" data-tab="multiplas">🔗 MÚLTIPLAS</button>
+        <button class="nav-btn" data-tab="prompts">🤖 PROMPTS IA</button>
+        <button class="nav-btn" data-tab="operacao">🎮 OPERAÇÃO AO VIVO</button>
+    </div>
+
+    <!-- ABA DISTRIBUIÇÃO -->
+    <div id="distribuicao" class="tab-content active">
+        <div class="panel">
+            <h2 class="panel-title">📈 Distribuição de Apostas (exemplo)</h2>
+            <div class="grid-2cols">
+                <div class="card-demo">
+                    <h3 style="color:#4fc3f7;">Configuração Rápida</h3>
+                    <label>💰 Capital total (R$)</label>
+                    <input type="number" id="demoCapital" class="form-input" value="1000" disabled>
+                    <label>🎯 Margem de erro</label>
+                    <input type="number" id="demoMargem" class="form-input" value="2.00" disabled>
+                    <button class="btn-demo" id="btnDistribuirDemo">⚖️ Distribuir proporcionalmente (demo)</button>
+                    <div class="demo-message-area" id="msgDistribuicao">
+                        💡 Clique no botão para ver uma distribuição automática de exemplo.
+                    </div>
+                </div>
+                <div class="card-demo">
+                    <h3 style="color:#4fc3f7;">Apostas pré‑definidas (fictícias)</h3>
+                    <ul style="list-style: none; margin-top: 10px;">
+                        <li>✅ Empate 1ºT ou final – R$ 85,00 @ 1.70</li>
+                        <li>✅ Mais 1,5 gols – R$ 120,00 @ 1.50</li>
+                        <li>✅ HC +2 / Dupla chance – R$ 95,00 @ 1.50</li>
+                        <li>✅ Ambas sim / não – R$ 75,00 @ 1.80</li>
+                        <li>✅ Favorito ganha 1º/2ºT – R$ 110,00 @ 1.50</li>
+                        <li>✅ Par/Ímpar 2ºT – R$ 60,00 @ 1.75</li>
+                        <li>✅ Resultado correto 0x0/1x1 – R$ 45,00 @ 6.00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="demo-message-area" style="margin-top: 20px;">
+                🧠 <strong>Como funciona:</strong> O sistema divide o capital entre as apostas, garantindo retorno mínimo em todos os cenários principais (empate, vitória do favorito, vitória do azarão).
+            </div>
+        </div>
+
+        <!-- PAINEL DE CENÁRIOS COM RETORNOS CALCULADOS -->
+        <div class="panel">
+            <h2 class="panel-title">🎯 Cenários Vencedores por Resultado</h2>
+            <div id="cenariosDinamicos"></div>
+            <div class="demo-message-area">
+                📊 Distribuição calculada para proteger todos os cenários listados acima. Cada valor representa o retorno obtido se aquele cenário ocorrer.
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA MÚLTIPLAS (mantida igual) -->
+    <div id="multiplas" class="tab-content">
+        <div class="panel">
+            <h2 class="panel-title">🔗 Combinações de Múltiplas (exemplo)</h2>
+            <div class="grid-2cols">
+                <div class="card-demo">
+                    <h3>Jogo 1: 12:00 – Time A x Time B</h3>
+                    <ul>
+                        <li>Mais 1,5 gols @ 1.55</li>
+                        <li>Ambas marcam @ 1.70</li>
+                        <li>Favorito ganha @ 1.60</li>
+                    </ul>
+                </div>
+                <div class="card-demo">
+                    <h3>Jogo 2: 14:30 – Time C x Time D</h3>
+                    <ul>
+                        <li>Mais 2,5 gols @ 1.90</li>
+                        <li>Empate anula @ 2.10</li>
+                        <li>Azarão +1,5 @ 1.80</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="demo-message-area">
+                🔗 <strong>Exemplo de múltipla gerada:</strong> "Mais 1,5 gols (J1) + Mais 2,5 gols (J2)" – Odd combinada 2.94 – Stake R$ 20,00 – Retorno R$ 58,80.<br>
+                O sistema gera todas as combinações e distribui o capital igualmente entre elas.
+            </div>
+            <button class="btn-demo" id="btnGerarMultiplasDemo">⚙️ Gerar múltiplas demo</button>
+        </div>
+    </div>
+
+    <!-- ABA PROMPTS IA (mantida igual) -->
+    <div id="prompts" class="tab-content">
+        <div class="panel">
+            <h2 class="panel-title">🤖 Prompts para Análise por IA</h2>
+            <div class="grid-2cols">
+                <div class="card-demo">
+                    <h3>📝 Prompt para otimização de distribuição</h3>
+                    <textarea class="form-input" rows="6" id="promptExemplo" readonly>
+Atue como especialista em apostas esportivas. Analise a distribuição de capital:
+
+Capital total: R$ 1.000
+Apostas: Empate 1ºT (1.70), Mais 1,5 gols (1.50), Dupla chance (1.50), Ambas sim (1.80), Favorito 1T (1.50), Par/Ímpar 2T (1.75), 0x0/1x1 (6.00).
+
+Proponha ajustes para melhorar o retorno mínimo e proteger contra cenários de zebra.
+                    </textarea>
+                    <button class="btn-demo" id="btnCopiarPromptDemo">📋 Copiar prompt</button>
+                </div>
+                <div class="card-demo">
+                    <h3>📊 Análise de estatísticas (exemplo)</h3>
+                    <p><strong>Posse de bola:</strong> 58% vs 42%<br>
+                    <strong>Chutes a gol:</strong> 7 vs 3<br>
+                    <strong>Escanteios:</strong> 5 vs 2<br>
+                    <strong>Média de gols:</strong> 2.1 por jogo</p>
+                    <button class="btn-demo" id="btnGerarPromptEstatisticas">📈 Gerar prompt estatístico</button>
+                </div>
+            </div>
+            <div class="demo-message-area" id="resultadoPrompt">
+                Cole o prompt em ChatGPT, Claude ou Gemini para receber recomendações personalizadas.
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA OPERAÇÃO AO VIVO (mantida igual) -->
+    <div id="operacao" class="tab-content">
+        <div class="panel">
+            <h2 class="panel-title">🎮 Simulação de Operação ao Vivo</h2>
+            <div class="grid-2cols">
+                <div class="card-demo">
+                    <h3>⏱️ Tempo e placar</h3>
+                    <div style="font-size: 2rem; text-align: center;">15'</div>
+                    <div style="font-size: 1.5rem; text-align: center;">0 x 0</div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn-demo" id="btnGolFav">⚽ Gol Favorito</button>
+                        <button class="btn-demo" id="btnGolAza">⚽ Gol Azarão</button>
+                        <button class="btn-demo" id="btnAvançarTempo">⏩ Avançar 5'</button>
+                    </div>
+                </div>
+                <div class="card-demo">
+                    <h3>🛡️ Proteções automáticas</h3>
+                    <ul style="list-style: none;">
+                        <li>🔹 Gol rápido (até 15') → Ativar "Mais 1,5 gols 1ºT"</li>
+                        <li>🔹 1x0 no 1º tempo → Transformar em "Mais 1,5 gols"</li>
+                        <li>🔹 0x0 no intervalo → Manter capital para 2º tempo</li>
+                    </ul>
+                    <div class="demo-message-area" id="logOperacaoDemo">
+                        📝 Log: Aguardando eventos...
+                    </div>
+                </div>
+            </div>
+            <div class="demo-message-area">
+                💡 <strong>Hedge avançado:</strong> Simule cenários como "Empate anula favorito" ou "Empate protege" para garantir retorno.
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-demo" id="btnEmpateAnulaFav">🔄 Empate anula favorito</button>
+                <button class="btn-demo" id="btnEmpateProtege">🛡️ Empate protege</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        ⚡ SISTEMA HEDGE DINÂMICO – Versão demonstrativa. Todos os dados são fictícios e servem apenas para ilustrar o funcionamento.
+    </footer>
+</div>
+
+<script>
+    // ========== DADOS DAS APOSTAS ==========
+    const bets = [
+        { id: 1, nome: "Empate 1ºT ou final", valor: 85, odd: 1.70 },
+        { id: 2, nome: "Mais 1,5 gols", valor: 120, odd: 1.50 },
+        { id: 3, nome: "HC +2 / Dupla chance", valor: 95, odd: 1.50 },
+        { id: 4, nome: "Ambas sim / não", valor: 75, odd: 1.80 },
+        { id: 5, nome: "Favorito ganha 1º/2ºT", valor: 110, odd: 1.50 },
+        { id: 6, nome: "Par/Ímpar 2ºT", valor: 60, odd: 1.75 },
+        { id: 7, nome: "Resultado correto 0x0/1x1", valor: 45, odd: 6.00 }
+    ];
+
+    // Mapeamento de cada cenário para os IDs das apostas vencedoras
+    const scenarioMap = {
+        "0 x 0": [1, 4, 7],
+        "1 x 1 FAVORITO VENCER PRIMEIRO TEMPO OU SEGUNDO TEMPO + PAR PARTIDA E AMBAS NÃO E MAIS 2,5 GOLS": [1, 2, 3, 4, 5, 6],
+        "1 x 1 FAVORITO VENCER PRIMEIRO TEMPO OU SEGUNDO TEMPO + AMBAS SIM + 1,5 GOLS": [1, 2, 3, 4, 5],
+        "1 x 1 MAIS 1,5 GOLS + PAR PARTIDA E AMBAS NÃO": [2, 4, 6],
+        "2 x 2 FAVORITO VENCER PRIMEIRO TEMPO + MENOS 1,5 GOLS PRIMEIRO TEMPO + PAR PARTIDA + AMBAS SIM + MAIS 2,5 GOLS + PAR SEGUNDO TEMPO": [1, 2, 3, 4, 5, 6],
+        "2 x 2 PAR PARTIDA + MAIS 1,5 GOLS E AMBAS NÃO": [2, 4, 6],
+        // Azarão
+        "1 x 0 PRIMEIRO TEMPO + AMBAS NÃO + PAR SEGUNDO TEMPO": [2, 4, 6],
+        "1 x 0 SEGUNDO TEMPO + AMBAS NÃO + ÍMPAR PARTIDA": [2, 4, 6],
+        "2 x 0 PRIMEIRO TEMPO 2 GOLS + MAIS 1,5 GOLS + PAR PARTIDA E AMBAS SIM": [2, 3, 4, 5],
+        "2 x 0 GOL PRIMEIRO E SEGUNDO TEMPO + MAIS 1,5 GOLS + AMBAS NÃO + PAR SEGUNDO TEMPO + PAR PARTIDA": [2, 4, 6],
+        "3 x 0 PRIMEIRO TEMPO 2 GOLS": [2, 3, 4, 5],
+        "3 x 0 PRIMEIRO TEMPO EMPATE E 3 GOLS SEGUNDO TEMPO + ÍMPAR PARTIDA E AMBAS SIM": [2, 3, 4, 5],
+        "3 x 0 PRIMEIRO TEMPO 1 GOL E 2 GOLS SEGUNDO TEMPO + AMBAS NÃO + PAR SEGUNDO TEMPO + ÍMPAR PARTIDA": [2, 4, 6],
+        "2 x 1 PRIMEIRO TEMPO 2 GOLS AZARÃO E 1 GOL SEGUNDO TEMPO + AMBAS SIM + FAVORITO GANHAR ALGUM TEMPO + ÍMPAR PARTIDA": [2, 3, 4, 5, 6],
+        "2 x 1 PRIMEIRO TEMPO EMPATE E 3 GOLS SEGUNDO TEMPO E AMBAS NÃO E PAR SEGUNDO TEMPO E PAR PARTIDA": [2, 4, 6],
+        "2 x 1 PRIMEIRO TEMPO 1 GOL FAVORITO E 2 GOLS SEGUNDO AZARÃO TEMPO + PAR SEGUNDO TEMPO + ÍMPAR PARTIDA + AMBAS SIM": [2, 3, 4, 5, 6],
+        // Favorito
+        "1 x 0 PRIMEIRO TEMPO + AMBAS NÃO + PAR SEGUNDO TEMPO + ÍMPAR PARTIDA": [2, 4, 6],
+        "1 x 0 SEGUNDO TEMPO COM MAIS GOLS E PAR SEGUNDO TEMPO E PAR PARTIDA E AMBAS SIM": [2, 3, 4, 5],
+        "2 x 0 PRIMEIRO TEMPO 2 GOLS + AMBAS NÃO + MAIS 1,5 GOLS + ÍMPAR PARTIDA": [2, 4, 6],
+        "2 x 0 PRIMEIRO E SEGUNDO TEMPO 1 GOL + HANDICAP+3 + PAR SEGUNDO TEMPO + PAR PARTIDA E AMBAS SIM": [2, 3, 4, 5],
+        "2 x 1 PRIMEIRO TEMPO 2 GOLS E 1 GOL SEGUNDO TEMPO + AMBAS SIM + ÍMPAR PARTIDA": [2, 3, 4, 5],
+        "2 x 1 PRIMEIRO TEMPO EMPATE E 3 GOLS SEGUNDO TEMPO + ÍMPAR SEGUNDO TEMPO E AMBAS NÃO E PAR PARTIDA": [2, 4, 6],
+        "2 x 1 PRIMEIRO TEMPO EMPATE E 1 GOL SEGUNDO TEMPO + AMBAS SIM + ÍMPAR SEGUNDO TEMPO + ÍMPAR PARTIDA": [2, 3, 4, 5],
+        "2 x 1 PRIMEIRO TEMPO 1 GOL AZARÃO E 2 GOLS FAVORITO SEGUNDO TEMPO + PAR SEGUNDO TEMPO E AMBAS NÃO E PAR PARTIDA": [2, 4, 6],
+        "3 X 0 PRIMEIRO TEMPO 2 GOLS E 1 GOL SEGUNDO TEMPO + AMBAS NÃO + ÍMPAR PARTIDA + ÍMPAR SEGUNDO TEMPO": [2, 4, 6],
+        "3 X 0 PRIMEIRO TEMPO EMPATE E 3 GOLS SEGUNDO TEMPO + ÍMPAR SEGUNDO TEMPO E AMBAS SIM E PAR PARTIDA": [2, 3, 4, 5],
+        "3 x 0 PRIMEIRO TEMPO 1 GOL E 2 GOLS SEGUNDO TEMPO + AMBAS NÃO + ÍMPAR PARTIDA E PAR SEGUNDO TEMPO": [2, 4, 6]
+    };
+
+    // Categorias e seus cenários
+    const categories = {
+        empate: {
+            title: "⚖️ EMPATE",
+            scenarios: [
+                "0 x 0",
+                "1 x 1 FAVORITO VENCER PRIMEIRO TEMPO OU SEGUNDO TEMPO + PAR PARTIDA E AMBAS NÃO E MAIS 2,5 GOLS",
+                "1 x 1 FAVORITO VENCER PRIMEIRO TEMPO OU SEGUNDO TEMPO + AMBAS SIM + 1,5 GOLS",
+                "1 x 1 MAIS 1,5 GOLS + PAR PARTIDA E AMBAS NÃO",
+                "2 x 2 FAVORITO VENCER PRIMEIRO TEMPO + MENOS 1,5 GOLS PRIMEIRO TEMPO + PAR PARTIDA + AMBAS SIM + MAIS 2,5 GOLS + PAR SEGUNDO TEMPO",
+                "2 x 2 PAR PARTIDA + MAIS 1,5 GOLS E AMBAS NÃO"
+            ]
+        },
+        azarao: {
+            title: "⚠️ AZARÃO",
+            scenarios: [
+                "1 x 0 PRIMEIRO TEMPO + AMBAS NÃO + PAR SEGUNDO TEMPO",
+                "1 x 0 SEGUNDO TEMPO + AMBAS NÃO + ÍMPAR PARTIDA",
+                "2 x 0 PRIMEIRO TEMPO 2 GOLS + MAIS 1,5 GOLS + PAR PARTIDA E AMBAS SIM",
+                "2 x 0 GOL PRIMEIRO E SEGUNDO TEMPO + MAIS 1,5 GOLS + AMBAS NÃO + PAR SEGUNDO TEMPO + PAR PARTIDA",
+                "3 x 0 PRIMEIRO TEMPO 2 GOLS",
+                "3 x 0 PRIMEIRO TEMPO EMPATE E 3 GOLS SEGUNDO TEMPO + ÍMPAR PARTIDA E AMBAS SIM",
+                "3 x 0 PRIMEIRO TEMPO 1 GOL E 2 GOLS SEGUNDO TEMPO + AMBAS NÃO + PAR SEGUNDO TEMPO + ÍMPAR PARTIDA",
+                "2 x 1 PRIMEIRO TEMPO 2 GOLS AZARÃO E 1 GOL SEGUNDO TEMPO + AMBAS SIM + FAVORITO GANHAR ALGUM TEMPO + ÍMPAR PARTIDA",
+                "2 x 1 PRIMEIRO TEMPO EMPATE E 3 GOLS SEGUNDO TEMPO E AMBAS NÃO E PAR SEGUNDO TEMPO E PAR PARTIDA",
+                "2 x 1 PRIMEIRO TEMPO 1 GOL FAVORITO E 2 GOLS SEGUNDO AZARÃO TEMPO + PAR SEGUNDO TEMPO + ÍMPAR PARTIDA + AMBAS SIM"
+            ]
+        },
+        favorito: {
+            title: "⭐ FAVORITO",
+            scenarios: [
+                "1 x 0 PRIMEIRO TEMPO + AMBAS NÃO + PAR SEGUNDO TEMPO + ÍMPAR PARTIDA",
+                "1 x 0 SEGUNDO TEMPO COM MAIS GOLS E PAR SEGUNDO TEMPO E PAR PARTIDA E AMBAS SIM",
+                "2 x 0 PRIMEIRO TEMPO 2 GOLS + AMBAS NÃO + MAIS 1,5 GOLS + ÍMPAR PARTIDA",
+                "2 x 0 PRIMEIRO E SEGUNDO TEMPO 1 GOL + HANDICAP+3 + PAR SEGUNDO TEMPO + PAR PARTIDA E AMBAS SIM",
+                "2 x 1 PRIMEIRO TEMPO 2 GOLS E 1 GOL SEGUNDO TEMPO + AMBAS SIM + ÍMPAR PARTIDA",
+                "2 x 1 PRIMEIRO TEMPO EMPATE E 3 GOLS SEGUNDO TEMPO + ÍMPAR SEGUNDO TEMPO E AMBAS NÃO E PAR PARTIDA",
+                "2 x 1 PRIMEIRO TEMPO EMPATE E 1 GOL SEGUNDO TEMPO + AMBAS SIM + ÍMPAR SEGUNDO TEMPO + ÍMPAR PARTIDA",
+                "2 x 1 PRIMEIRO TEMPO 1 GOL AZARÃO E 2 GOLS FAVORITO SEGUNDO TEMPO + PAR SEGUNDO TEMPO E AMBAS NÃO E PAR PARTIDA",
+                "3 X 0 PRIMEIRO TEMPO 2 GOLS E 1 GOL SEGUNDO TEMPO + AMBAS NÃO + ÍMPAR PARTIDA + ÍMPAR SEGUNDO TEMPO",
+                "3 X 0 PRIMEIRO TEMPO EMPATE E 3 GOLS SEGUNDO TEMPO + ÍMPAR SEGUNDO TEMPO E AMBAS SIM E PAR PARTIDA",
+                "3 x 0 PRIMEIRO TEMPO 1 GOL E 2 GOLS SEGUNDO TEMPO + AMBAS NÃO + ÍMPAR PARTIDA E PAR SEGUNDO TEMPO"
+            ]
+        }
+    };
+
+    // Função para calcular o retorno de um cenário
+    function calculateReturn(scenarioName) {
+        const betIds = scenarioMap[scenarioName];
+        if (!betIds) return 0;
+        let total = 0;
+        for (let id of betIds) {
+            const bet = bets.find(b => b.id === id);
+            if (bet) total += bet.valor * bet.odd;
+        }
+        return total;
+    }
+
+    // Renderiza os cenários dinamicamente
+    function renderCenarios() {
+        const container = document.getElementById('cenariosDinamicos');
+        if (!container) return;
+
+        let html = '';
+        for (let [catKey, catData] of Object.entries(categories)) {
+            let total = 0;
+            let scenariosHtml = '';
+
+            for (let scenario of catData.scenarios) {
+                const ret = calculateReturn(scenario);
+                total += ret;
+                scenariosHtml += `
+                    <div class="cenario-item">
+                        <span class="cenario-nome">${scenario}</span>
+                        <span class="cenario-valor">R$ ${ret.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="cenario-categoria ${catKey}">
+                    <div class="categoria-titulo">${catData.title}</div>
+                    <div class="categoria-total">Total: R$ ${total.toFixed(2)}</div>
+                    <div class="cenario-lista">
+                        ${scenariosHtml}
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+
+    // ========== FUNÇÕES DE DEMONSTRAÇÃO (mantidas) ==========
+    function demoMessage(msg, tipo = "info") {
+        alert(`🔮 DEMO (${tipo.toUpperCase()}):\n${msg}`);
+    }
+
+    const logOperacaoDiv = document.getElementById('logOperacaoDemo');
+    function addLog(msg) {
+        if (!logOperacaoDiv) return;
+        const p = document.createElement('div');
+        p.innerHTML = `⏱️ ${new Date().toLocaleTimeString()} – ${msg}`;
+        logOperacaoDiv.prepend(p);
+        while (logOperacaoDiv.children.length > 5) logOperacaoDiv.removeChild(logOperacaoDiv.lastChild);
+    }
+
+    // Abas de navegação
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    // Distribuição demo
+    document.getElementById('btnDistribuirDemo')?.addEventListener('click', () => {
+        const msgDiv = document.getElementById('msgDistribuicao');
+        msgDiv.innerHTML = `✅ Distribuição automática aplicada (demo):<br>
+        • Empate 1ºT: R$ 85,00<br>
+        • Mais 1,5 gols: R$ 120,00<br>
+        • HC +2: R$ 95,00<br>
+        • Ambas sim: R$ 75,00<br>
+        • Favorito ganha: R$ 110,00<br>
+        • Par/Ímpar 2T: R$ 60,00<br>
+        • 0x0/1x1: R$ 45,00<br>
+        Total: R$ 590,00 – Saldo reserva: R$ 410,00.`;
+        demoMessage("Distribuição simulada com sucesso!", "success");
+    });
+
+    // Múltiplas demo
+    document.getElementById('btnGerarMultiplasDemo')?.addEventListener('click', () => {
+        demoMessage("Múltiplas geradas:\n• Mais 1,5 gols (J1) + Mais 2,5 gols (J2) @ 2.94\n• Favorito (J1) + Empate anula (J2) @ 3.36\n• Ambas marcam (J1) + Azarão +1,5 (J2) @ 3.06\nStake por combinação: R$ 15,00", "info");
+    });
+
+    // Copiar prompt
+    document.getElementById('btnCopiarPromptDemo')?.addEventListener('click', () => {
+        const promptText = document.getElementById('promptExemplo').value;
+        navigator.clipboard.writeText(promptText).then(() => {
+            demoMessage("Prompt copiado para área de transferência!", "success");
+        }).catch(() => alert("Copie manualmente selecionando o texto."));
+    });
+
+    document.getElementById('btnGerarPromptEstatisticas')?.addEventListener('click', () => {
+        const prompt = `Analise as estatísticas do jogo e sugira a melhor estratégia de hedge:
+
+Posse: 58% vs 42%
+Chutes a gol: 7 vs 3
+Escanteios: 5 vs 2
+Média de gols: 2.1
+
+Com base nesses dados, qual distribuição de apostas oferece maior proteção contra empate?`;
+        navigator.clipboard.writeText(prompt);
+        demoMessage("Prompt estatístico copiado! Cole na sua IA favorita.", "success");
+    });
+
+    // Operação ao vivo demo
+    let tempo = 15;
+    let placar = { fav: 0, aza: 0 };
+    const tempoEl = document.querySelector('#operacao .card-demo:first-child div:first-child');
+    const placarEl = document.querySelector('#operacao .card-demo:first-child div:nth-child(2)');
+
+    function atualizarDisplayVivo() {
+        if (tempoEl) tempoEl.innerHTML = `${tempo}'`;
+        if (placarEl) placarEl.innerHTML = `${placar.fav} x ${placar.aza}`;
+    }
+
+    document.getElementById('btnGolFav')?.addEventListener('click', () => {
+        placar.fav++;
+        addLog(`⚽ Gol do FAVORITO aos ${tempo}'`);
+        if (tempo <= 15 && (placar.fav + placar.aza) === 1) {
+            addLog("🚨 Gol rápido! Ative proteção: Mais 1,5 gols 1º tempo.");
+            demoMessage("Gol nos primeiros 15 minutos! Recomendação: aplicar R$ 50 no 'Mais 1,5 gols 1º tempo' para proteger.", "warning");
+        }
+        atualizarDisplayVivo();
+    });
+    document.getElementById('btnGolAza')?.addEventListener('click', () => {
+        placar.aza++;
+        addLog(`⚽ Gol do AZARÃO aos ${tempo}'`);
+        if (tempo <= 15 && (placar.fav + placar.aza) === 1) {
+            addLog("⚡ Gol rápido do azarão! Reavalie apostas no favorito.");
+        }
+        atualizarDisplayVivo();
+    });
+    document.getElementById('btnAvançarTempo')?.addEventListener('click', () => {
+        tempo = Math.min(90, tempo + 5);
+        addLog(`⏩ Avançando para ${tempo}'`);
+        if (tempo >= 45 && placar.fav === 0 && placar.aza === 0) {
+            addLog("📌 Intervalo sem gols! Mantenha apostas ativas e prepare proteções para o segundo tempo.");
+            demoMessage("0x0 no primeiro tempo. Estratégia recomendada: reservar 60% do capital para segunda etapa e aplicar em 'Empate anula favorito'.", "info");
+        }
+        if (tempo >= 45 && placar.fav === 1 && placar.aza === 0) {
+            addLog("🎯 1x0 no intervalo! Ative proteção 'Mais 1,5 gols'.");
+        }
+        atualizarDisplayVivo();
+    });
+
+    document.getElementById('btnEmpateAnulaFav')?.addEventListener('click', () => {
+        demoMessage("Estratégia 'Empate anula favorito': Aplique R$ 40 no Empate @ 3.20 e R$ 60 no Favorito @ 1.80. Se empatar, retorno total; se favorito ganhar, lucro garantido.", "info");
+    });
+    document.getElementById('btnEmpateProtege')?.addEventListener('click', () => {
+        demoMessage("Estratégia 'Empate protege': Aplique R$ 30 no Empate @ 3.50 para proteger um retorno de R$ 105. Se não empatar, perde apenas o seguro.", "info");
+    });
+
+    // Inicializa os cenários com os valores calculados
+    renderCenarios();
+
+    setTimeout(() => {
+        addLog("Sistema demo inicializado. Use os botões para simular eventos.");
+    }, 500);
+</script>
+</body>
+</html>
+```
