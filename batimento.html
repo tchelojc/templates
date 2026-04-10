@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>ALMAFLUXO · BATIMENTO da Vida</title>
+    <title>ALMAFLUXO · GERADOR DE PROMPTS SONOROS QUÂNTICOS</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -38,7 +38,7 @@
             position: absolute;
             top: 24px;
             right: 24px;
-            width: 280px;
+            width: 320px;
             z-index: 100;
             text-align: right;
             border-right: 5px solid #00f2ff;
@@ -53,6 +53,12 @@
             display: flex;
             gap: 30px;
             border-top: 2px solid #d4a843;
+            padding: 15px 30px;
+            background: rgba(5, 8, 20, 0.8);
+            backdrop-filter: blur(14px);
+            border-radius: 28px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         h2 {
             font-size: 24px;
@@ -146,13 +152,99 @@
             box-shadow: 0 0 15px #d4a843; transition: width 0.05s;
         }
         canvas { display: block; }
+        .genre-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: flex-end;
+        }
+        .genre-btn {
+            background: #0b1222;
+            border: 1px solid #2a4a7a;
+            color: #b0c8f0;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .genre-btn.active-genre {
+            background: #d4a843;
+            color: #030308;
+            border-color: #d4a843;
+            box-shadow: 0 0 12px #d4a843;
+        }
+        .extra-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .extra-controls .slider-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+        .extra-controls .slider-group label {
+            font-size: 9px;
+            letter-spacing: 2px;
+            margin-bottom: 0;
+        }
+        .extra-controls input {
+            width: 100px;
+            padding: 6px;
+            font-size: 12px;
+        }
+        .extra-controls span {
+            font-size: 12px;
+        }
+        .prompt-btn {
+            background: #4a6eff;
+            border-color: #aac0ff;
+            color: white;
+            padding: 8px 20px;
+            font-size: 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .prompt-btn:hover {
+            background: #6c8cff;
+            box-shadow: 0 0 12px #4a6eff;
+        }
+        .prompt-area {
+            background: #0b1222cc;
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 16px;
+            margin-top: 20px;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            border: 1px solid #3a5a8c;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .prompt-area pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #d4e6ff;
+        }
+        @media (max-width: 1000px) {
+            #ui-left, #ui-right { width: 280px; padding: 16px; }
+            .genre-selector { justify-content: center; }
+            .extra-controls { flex-wrap: wrap; justify-content: center; }
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Painel esquerdo: controles principais -->
     <div id="ui-left" class="glass-panel">
-        <h2>🌬️ BATIMENTO <span></h2>
+        <h2>🌬️ BATIMENTO <span>PROMPT SONORO</span></h2>
         <div>
             <label>🔮 Elemento Primordial</label>
             <select id="element-select"></select>
@@ -160,8 +252,8 @@
         <div class="slider-block">
             <label>💓 Frequência do Pulso (Hz)</label>
             <div class="slider-row">
-                <input type="range" id="freq-slider" min="100" max="2000" value="1420" step="1">
-                <span id="freq-val">1420</span>
+                <input type="range" id="freq-slider" min="60" max="300" value="177" step="1">
+                <span id="freq-val">177</span>
             </div>
         </div>
         <div class="slider-block">
@@ -179,12 +271,12 @@
             </div>
         </div>
         <div class="mode-buttons">
-            <button id="mode-normal" class="mode-btn active">🌬️ BATIMENTO</button>
+            <button id="mode-normal" class="mode-btn active">🌬️ MODO NORMAL</button>
             <button id="mode-desentrelacar" class="mode-btn">🌀 DESENTRELAÇAR</button>
         </div>
     </div>
 
-    <!-- Painel direito: telemetria do elemento -->
+    <!-- Painel direito: telemetria do elemento + gêneros + prompt -->
     <div id="ui-right" class="glass-panel">
         <div id="current-symbol" class="element-badge">H</div>
         <div id="current-name" style="font-size:20px; font-weight:500;">Hidrogênio</div>
@@ -193,28 +285,59 @@
         <div class="element-role" id="current-role">Semente das Realidades</div>
         <div style="margin-top: 20px;">
             <div style="font-size:12px; color:#aac8ff;">PULSO ATUAL</div>
-            <div style="font-size:28px; color:#d4a843;" id="pulse-display">1420 Hz</div>
+            <div style="font-size:28px; color:#d4a843;" id="pulse-display">177 Hz</div>
+        </div>
+        <div style="margin-top: 24px;">
+            <div style="font-size:12px; color:#aac8ff;">🌌 BASE RÍTMICA (GÊNERO)</div>
+            <div class="genre-selector" id="genre-container">
+                <button data-genre="hiphop" class="genre-btn">HIP HOP</button>
+                <button data-genre="pagode" class="genre-btn">PAGODE</button>
+                <button data-genre="rock" class="genre-btn">ROCK</button>
+                <button data-genre="trap" class="genre-btn">TRAP</button>
+                <button data-genre="classica" class="genre-btn">CLÁSSICA</button>
+                <button data-genre="eletronico" class="genre-btn">ELETRÔNICO</button>
+                <button data-genre="mpb" class="genre-btn">MPB</button>
+                <button data-genre="tango" class="genre-btn">TANGO</button>
+                <button data-genre="forro" class="genre-btn">FORRÓ</button>
+                <button data-genre="salsa" class="genre-btn">SALSA</button>
+            </div>
+        </div>
+        <div class="prompt-area" id="prompt-area">
+            <pre id="prompt-text">Clique em "GERAR PROMPT" para criar a descrição sonora.</pre>
         </div>
     </div>
 
-    <!-- Painel inferior: indicador de batimento -->
-    <div id="controls-bottom" class="glass-panel" style="padding: 15px 30px;">
+    <!-- Painel inferior: indicador de batimento + controles de prompt -->
+    <div id="controls-bottom" class="glass-panel">
         <div id="pulse-bar-container">
             <div style="font-size:12px; letter-spacing:3px; color:#7aa5d9;">INDICADOR DE BATIMENTO</div>
             <div id="pulse-bar">
                 <div id="pulse-bar-fill"></div>
             </div>
         </div>
+        <div class="extra-controls">
+            <div class="slider-group">
+                <label>🎚️ INTENSIDADE RÍTMICA</label>
+                <input type="range" id="base-vol" min="0" max="1" step="0.01" value="0.7">
+                <span id="base-vol-val" style="font-family:monospace;">0.70</span>
+            </div>
+            <div class="slider-group">
+                <label>🥁 BPM</label>
+                <input type="range" id="bpm-slider" min="60" max="160" step="1" value="100">
+                <span id="bpm-val" style="font-family:monospace;">100</span>
+            </div>
+            <button id="generate-prompt-btn" class="prompt-btn">✨ GERAR PROMPT</button>
+            <button id="copy-prompt-btn" class="prompt-btn">📋 COPIAR PROMPT</button>
+        </div>
     </div>
 
-    <div id="mode-hint">⚡ SINGULARITY ENGINE · BATIMENTO ⚡</div>
+    <div id="mode-hint">⚡ ALMAFLUXO · PROMPTS PARA IA DE ÁUDIO ⚡</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // ======================== BANCO DE DADOS QUÂNTICO (118 elementos) ========================
+        // ======================== 1. BANCO DE DADOS QUÂNTICO (idêntico ao original) ========================
         const QUANTUM_ELEMENTS = {};
         (function buildDatabase() {
-            // Primeiros 10 elementos
             const base = {
                 'H': {Z:1, raiz:1, grupo:'PORTAL_FISICO', freq:1420.4, grav:7.8, phi:1.618, cor:'#FF6666', nome:'Hidrogênio', role:'Semente das Realidades', estado:'GASOSO'},
                 'He':{Z:2, raiz:2, grupo:'PORTAL_FISICO', freq:1803, grav:2.1, phi:1.618, cor:'#D9FFFF', nome:'Hélio', role:'Espelho Dimensional', estado:'GASOSO'},
@@ -238,7 +361,6 @@
                 'Fr':'Frâncio','Ra':'Rádio','Ac':'Actínio','Th':'Tório','Pa':'Protactínio','U':'Urânio','Np':'Netúnio','Pu':'Plutônio','Am':'Amerício','Cm':'Cúrio','Bk':'Berquélio','Cf':'Califórnio','Es':'Einstênio','Fm':'Férmio','Md':'Mendelévio','No':'Nobélio','Lr':'Laurêncio',
                 'Rf':'Rutherfórdio','Db':'Dúbnio','Sg':'Seabórgio','Bh':'Bóhrio','Hs':'Hássio','Mt':'Meitnério','Ds':'Darmstádtio','Rg':'Roentgênio','Cn':'Copernício','Nh':'Nihônio','Fl':'Fleróvio','Mc':'Moscóvio','Lv':'Livermório','Ts':'Tenessino','Og':'Oganessônio'
             };
-            
             const symbols = Object.keys(nomes);
             symbols.forEach((sym, idx) => {
                 const Z = idx + 11;
@@ -260,15 +382,95 @@
                     estado: Z<20?'SOLIDO':(Z%2?'SOLIDO':'LIQUIDO')
                 };
             });
-            
             QUANTUM_ELEMENTS['Fe'] = {...QUANTUM_ELEMENTS['Fe'], freq:1020, grav:6.8, cor:'#E06633', role:'Núcleo da Realidade'};
             QUANTUM_ELEMENTS['Au'] = {...QUANTUM_ELEMENTS['Au'], freq:1340, grav:8.9, cor:'#FFD700', role:'Armazenador de Tempo', grupo:'SINGULARIDADE'};
             QUANTUM_ELEMENTS['Og'] = {...QUANTUM_ELEMENTS['Og'], freq:11800, grav:9.0, cor:'#6A0DAD', role:'Unificador Quântico', grupo:'SINGULARIDADE'};
         })();
 
-        // ======================== CONFIGURAÇÃO THREE.JS ========================
-        let scene, camera, renderer, core, particles;
+        // ======================== 2. FUNÇÕES AUXILIARES (sem áudio) ========================
+        const TARGET_RANGE = { min: 60, max: 300 };
+        function reduceByOctaves(rawFreq) {
+            let freq = rawFreq;
+            while(freq > TARGET_RANGE.max) freq /= 2;
+            if(freq < TARGET_RANGE.min) freq *= 2;
+            return parseFloat(freq.toFixed(1));
+        }
+        function getTimbreDescription(symbol) {
+            const el = QUANTUM_ELEMENTS[symbol];
+            if(!el) return 'senoidal pura';
+            if(el.estado === 'GASOSO' || el.Z === 1) return 'senoidal pura (etérea, suave)';
+            if(['Au','Ag','Pt','Cu','Fe'].includes(symbol)) return 'quadrada (metálica, brilhante)';
+            if(['C','Si'].includes(symbol)) return 'dente de serra (áspera, estruturada)';
+            if(el.Z > 100) return 'triangular (complexa, enigmática)';
+            return 'senoidal';
+        }
+
+        // Padrões rítmicos para descrição textual
+        const genrePatterns = {
+            hiphop:   "kick forte nos tempos 1, 5, 9, 13; snare nos tempos 3, 7, 11, 15; hi-hat constante; clap acompanhando a caixa.",
+            pagode:   "kick constante; snare com variação de síncope; hi-hat semi-aberto; tamborim em colcheias.",
+            rock:     "kick pesado; snare acentuada; hi-hat contínuo; crash nos inícios de compasso.",
+            trap:     "kick com padrão de 808, snare arrastada; hi-hat com ritmo de semicolcheia pontuada; clap em destaque.",
+            classica: "tímpanos marcando os tempos fortes; pouca percussão; atmosfera orquestral.",
+            eletronico:"kick em four-on-the-floor; snare eletrônica; hi-hat aberto; clap em off-beat.",
+            mpb:      "kick suave; snare discreta; hi-hat com padrão de bossa; shaker contínuo.",
+            tango:    "kick com síncope característica; snare marcada; hi-hat em staccato.",
+            forro:    "kick marcado; snare; zabumba no contratempo; triângulo.",
+            salsa:    "kick em padrão de clave; snare; cowbell no tempo; conga improvisada."
+        };
+
+        let currentElementSym = 'H';
+        let currentTerrestrialFreq = 177.5;
         let currentMode = 'normal';
+        let currentGenre = 'hiphop';
+        let bpm = 100;
+        let intensity = 0.7;
+
+        function generatePrompt() {
+            const el = QUANTUM_ELEMENTS[currentElementSym];
+            if (!el) return "Elemento não encontrado.";
+            const rawFreq = el.freq;
+            const audibleFreq = currentTerrestrialFreq;
+            const timbreDesc = getTimbreDescription(currentElementSym);
+            const grav = parseFloat(document.getElementById('grav-slider').value);
+            const phi = parseFloat(document.getElementById('phi-slider').value);
+            const genreDesc = genrePatterns[currentGenre] || "ritmo variado";
+            const modeText = currentMode === 'normal' ? "Batimento harmônico, com LFO de 2.5 Hz criando pulsação suave." : "Modo Desentrelaçar: o som entra em colapso, com ruído branco e frequência descendo em espiral até 20 Hz.";
+            
+            let prompt = `🎧 **ALMAFLUXO · Sinfonia Quântica** 🎧\n\n`;
+            prompt += `🔹 **Elemento**: ${el.nome} (${currentElementSym}) – ${el.role}\n`;
+            prompt += `🔹 **Frequência quântica original**: ${rawFreq} Hz\n`;
+            prompt += `🔹 **Frequência audível (reduzida por oitavas)**: ${audibleFreq} Hz\n`;
+            prompt += `🔹 **Timbre sugerido**: ${timbreDesc}\n`;
+            prompt += `🔹 **Gravidade (Força da Singularidade)**: ${grav} – influencia o subgrave (40 Hz) e a profundidade do LFO.\n`;
+            prompt += `🔹 **Harmonia Áurea (φ)**: ${phi} – controla o filtro passa-baixa (quanto maior φ, mais agudo).\n`;
+            prompt += `🔹 **Modo**: ${modeText}\n\n`;
+            prompt += `🎵 **BASE RÍTMICA**\n`;
+            prompt += `Gênero: ${currentGenre.toUpperCase()} | BPM: ${bpm} | Intensidade rítmica: ${intensity}\n`;
+            prompt += `Padrão: ${genreDesc}\n\n`;
+            prompt += `✨ **Instrução para IA de áudio (Suno / ElevenLabs / Stable Audio)**:\n`;
+            prompt += `Crie uma peça instrumental com duração de 30 a 60 segundos. O elemento principal deve ser um drone contínuo na frequência ${audibleFreq} Hz, com timbre ${timbreDesc}. Adicione uma modulação de amplitude (tremolo) a 2.5 Hz. Acompanhamento rítmico no estilo ${currentGenre.toUpperCase()}, seguindo a descrição de percussão. Inclua um subgrave suave a 40 Hz e um filtro passa-baixa que se abre conforme a harmonia áurea ${phi}. O modo ${currentMode} deve ser interpretado como uma evolução: no modo Normal, o som permanece estável; no Desentrelaçar, o som se desfaz em ruído e glissandos descendentes. A intensidade geral é ${intensity} (0 = silêncio, 1 = máximo).`;
+
+            return prompt;
+        }
+
+        function updatePromptDisplay() {
+            const prompt = generatePrompt();
+            document.getElementById('prompt-text').innerText = prompt;
+        }
+
+        function copyPrompt() {
+            const promptText = document.getElementById('prompt-text').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                const btn = document.getElementById('copy-prompt-btn');
+                const originalText = btn.innerText;
+                btn.innerText = '✅ COPIADO!';
+                setTimeout(() => { btn.innerText = originalText; }, 1500);
+            }).catch(err => console.warn('Erro ao copiar: ', err));
+        }
+
+        // ======================== 3. THREE.JS VISUAL (puramente estético) ========================
+        let scene, camera, renderer, core, particles;
         const clock = new THREE.Clock();
         let currentElement = 'H';
 
@@ -276,25 +478,19 @@
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x05050A);
             scene.fog = new THREE.FogExp2(0x05050A, 0.008);
-            
             camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
             camera.position.set(0, 2, 12);
             camera.lookAt(0, 0, 0);
-            
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(innerWidth, innerHeight);
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             document.body.appendChild(renderer.domElement);
-            
             const ambient = new THREE.AmbientLight(0x1a2440); scene.add(ambient);
             const l1 = new THREE.PointLight(0x446688, 1.8, 40); l1.position.set(6, 8, 6); scene.add(l1);
             const l2 = new THREE.PointLight(0xd4a843, 1.2, 40); l2.position.set(-5, 4, 8); scene.add(l2);
             const l3 = new THREE.PointLight(0x8844aa, 0.9, 30); l3.position.set(4, -3, -8); scene.add(l3);
-            
             updateCoreGeometry(currentElement);
-            
-            // Partículas
             const pGeo = new THREE.BufferGeometry();
             const count = 5000;
             const pos = new Float32Array(count * 3);
@@ -307,12 +503,8 @@
                 pos[i+2] = r * Math.cos(phi);
             }
             pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
-                color: 0xd4a843, size: 0.05, transparent: true, blending: THREE.AdditiveBlending
-            }));
+            particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xd4a843, size: 0.05, transparent: true, blending: THREE.AdditiveBlending }));
             scene.add(particles);
-            
-            // Estrelas
             const sGeo = new THREE.BufferGeometry();
             const sPos = new Float32Array(3000 * 3);
             for (let i=0; i<3000*3; i+=3) {
@@ -355,79 +547,37 @@
             scene.add(core);
         }
 
-        function updateUI() {
-            const sym = document.getElementById('element-select').value;
-            const el = QUANTUM_ELEMENTS[sym];
-            if (!el) return;
-            currentElement = sym;
-            
-            document.getElementById('current-symbol').textContent = sym;
-            document.getElementById('current-name').textContent = el.nome;
-            document.getElementById('current-group').textContent = el.grupo.replace(/_/g, ' ');
-            document.getElementById('current-freq').textContent = `f₀: ${Math.round(el.freq)} Hz`;
-            document.getElementById('current-role').textContent = el.role;
-            
-            document.getElementById('freq-slider').value = el.freq;
-            document.getElementById('grav-slider').value = el.grav;
-            document.getElementById('phi-slider').value = el.phi;
-            document.getElementById('freq-val').textContent = Math.round(el.freq);
-            document.getElementById('grav-val').textContent = el.grav.toFixed(1);
-            document.getElementById('phi-val').textContent = el.phi.toFixed(3);
-            
-            updateCoreGeometry(sym);
-            particles.material.color.set(el.cor);
-        }
-
         function animate() {
             requestAnimationFrame(animate);
             const time = clock.getElapsedTime();
-            const freq = parseFloat(document.getElementById('freq-slider').value);
+            const freqAud = parseFloat(document.getElementById('freq-slider').value);
             const grav = parseFloat(document.getElementById('grav-slider').value);
             const phi = parseFloat(document.getElementById('phi-slider').value);
-            const el = QUANTUM_ELEMENTS[currentElement];
-            if (!el) return;
-            
-            document.getElementById('pulse-display').textContent = Math.round(freq) + ' Hz';
-            
-            const pulse = Math.sin(time * (freq / 80)) * 0.35 + 1.2;
-            core.scale.set(pulse, pulse, pulse);
-            core.rotation.y += 0.005;
+            const pulseScale = Math.sin(time * (freqAud / 55)) * 0.25 + 1.15;
+            core.scale.set(pulseScale, pulseScale, pulseScale);
+            core.rotation.y += 0.008;
             core.rotation.x += 0.002;
-            
-            // Barra de pulsação
-            const fill = document.getElementById('pulse-bar-fill');
-            const barValue = (Math.sin(time * (freq / 50)) * 0.4 + 0.6) * 100;
-            fill.style.width = barValue + '%';
-            
-            // Movimento das partículas
+            const barVal = (Math.sin(time * (freqAud / 35)) * 0.4 + 0.6) * 100;
+            document.getElementById('pulse-bar-fill').style.width = barVal + '%';
+            document.getElementById('pulse-display').innerText = Math.round(freqAud) + ' Hz';
             const positions = particles.geometry.attributes.position.array;
-            const factor = currentMode === 'normal' ? (0.98 + grav * 0.0025) : (1.02 - grav * 0.0015);
-            
+            const factor = currentMode === 'normal' ? (0.99 + grav*0.002) : (1.01 - grav*0.0018);
             for (let i=0; i<positions.length; i+=3) {
-                positions[i] *= factor;
-                positions[i+1] *= factor;
-                positions[i+2] *= factor;
-                
-                if (currentMode === 'normal' && Math.abs(positions[i]) < 0.2) {
-                    const ang = Math.random() * Math.PI * 2;
-                    const rad = 12 * phi;
-                    positions[i] = Math.cos(ang) * rad;
-                    positions[i+1] = (Math.random() - 0.5) * rad;
-                    positions[i+2] = Math.sin(ang) * rad;
-                }
-                
-                if (currentMode === 'desentrelacar' && Math.abs(positions[i]) > 20) {
-                    positions[i] = (Math.random() - 0.5) * 6;
-                    positions[i+1] = (Math.random() - 0.5) * 6;
-                    positions[i+2] = (Math.random() - 0.5) * 6;
+                positions[i] *= factor; positions[i+1] *= factor; positions[i+2] *= factor;
+                if (currentMode === 'normal' && Math.abs(positions[i]) < 0.25) {
+                    const ang = Math.random() * Math.PI*2;
+                    const rad = 9 * phi;
+                    positions[i] = Math.cos(ang)*rad;
+                    positions[i+1] = (Math.random()-0.5)*rad;
+                    positions[i+2] = Math.sin(ang)*rad;
                 }
             }
             particles.geometry.attributes.position.needsUpdate = true;
-            particles.rotation.y += 0.001;
-            
+            particles.rotation.y += 0.0008;
             renderer.render(scene, camera);
         }
 
+        // ======================== 4. UI E EVENTOS ========================
         function populateSelectors() {
             const sel = document.getElementById('element-select');
             const syms = Object.keys(QUANTUM_ELEMENTS).sort((a,b) => QUANTUM_ELEMENTS[a].Z - QUANTUM_ELEMENTS[b].Z);
@@ -440,29 +590,76 @@
             sel.value = 'H';
         }
 
+        function updateUI() {
+            const sym = document.getElementById('element-select').value;
+            const el = QUANTUM_ELEMENTS[sym];
+            if (!el) return;
+            currentElementSym = sym;
+            currentTerrestrialFreq = reduceByOctaves(el.freq);
+            document.getElementById('current-symbol').textContent = sym;
+            document.getElementById('current-name').textContent = el.nome;
+            document.getElementById('current-group').textContent = el.grupo.replace(/_/g, ' ');
+            document.getElementById('current-freq').textContent = `f₀: ${Math.round(el.freq)} Hz`;
+            document.getElementById('current-role').textContent = el.role;
+            document.getElementById('grav-slider').value = el.grav;
+            document.getElementById('phi-slider').value = el.phi;
+            document.getElementById('grav-val').textContent = el.grav.toFixed(1);
+            document.getElementById('phi-val').textContent = el.phi.toFixed(3);
+            document.getElementById('freq-slider').value = Math.floor(currentTerrestrialFreq);
+            document.getElementById('freq-val').innerText = Math.floor(currentTerrestrialFreq);
+            updateCoreGeometry(sym);
+            particles.material.color.set(el.cor);
+            updatePromptDisplay(); // atualiza o prompt ao trocar elemento
+        }
+
         function setupEvents() {
             document.getElementById('element-select').addEventListener('change', updateUI);
             document.getElementById('freq-slider').addEventListener('input', e => {
-                document.getElementById('freq-val').textContent = e.target.value;
+                const val = e.target.value;
+                document.getElementById('freq-val').textContent = val;
+                currentTerrestrialFreq = parseFloat(val);
+                updatePromptDisplay();
             });
             document.getElementById('grav-slider').addEventListener('input', e => {
                 document.getElementById('grav-val').textContent = parseFloat(e.target.value).toFixed(1);
+                updatePromptDisplay();
             });
             document.getElementById('phi-slider').addEventListener('input', e => {
                 document.getElementById('phi-val').textContent = parseFloat(e.target.value).toFixed(3);
+                updatePromptDisplay();
             });
-            
             document.getElementById('mode-normal').addEventListener('click', () => {
                 currentMode = 'normal';
                 document.getElementById('mode-normal').classList.add('active');
                 document.getElementById('mode-desentrelacar').classList.remove('active');
+                updatePromptDisplay();
             });
             document.getElementById('mode-desentrelacar').addEventListener('click', () => {
                 currentMode = 'desentrelacar';
                 document.getElementById('mode-desentrelacar').classList.add('active');
                 document.getElementById('mode-normal').classList.remove('active');
+                updatePromptDisplay();
             });
-            
+            document.getElementById('base-vol').addEventListener('input', e => {
+                intensity = parseFloat(e.target.value);
+                document.getElementById('base-vol-val').innerText = intensity.toFixed(2);
+                updatePromptDisplay();
+            });
+            document.getElementById('bpm-slider').addEventListener('input', e => {
+                bpm = parseInt(e.target.value);
+                document.getElementById('bpm-val').innerText = bpm;
+                updatePromptDisplay();
+            });
+            document.querySelectorAll('.genre-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentGenre = btn.dataset.genre;
+                    document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active-genre'));
+                    btn.classList.add('active-genre');
+                    updatePromptDisplay();
+                });
+            });
+            document.getElementById('generate-prompt-btn').addEventListener('click', updatePromptDisplay);
+            document.getElementById('copy-prompt-btn').addEventListener('click', copyPrompt);
             window.addEventListener('resize', () => {
                 camera.aspect = innerWidth / innerHeight;
                 camera.updateProjectionMatrix();
@@ -470,12 +667,15 @@
             });
         }
 
-        // Inicialização segura
+        // INICIALIZAÇÃO
         populateSelectors();
         initThree();
         updateUI();
         setupEvents();
         animate();
+        // Define gênero inicial ativo
+        document.querySelector('.genre-btn[data-genre="hiphop"]').classList.add('active-genre');
+        updatePromptDisplay();
     </script>
 </body>
 </html>
