@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>ALMAFLUXO · BATIMENTO da Vida</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: #030308;
+            color: #fff;
+            overflow: hidden;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 30% 40%, #191530 0%, #0a0815 45%, #020105 100%);
+            z-index: -2;
+        }
+        .glass-panel {
+            background: rgba(5, 8, 20, 0.65);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(212, 168, 67, 0.3);
+            border-radius: 28px;
+            padding: 22px 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(80,140,220,0.15);
+        }
+        #ui-left {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            width: 370px;
+            z-index: 100;
+            border-left: 5px solid #d4a843;
+        }
+        #ui-right {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 280px;
+            z-index: 100;
+            text-align: right;
+            border-right: 5px solid #00f2ff;
+        }
+        #controls-bottom {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            z-index: 100;
+            display: flex;
+            gap: 30px;
+            border-top: 2px solid #d4a843;
+        }
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 5px;
+            color: #d4a843;
+            text-shadow: 0 0 20px #d4a84380;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #3a5a8c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h2 span { font-size: 16px; color: #7aa5d9; font-weight: 400; }
+        label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #b0c8f0;
+            margin-bottom: 8px;
+            display: block;
+        }
+        select, input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0b1222;
+            color: #f0e6d2;
+            border: 1px solid #2a4a7a;
+            border-radius: 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+            box-shadow: inset 0 3px 8px #00000060;
+            transition: all 0.25s;
+        }
+        select option { background: #0b1222; }
+        select:hover, select:focus {
+            border-color: #d4a843;
+            box-shadow: 0 0 15px #d4a84340, inset 0 3px 8px #000;
+        }
+        .slider-block { margin-bottom: 24px; }
+        .slider-row { display: flex; align-items: center; gap: 14px; }
+        .slider-row span {
+            min-width: 50px; text-align: right; color: #d4a843;
+            font-weight: 700; text-shadow: 0 0 10px #d4a843; font-size: 16px;
+        }
+        input[type=range] {
+            -webkit-appearance: none; background: transparent; padding: 0;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 8px; background: #151e30; border-radius: 10px; border: 1px solid #2a3a55;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
+            background: linear-gradient(145deg, #f5d060, #d4a843); margin-top: -8px;
+            box-shadow: 0 0 25px #d4a843, 0 3px 8px #000; border: 1px solid #ffe6a0; cursor: pointer;
+        }
+        .mode-buttons {
+            display: flex; gap: 12px; margin-top: 20px;
+        }
+        .mode-btn {
+            flex: 1; background: transparent; color: #d4a843; border: 2px solid #d4a843;
+            padding: 10px; border-radius: 40px; font-weight: bold; cursor: pointer;
+            font-family: 'Orbitron'; letter-spacing: 2px; transition: 0.3s; text-transform: uppercase;
+        }
+        .mode-btn.active {
+            background: #d4a843; color: #030308; box-shadow: 0 0 20px #d4a843;
+        }
+        .element-badge {
+            font-size: 52px; font-weight: 800;
+            background: linear-gradient(135deg, #fff, #b0d0ff);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            text-shadow: 0 0 30px #00f2ff;
+        }
+        .element-detail { font-size: 14px; opacity: 0.95; margin: 4px 0; }
+        .element-role { margin-top: 16px; font-size: 13px; color: #c0d4f0; font-style: italic; }
+        #mode-hint {
+            position: absolute; bottom: 30px; right: 30px; color: #7a9bcb;
+            font-size: 12px; opacity: 0.6; z-index: 200; letter-spacing: 3px;
+        }
+        #pulse-bar-container {
+            text-align: center;
+        }
+        #pulse-bar {
+            width: 200px; height: 12px; background: #151e30; border-radius: 20px; margin-top: 8px;
+        }
+        #pulse-bar-fill {
+            width: 50%; height: 100%; background: #d4a843; border-radius: 20px;
+            box-shadow: 0 0 15px #d4a843; transition: width 0.05s;
+        }
+        canvas { display: block; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Painel esquerdo: controles principais -->
+    <div id="ui-left" class="glass-panel">
+        <h2>🌬️ BATIMENTO <span></h2>
+        <div>
+            <label>🔮 Elemento Primordial</label>
+            <select id="element-select"></select>
+        </div>
+        <div class="slider-block">
+            <label>💓 Frequência do Pulso (Hz)</label>
+            <div class="slider-row">
+                <input type="range" id="freq-slider" min="100" max="2000" value="1420" step="1">
+                <span id="freq-val">1420</span>
+            </div>
+        </div>
+        <div class="slider-block">
+            <label>🌀 Força da Singularidade</label>
+            <div class="slider-row">
+                <input type="range" id="grav-slider" min="1.0" max="9.0" value="5.0" step="0.1">
+                <span id="grav-val">5.0</span>
+            </div>
+        </div>
+        <div class="slider-block">
+            <label>🌻 Harmonia Áurea (φ)</label>
+            <div class="slider-row">
+                <input type="range" id="phi-slider" min="1.0" max="3.0" value="1.618" step="0.01">
+                <span id="phi-val">1.618</span>
+            </div>
+        </div>
+        <div class="mode-buttons">
+            <button id="mode-normal" class="mode-btn active">🌬️ BATIMENTO</button>
+            <button id="mode-desentrelacar" class="mode-btn">🌀 DESENTRELAÇAR</button>
+        </div>
+    </div>
+
+    <!-- Painel direito: telemetria do elemento -->
+    <div id="ui-right" class="glass-panel">
+        <div id="current-symbol" class="element-badge">H</div>
+        <div id="current-name" style="font-size:20px; font-weight:500;">Hidrogênio</div>
+        <div class="element-detail" id="current-group">PORTAL FÍSICO</div>
+        <div class="element-detail" id="current-freq">f₀: 1420 Hz</div>
+        <div class="element-role" id="current-role">Semente das Realidades</div>
+        <div style="margin-top: 20px;">
+            <div style="font-size:12px; color:#aac8ff;">PULSO ATUAL</div>
+            <div style="font-size:28px; color:#d4a843;" id="pulse-display">1420 Hz</div>
+        </div>
+    </div>
+
+    <!-- Painel inferior: indicador de batimento -->
+    <div id="controls-bottom" class="glass-panel" style="padding: 15px 30px;">
+        <div id="pulse-bar-container">
+            <div style="font-size:12px; letter-spacing:3px; color:#7aa5d9;">INDICADOR DE BATIMENTO</div>
+            <div id="pulse-bar">
+                <div id="pulse-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mode-hint">⚡ SINGULARITY ENGINE · BATIMENTO ⚡</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ======================== BANCO DE DADOS QUÂNTICO (118 elementos) ========================
+        const QUANTUM_ELEMENTS = {};
+        (function buildDatabase() {
+            // Primeiros 10 elementos
+            const base = {
+                'H': {Z:1, raiz:1, grupo:'PORTAL_FISICO', freq:1420.4, grav:7.8, phi:1.618, cor:'#FF6666', nome:'Hidrogênio', role:'Semente das Realidades', estado:'GASOSO'},
+                'He':{Z:2, raiz:2, grupo:'PORTAL_FISICO', freq:1803, grav:2.1, phi:1.618, cor:'#D9FFFF', nome:'Hélio', role:'Espelho Dimensional', estado:'GASOSO'},
+                'Li':{Z:3, raiz:3, grupo:'ATIVACAO_FISICA', freq:671, grav:5.5, phi:1.618, cor:'#CC80FF', nome:'Lítio', role:'Ativador de Campos', estado:'SOLIDO'},
+                'Be':{Z:4, raiz:4, grupo:'ATIVACAO_FISICA', freq:890, grav:4.8, phi:1.618, cor:'#C2FF00', nome:'Berílio', role:'Arquiteto', estado:'SOLIDO'},
+                'B':{Z:5, raiz:5, grupo:'PONTE_ENERGETICA', freq:950, grav:5.0, phi:1.618, cor:'#FFB5B5', nome:'Boro', role:'Filtro Dimensional', estado:'SOLIDO'},
+                'C':{Z:6, raiz:6, grupo:'PONTE_ENERGETICA', freq:1200, grav:5.5, phi:1.618, cor:'#909090', nome:'Carbono', role:'Rede de Consciência', estado:'SOLIDO'},
+                'N':{Z:7, raiz:7, grupo:'PONTE_ENERGETICA', freq:1350, grav:5.2, phi:1.618, cor:'#3050F8', nome:'Nitrogênio', role:'Fixador de Potencial', estado:'GASOSO'},
+                'O':{Z:8, raiz:8, grupo:'PONTE_ENERGETICA', freq:1501, grav:6.0, phi:1.618, cor:'#FF0D0D', nome:'Oxigênio', role:'Portal de Energia', estado:'GASOSO'},
+                'F':{Z:9, raiz:9, grupo:'SINGULARIDADE', freq:1800, grav:7.0, phi:1.618, cor:'#90E050', nome:'Flúor', role:'Transformador de Estados', estado:'GASOSO'},
+                'Ne':{Z:10, raiz:1, grupo:'SINGULARIDADE', freq:1950, grav:6.5, phi:1.618, cor:'#B3E3F5', nome:'Neônio', role:'Emissor de Padrões', estado:'GASOSO'}
+            };
+            Object.entries(base).forEach(([k,v]) => QUANTUM_ELEMENTS[k] = v);
+            
+            const nomes = {
+                'Na':'Sódio','Mg':'Magnésio','Al':'Alumínio','Si':'Silício','P':'Fósforo','S':'Enxofre','Cl':'Cloro','Ar':'Argônio',
+                'K':'Potássio','Ca':'Cálcio','Sc':'Escândio','Ti':'Titânio','V':'Vanádio','Cr':'Cromo','Mn':'Manganês','Fe':'Ferro','Co':'Cobalto','Ni':'Níquel','Cu':'Cobre','Zn':'Zinco','Ga':'Gálio','Ge':'Germânio','As':'Arsênio','Se':'Selênio','Br':'Bromo','Kr':'Criptônio',
+                'Rb':'Rubídio','Sr':'Estrôncio','Y':'Ítrio','Zr':'Zircônio','Nb':'Nióbio','Mo':'Molibdênio','Tc':'Tecnécio','Ru':'Rutênio','Rh':'Ródio','Pd':'Paládio','Ag':'Prata','Cd':'Cádmio','In':'Índio','Sn':'Estanho','Sb':'Antimônio','Te':'Telúrio','I':'Iodo','Xe':'Xenônio',
+                'Cs':'Césio','Ba':'Bário','La':'Lantânio','Ce':'Cério','Pr':'Praseodímio','Nd':'Neodímio','Pm':'Promécio','Sm':'Samário','Eu':'Európio','Gd':'Gadolínio','Tb':'Térbio','Dy':'Disprósio','Ho':'Hólmio','Er':'Érbio','Tm':'Túlio','Yb':'Itérbio','Lu':'Lutécio',
+                'Hf':'Háfnio','Ta':'Tântalo','W':'Tungstênio','Re':'Rênio','Os':'Ósmio','Ir':'Irídio','Pt':'Platina','Au':'Ouro','Hg':'Mercúrio','Tl':'Tálio','Pb':'Chumbo','Bi':'Bismuto','Po':'Polônio','At':'Astato','Rn':'Radônio',
+                'Fr':'Frâncio','Ra':'Rádio','Ac':'Actínio','Th':'Tório','Pa':'Protactínio','U':'Urânio','Np':'Netúnio','Pu':'Plutônio','Am':'Amerício','Cm':'Cúrio','Bk':'Berquélio','Cf':'Califórnio','Es':'Einstênio','Fm':'Férmio','Md':'Mendelévio','No':'Nobélio','Lr':'Laurêncio',
+                'Rf':'Rutherfórdio','Db':'Dúbnio','Sg':'Seabórgio','Bh':'Bóhrio','Hs':'Hássio','Mt':'Meitnério','Ds':'Darmstádtio','Rg':'Roentgênio','Cn':'Copernício','Nh':'Nihônio','Fl':'Fleróvio','Mc':'Moscóvio','Lv':'Livermório','Ts':'Tenessino','Og':'Oganessônio'
+            };
+            
+            const symbols = Object.keys(nomes);
+            symbols.forEach((sym, idx) => {
+                const Z = idx + 11;
+                if (QUANTUM_ELEMENTS[sym]) return;
+                const raiz = ((Z - 1) % 9) + 1;
+                let grupo = 'EIXO_TRANSICAO';
+                if ([3,4,11,12,19,20,37,38,55,56,87,88].includes(Z)) grupo = 'ATIVACAO_FISICA';
+                else if ([5,6,7,8,13,14,15,16,31,32,33,34,49,50,51,52,81,82,83,113,114,115,116].includes(Z)) grupo = 'PONTE_ENERGETICA';
+                else if ([9,10,17,18,35,36,53,54,85,86,117,118].includes(Z) || Z>=109) grupo = 'SINGULARIDADE';
+                
+                QUANTUM_ELEMENTS[sym] = {
+                    Z, raiz, grupo,
+                    freq: Math.round(400 + 350 * Math.log(Z+1) * (raiz/5)),
+                    grav: 4.5 + (raiz/2) + (Z%3)*0.3,
+                    phi: 1.618,
+                    cor: `hsl(${Z*23 % 360}, 80%, 60%)`,
+                    nome: nomes[sym],
+                    role: `Função Quântica ${raiz}`,
+                    estado: Z<20?'SOLIDO':(Z%2?'SOLIDO':'LIQUIDO')
+                };
+            });
+            
+            QUANTUM_ELEMENTS['Fe'] = {...QUANTUM_ELEMENTS['Fe'], freq:1020, grav:6.8, cor:'#E06633', role:'Núcleo da Realidade'};
+            QUANTUM_ELEMENTS['Au'] = {...QUANTUM_ELEMENTS['Au'], freq:1340, grav:8.9, cor:'#FFD700', role:'Armazenador de Tempo', grupo:'SINGULARIDADE'};
+            QUANTUM_ELEMENTS['Og'] = {...QUANTUM_ELEMENTS['Og'], freq:11800, grav:9.0, cor:'#6A0DAD', role:'Unificador Quântico', grupo:'SINGULARIDADE'};
+        })();
+
+        // ======================== CONFIGURAÇÃO THREE.JS ========================
+        let scene, camera, renderer, core, particles;
+        let currentMode = 'normal';
+        const clock = new THREE.Clock();
+        let currentElement = 'H';
+
+        function initThree() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x05050A);
+            scene.fog = new THREE.FogExp2(0x05050A, 0.008);
+            
+            camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
+            camera.position.set(0, 2, 12);
+            camera.lookAt(0, 0, 0);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(innerWidth, innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.body.appendChild(renderer.domElement);
+            
+            const ambient = new THREE.AmbientLight(0x1a2440); scene.add(ambient);
+            const l1 = new THREE.PointLight(0x446688, 1.8, 40); l1.position.set(6, 8, 6); scene.add(l1);
+            const l2 = new THREE.PointLight(0xd4a843, 1.2, 40); l2.position.set(-5, 4, 8); scene.add(l2);
+            const l3 = new THREE.PointLight(0x8844aa, 0.9, 30); l3.position.set(4, -3, -8); scene.add(l3);
+            
+            updateCoreGeometry(currentElement);
+            
+            // Partículas
+            const pGeo = new THREE.BufferGeometry();
+            const count = 5000;
+            const pos = new Float32Array(count * 3);
+            for (let i=0; i<count*3; i+=3) {
+                const r = 5 + Math.random() * 7;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                pos[i] = r * Math.sin(phi) * Math.cos(theta);
+                pos[i+1] = r * Math.sin(phi) * Math.sin(theta);
+                pos[i+2] = r * Math.cos(phi);
+            }
+            pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
+                color: 0xd4a843, size: 0.05, transparent: true, blending: THREE.AdditiveBlending
+            }));
+            scene.add(particles);
+            
+            // Estrelas
+            const sGeo = new THREE.BufferGeometry();
+            const sPos = new Float32Array(3000 * 3);
+            for (let i=0; i<3000*3; i+=3) {
+                sPos[i] = (Math.random() - 0.5) * 400;
+                sPos[i+1] = (Math.random() - 0.5) * 400;
+                sPos[i+2] = (Math.random() - 0.5) * 400;
+            }
+            sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+            scene.add(new THREE.Points(sGeo, new THREE.PointsMaterial({color: 0xffffff, size: 0.2})));
+        }
+
+        function updateCoreGeometry(symbol) {
+            if (core) scene.remove(core);
+            const el = QUANTUM_ELEMENTS[symbol];
+            if (!el) return;
+            let geo;
+            switch(el.raiz) {
+                case 1: geo = new THREE.SphereGeometry(1.8, 64, 32); break;
+                case 2: geo = new THREE.TorusKnotGeometry(1.4, 0.4, 48, 8); break;
+                case 3: geo = new THREE.TetrahedronGeometry(1.9); break;
+                case 4: geo = new THREE.OctahedronGeometry(1.8); break;
+                case 5: geo = new THREE.DodecahedronGeometry(1.6); break;
+                case 6: geo = new THREE.IcosahedronGeometry(1.8); break;
+                case 7: geo = new THREE.ConeGeometry(1.7, 2.3, 7); break;
+                case 8: geo = new THREE.BoxGeometry(2.2, 2.2, 2.2); break;
+                default: geo = new THREE.IcosahedronGeometry(1.8, 1);
+            }
+            const mat = new THREE.MeshStandardMaterial({
+                color: el.cor,
+                emissive: new THREE.Color(el.cor).multiplyScalar(0.5),
+                roughness: 0.25,
+                metalness: 0.1,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.9
+            });
+            core = new THREE.Mesh(geo, mat);
+            core.castShadow = true;
+            core.receiveShadow = true;
+            scene.add(core);
+        }
+
+        function updateUI() {
+            const sym = document.getElementById('element-select').value;
+            const el = QUANTUM_ELEMENTS[sym];
+            if (!el) return;
+            currentElement = sym;
+            
+            document.getElementById('current-symbol').textContent = sym;
+            document.getElementById('current-name').textContent = el.nome;
+            document.getElementById('current-group').textContent = el.grupo.replace(/_/g, ' ');
+            document.getElementById('current-freq').textContent = `f₀: ${Math.round(el.freq)} Hz`;
+            document.getElementById('current-role').textContent = el.role;
+            
+            document.getElementById('freq-slider').value = el.freq;
+            document.getElementById('grav-slider').value = el.grav;
+            document.getElementById('phi-slider').value = el.phi;
+            document.getElementById('freq-val').textContent = Math.round(el.freq);
+            document.getElementById('grav-val').textContent = el.grav.toFixed(1);
+            document.getElementById('phi-val').textContent = el.phi.toFixed(3);
+            
+            updateCoreGeometry(sym);
+            particles.material.color.set(el.cor);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+            const freq = parseFloat(document.getElementById('freq-slider').value);
+            const grav = parseFloat(document.getElementById('grav-slider').value);
+            const phi = parseFloat(document.getElementById('phi-slider').value);
+            const el = QUANTUM_ELEMENTS[currentElement];
+            if (!el) return;
+            
+            document.getElementById('pulse-display').textContent = Math.round(freq) + ' Hz';
+            
+            const pulse = Math.sin(time * (freq / 80)) * 0.35 + 1.2;
+            core.scale.set(pulse, pulse, pulse);
+            core.rotation.y += 0.005;
+            core.rotation.x += 0.002;
+            
+            // Barra de pulsação
+            const fill = document.getElementById('pulse-bar-fill');
+            const barValue = (Math.sin(time * (freq / 50)) * 0.4 + 0.6) * 100;
+            fill.style.width = barValue + '%';
+            
+            // Movimento das partículas
+            const positions = particles.geometry.attributes.position.array;
+            const factor = currentMode === 'normal' ? (0.98 + grav * 0.0025) : (1.02 - grav * 0.0015);
+            
+            for (let i=0; i<positions.length; i+=3) {
+                positions[i] *= factor;
+                positions[i+1] *= factor;
+                positions[i+2] *= factor;
+                
+                if (currentMode === 'normal' && Math.abs(positions[i]) < 0.2) {
+                    const ang = Math.random() * Math.PI * 2;
+                    const rad = 12 * phi;
+                    positions[i] = Math.cos(ang) * rad;
+                    positions[i+1] = (Math.random() - 0.5) * rad;
+                    positions[i+2] = Math.sin(ang) * rad;
+                }
+                
+                if (currentMode === 'desentrelacar' && Math.abs(positions[i]) > 20) {
+                    positions[i] = (Math.random() - 0.5) * 6;
+                    positions[i+1] = (Math.random() - 0.5) * 6;
+                    positions[i+2] = (Math.random() - 0.5) * 6;
+                }
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+            particles.rotation.y += 0.001;
+            
+            renderer.render(scene, camera);
+        }
+
+        function populateSelectors() {
+            const sel = document.getElementById('element-select');
+            const syms = Object.keys(QUANTUM_ELEMENTS).sort((a,b) => QUANTUM_ELEMENTS[a].Z - QUANTUM_ELEMENTS[b].Z);
+            syms.forEach(sym => {
+                const opt = document.createElement('option');
+                opt.value = sym;
+                opt.textContent = `${sym} - ${QUANTUM_ELEMENTS[sym].nome}`;
+                sel.appendChild(opt);
+            });
+            sel.value = 'H';
+        }
+
+        function setupEvents() {
+            document.getElementById('element-select').addEventListener('change', updateUI);
+            document.getElementById('freq-slider').addEventListener('input', e => {
+                document.getElementById('freq-val').textContent = e.target.value;
+            });
+            document.getElementById('grav-slider').addEventListener('input', e => {
+                document.getElementById('grav-val').textContent = parseFloat(e.target.value).toFixed(1);
+            });
+            document.getElementById('phi-slider').addEventListener('input', e => {
+                document.getElementById('phi-val').textContent = parseFloat(e.target.value).toFixed(3);
+            });
+            
+            document.getElementById('mode-normal').addEventListener('click', () => {
+                currentMode = 'normal';
+                document.getElementById('mode-normal').classList.add('active');
+                document.getElementById('mode-desentrelacar').classList.remove('active');
+            });
+            document.getElementById('mode-desentrelacar').addEventListener('click', () => {
+                currentMode = 'desentrelacar';
+                document.getElementById('mode-desentrelacar').classList.add('active');
+                document.getElementById('mode-normal').classList.remove('active');
+            });
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = innerWidth / innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(innerWidth, innerHeight);
+            });
+        }
+
+        // Inicialização segura
+        populateSelectors();
+        initThree();
+        updateUI();
+        setupEvents();
+        animate();
+    </script>
+</body>
+</html>
