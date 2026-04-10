@@ -1,681 +1,1259 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>ALMAFLUXO · GERADOR DE PROMPTS SONOROS QUÂNTICOS</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Orbitron', sans-serif;
-            background: #030308;
-            color: #fff;
-            overflow: hidden;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 30% 40%, #191530 0%, #0a0815 45%, #020105 100%);
-            z-index: -2;
-        }
-        .glass-panel {
-            background: rgba(5, 8, 20, 0.65);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(212, 168, 67, 0.3);
-            border-radius: 28px;
-            padding: 22px 28px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(80,140,220,0.15);
-        }
-        #ui-left {
-            position: absolute;
-            top: 24px;
-            left: 24px;
-            width: 370px;
-            z-index: 100;
-            border-left: 5px solid #d4a843;
-        }
-        #ui-right {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            width: 320px;
-            z-index: 100;
-            text-align: right;
-            border-right: 5px solid #00f2ff;
-        }
-        #controls-bottom {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: auto;
-            z-index: 100;
-            display: flex;
-            gap: 30px;
-            border-top: 2px solid #d4a843;
-            padding: 15px 30px;
-            background: rgba(5, 8, 20, 0.8);
-            backdrop-filter: blur(14px);
-            border-radius: 28px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        h2 {
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: 5px;
-            color: #d4a843;
-            text-shadow: 0 0 20px #d4a84380;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #3a5a8c;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        h2 span { font-size: 16px; color: #7aa5d9; font-weight: 400; }
-        label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #b0c8f0;
-            margin-bottom: 8px;
-            display: block;
-        }
-        select, input {
-            width: 100%;
-            padding: 12px 16px;
-            background: #0b1222;
-            color: #f0e6d2;
-            border: 1px solid #2a4a7a;
-            border-radius: 16px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            outline: none;
-            cursor: pointer;
-            box-shadow: inset 0 3px 8px #00000060;
-            transition: all 0.25s;
-        }
-        select option { background: #0b1222; }
-        select:hover, select:focus {
-            border-color: #d4a843;
-            box-shadow: 0 0 15px #d4a84340, inset 0 3px 8px #000;
-        }
-        .slider-block { margin-bottom: 24px; }
-        .slider-row { display: flex; align-items: center; gap: 14px; }
-        .slider-row span {
-            min-width: 50px; text-align: right; color: #d4a843;
-            font-weight: 700; text-shadow: 0 0 10px #d4a843; font-size: 16px;
-        }
-        input[type=range] {
-            -webkit-appearance: none; background: transparent; padding: 0;
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            height: 8px; background: #151e30; border-radius: 10px; border: 1px solid #2a3a55;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
-            background: linear-gradient(145deg, #f5d060, #d4a843); margin-top: -8px;
-            box-shadow: 0 0 25px #d4a843, 0 3px 8px #000; border: 1px solid #ffe6a0; cursor: pointer;
-        }
-        .mode-buttons {
-            display: flex; gap: 12px; margin-top: 20px;
-        }
-        .mode-btn {
-            flex: 1; background: transparent; color: #d4a843; border: 2px solid #d4a843;
-            padding: 10px; border-radius: 40px; font-weight: bold; cursor: pointer;
-            font-family: 'Orbitron'; letter-spacing: 2px; transition: 0.3s; text-transform: uppercase;
-        }
-        .mode-btn.active {
-            background: #d4a843; color: #030308; box-shadow: 0 0 20px #d4a843;
-        }
-        .element-badge {
-            font-size: 52px; font-weight: 800;
-            background: linear-gradient(135deg, #fff, #b0d0ff);
-            -webkit-background-clip: text; background-clip: text; color: transparent;
-            text-shadow: 0 0 30px #00f2ff;
-        }
-        .element-detail { font-size: 14px; opacity: 0.95; margin: 4px 0; }
-        .element-role { margin-top: 16px; font-size: 13px; color: #c0d4f0; font-style: italic; }
-        #mode-hint {
-            position: absolute; bottom: 30px; right: 30px; color: #7a9bcb;
-            font-size: 12px; opacity: 0.6; z-index: 200; letter-spacing: 3px;
-        }
-        #pulse-bar-container {
-            text-align: center;
-        }
-        #pulse-bar {
-            width: 200px; height: 12px; background: #151e30; border-radius: 20px; margin-top: 8px;
-        }
-        #pulse-bar-fill {
-            width: 50%; height: 100%; background: #d4a843; border-radius: 20px;
-            box-shadow: 0 0 15px #d4a843; transition: width 0.05s;
-        }
-        canvas { display: block; }
-        .genre-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-            justify-content: flex-end;
-        }
-        .genre-btn {
-            background: #0b1222;
-            border: 1px solid #2a4a7a;
-            color: #b0c8f0;
-            padding: 6px 12px;
-            border-radius: 40px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .genre-btn.active-genre {
-            background: #d4a843;
-            color: #030308;
-            border-color: #d4a843;
-            box-shadow: 0 0 12px #d4a843;
-        }
-        .extra-controls {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .extra-controls .slider-group {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 4px;
-        }
-        .extra-controls .slider-group label {
-            font-size: 9px;
-            letter-spacing: 2px;
-            margin-bottom: 0;
-        }
-        .extra-controls input {
-            width: 100px;
-            padding: 6px;
-            font-size: 12px;
-        }
-        .extra-controls span {
-            font-size: 12px;
-        }
-        .prompt-btn {
-            background: #4a6eff;
-            border-color: #aac0ff;
-            color: white;
-            padding: 8px 20px;
-            font-size: 14px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .prompt-btn:hover {
-            background: #6c8cff;
-            box-shadow: 0 0 12px #4a6eff;
-        }
-        .prompt-area {
-            background: #0b1222cc;
-            backdrop-filter: blur(8px);
-            border-radius: 24px;
-            padding: 16px;
-            margin-top: 20px;
-            text-align: left;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            border: 1px solid #3a5a8c;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .prompt-area pre {
-            white-space: pre-wrap;
-            word-break: break-word;
-            color: #d4e6ff;
-        }
-        @media (max-width: 1000px) {
-            #ui-left, #ui-right { width: 280px; padding: 16px; }
-            .genre-selector { justify-content: center; }
-            .extra-controls { flex-wrap: wrap; justify-content: center; }
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALMAFLUXO · QUANTUM SOUND ENGINE v5 (Timeline Editável)</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #d4a843; --gold-dim: #8a6a1f; --gold-bg: rgba(212,168,67,0.08);
+  --cyan: #00f2ff; --cyan-dim: #006e75;
+  --violet: #7b3fc4; --green: #39d98a; --red: #ff5a5a;
+  --bg: #020408; --glass: rgba(6,13,28,0.88);
+  --border: rgba(212,168,67,0.22); --border-cyan: rgba(0,242,255,0.18);
+  --text: #c8deff; --text-dim: #5a7aaa; --text-muted: #2a4060;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(ellipse 70% 50% at 15% 25%,#0d1a33 0%,transparent 55%),
+             radial-gradient(ellipse 50% 70% at 85% 75%,#1a0d2e 0%,transparent 55%),var(--bg);}
+
+/* NAVIGATION */
+.nav{position:sticky;top:0;z-index:999;display:flex;align-items:center;gap:0;
+     background:rgba(2,4,8,0.95);backdrop-filter:blur(20px);
+     border-bottom:1px solid var(--border);padding:0 24px;}
+.nav-brand{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;
+           color:var(--gold);letter-spacing:4px;padding:14px 0;margin-right:24px;
+           text-shadow:0 0 20px rgba(212,168,67,0.4);white-space:nowrap;}
+.nav-tabs{display:flex;gap:0;flex:1;overflow-x:auto;}
+.nav-tab{padding:14px 20px;font-family:'Share Tech Mono',monospace;font-size:11px;
+         letter-spacing:2px;color:var(--text-dim);cursor:pointer;border:none;background:none;
+         border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nav-status{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;
+            font-size:10px;color:var(--text-dim);white-space:nowrap;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+            box-shadow:0 0 8px var(--green);animation:pulse-dot 2s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* PAGES */
+.page{display:none;max-width:1300px;margin:0 auto;padding:24px;}
+.page.active{display:block;}
+
+/* CARDS */
+.card{background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--border);
+      border-radius:20px;padding:28px;margin-bottom:18px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;
+              background:linear-gradient(180deg,var(--gold),transparent);}
+.card-title{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:4px;
+            color:var(--gold);margin-bottom:20px;padding-bottom:12px;
+            border-bottom:1px solid rgba(212,168,67,.12);display:flex;align-items:center;gap:10px;}
+.card-cyan::before{background:linear-gradient(180deg,var(--cyan),transparent);}
+.card-cyan .card-title{color:var(--cyan);}
+.card-violet::before{background:linear-gradient(180deg,var(--violet),transparent);}
+.card-violet .card-title{color:#a87de8;}
+.card-green::before{background:linear-gradient(180deg,var(--green),transparent);}
+.card-green .card-title{color:var(--green);}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+/* CONTROLS */
+.ctrl-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;
+            color:var(--text-dim);margin-bottom:8px;display:block;}
+select,input[type=number]{width:100%;background:rgba(5,10,20,.85);color:var(--text);
+  border:1px solid rgba(212,168,67,.2);border-radius:12px;
+  padding:10px 14px;font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;cursor:pointer;transition:.2s;}
+select:focus,input[type=number]:focus{border-color:var(--gold);}
+select option{background:#0b1626;}
+
+.slider-row{display:flex;align-items:center;gap:12px;margin-top:4px;}
+.slider-val{min-width:58px;text-align:right;font-family:'Share Tech Mono',monospace;
+            font-size:14px;color:var(--gold);font-weight:700;}
+input[type=range]{flex:1;-webkit-appearance:none;height:4px;
+  background:rgba(212,168,67,.15);border-radius:4px;border:none;padding:0;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+  border-radius:50%;background:var(--gold);box-shadow:0 0 12px rgba(212,168,67,.6);cursor:pointer;}
+
+.pill-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+.pill{padding:6px 14px;border-radius:40px;border:1px solid rgba(212,168,67,.2);
+      background:rgba(5,10,20,.6);color:var(--text-dim);font-family:'Share Tech Mono',monospace;
+      font-size:10px;letter-spacing:2px;cursor:pointer;transition:.2s;}
+.pill:hover{border-color:var(--gold);color:var(--text);}
+.pill.sel{background:var(--gold);color:#020408;border-color:var(--gold);box-shadow:0 0 14px rgba(212,168,67,.35);}
+
+/* DURATION */
+.dur-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px;margin-top:8px;}
+.dur-btn{padding:12px 8px;border-radius:14px;border:1px solid rgba(212,168,67,.2);
+         background:rgba(5,10,20,.7);color:var(--text-dim);font-family:'Orbitron',monospace;
+         font-size:11px;letter-spacing:2px;cursor:pointer;transition:.25s;text-align:center;}
+.dur-btn:hover{border-color:var(--gold);color:var(--text);}
+.dur-btn.sel{border-color:var(--cyan);background:rgba(0,242,255,.1);color:var(--cyan);
+             box-shadow:0 0 16px rgba(0,242,255,.2);}
+.dur-btn .dur-label{font-size:9px;color:var(--text-dim);margin-top:4px;font-family:'Rajdhani',sans-serif;letter-spacing:1px;}
+
+/* TIMELINE SCENES (EDITÁVEL) */
+.scene-row{display:grid;grid-template-columns:70px 1.6fr 1fr 90px 100px 80px 36px 30px;
+           align-items:center;gap:10px;padding:8px 12px;border-radius:12px;
+           border:1px solid rgba(212,168,67,.1);background:rgba(5,10,20,.6);
+           cursor:pointer;transition:.2s;font-family:'Share Tech Mono',monospace;font-size:11px;margin-bottom:6px;}
+.scene-row:hover{border-color:rgba(212,168,67,.35);}
+.scene-row.active-s{border-color:var(--gold);background:rgba(212,168,67,.06);box-shadow:0 0 16px rgba(212,168,67,.12);}
+.scene-row.playing-s{border-color:var(--cyan);background:rgba(0,242,255,.05);animation:sc-pulse 1.2s ease-in-out infinite;}
+@keyframes sc-pulse{0%,100%{box-shadow:0 0 12px rgba(0,242,255,.1)}50%{box-shadow:0 0 28px rgba(0,242,255,.28)}}
+.sc-time{color:var(--gold);font-size:10px;}
+.sc-select{background:rgba(2,5,12,.9);color:var(--text);border:1px solid rgba(212,168,67,.3);border-radius:20px;padding:4px 8px;font-size:11px;font-family:'Share Tech Mono';}
+.sc-effect-select{background:rgba(2,5,12,.9);color:var(--text);border:1px solid rgba(212,168,67,.3);border-radius:20px;padding:4px 8px;font-size:11px;}
+.sc-freq{color:var(--cyan-dim);text-align:right;font-size:10px;}
+.sc-play{width:30px;height:30px;border-radius:50%;border:1px solid var(--text-muted);
+         background:transparent;color:var(--text-dim);cursor:pointer;font-size:10px;
+         display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0;}
+.sc-play:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 10px rgba(0,242,255,.3);}
+.sc-del{background:transparent;border:none;color:#ff6666;cursor:pointer;font-size:14px;width:24px;height:24px;border-radius:50%;}
+.sc-del:hover{background:rgba(255,102,102,.2);}
+
+/* PLAYBACK BAR */
+.play-bar{position:sticky;bottom:0;z-index:100;display:flex;align-items:center;gap:18px;
+          padding:14px 24px;background:rgba(2,4,8,.97);backdrop-filter:blur(20px);
+          border-top:1px solid var(--border);}
+.play-master{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#f5d060);
+             border:none;color:#020408;font-size:18px;cursor:pointer;flex-shrink:0;
+             box-shadow:0 0 24px rgba(212,168,67,.45);transition:.2s;display:flex;align-items:center;justify-content:center;}
+.play-master:hover{transform:scale(1.1);box-shadow:0 0 36px rgba(212,168,67,.7);}
+.progress-wrap{flex:1;}
+.progress-meta{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;
+               font-size:10px;color:var(--text-dim);margin-bottom:6px;}
+.progress-track{width:100%;height:5px;background:rgba(212,168,67,.1);border-radius:5px;cursor:pointer;position:relative;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--cyan));
+               border-radius:5px;box-shadow:0 0 8px rgba(212,168,67,.4);width:0%;transition:width .1s;}
+.play-info{min-width:180px;text-align:right;}
+.play-info-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
+.play-info-val{font-family:'Orbitron',monospace;font-size:15px;color:var(--gold);}
+.play-dur-badge{font-family:'Orbitron',monospace;font-size:11px;color:var(--cyan);
+                padding:4px 12px;border:1px solid var(--border-cyan);border-radius:40px;background:rgba(0,242,255,.06);}
+
+/* PROMPTS */
+.prompt-tabs-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.ptab{padding:7px 16px;border-radius:40px;border:1px solid rgba(212,168,67,.2);
+      background:transparent;color:var(--text-dim);font-family:'Share Tech Mono',monospace;
+      font-size:10px;letter-spacing:1px;cursor:pointer;transition:.2s;}
+.ptab.sel{border-color:var(--cyan);color:var(--cyan);background:rgba(0,242,255,.08);}
+.prompt-out{background:rgba(2,5,12,.92);border:1px solid var(--border-cyan);border-radius:14px;
+            padding:18px;font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.75;
+            color:#a8c8ff;white-space:pre-wrap;word-break:break-word;min-height:180px;max-height:300px;overflow-y:auto;}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.btn{padding:10px 22px;border-radius:40px;font-family:'Orbitron',monospace;font-size:9px;
+     letter-spacing:2px;cursor:pointer;border:none;transition:.2s;}
+.btn-gold{background:var(--gold);color:#020408;box-shadow:0 0 16px rgba(212,168,67,.3);}
+.btn-gold:hover{box-shadow:0 0 28px rgba(212,168,67,.6);}
+.btn-cyan{background:transparent;color:var(--cyan);border:1px solid var(--cyan);}
+.btn-cyan:hover{background:rgba(0,242,255,.1);}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid rgba(212,168,67,.2);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-violet{background:transparent;color:#a87de8;border:1px solid rgba(123,63,196,.4);}
+.btn-violet:hover{background:rgba(123,63,196,.15);}
+
+/* WAVEFORM */
+#wave-canvas{width:100%;height:72px;border-radius:10px;border:1px solid var(--border-cyan);
+             background:rgba(0,5,15,.8);display:block;}
+
+/* ELEMENT BADGE */
+.el-badge{text-align:center;padding:18px;border:1px solid rgba(212,168,67,.2);
+          border-radius:16px;background:rgba(5,10,20,.5);}
+.el-sym{font-family:'Orbitron',monospace;font-size:52px;font-weight:900;
+        background:linear-gradient(135deg,#fff,#b0d0ff);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;}
+.el-name{font-size:17px;font-weight:600;color:var(--text);margin:4px 0 2px;}
+.el-freq{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);}
+.el-role{font-size:11px;color:var(--text-dim);font-style:italic;margin-top:4px;}
+
+/* MANUAL */
+.manual-step{display:flex;gap:18px;padding:20px;border:1px solid rgba(212,168,67,.12);
+             border-radius:14px;background:rgba(5,10,20,.5);margin-bottom:14px;align-items:flex-start;}
+.step-num{width:36px;height:36px;border-radius:50%;background:var(--gold);color:#020408;
+          font-family:'Orbitron',monospace;font-size:14px;font-weight:900;flex-shrink:0;
+          display:flex;align-items:center;justify-content:center;}
+.step-body h3{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:2px;
+              color:var(--gold);margin-bottom:8px;}
+.step-body p{font-family:'Rajdhani',sans-serif;font-size:15px;color:var(--text-dim);line-height:1.7;}
+.step-body code{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--cyan);
+                background:rgba(0,242,255,.08);padding:1px 6px;border-radius:4px;}
+
+.tip-box{padding:14px 18px;border-radius:12px;border:1px solid rgba(0,242,255,.2);
+         background:rgba(0,242,255,.05);font-family:'Rajdhani',sans-serif;font-size:14px;
+         color:#80c0e8;line-height:1.7;margin-bottom:12px;}
+.tip-box strong{color:var(--cyan);}
+.warn-box{padding:14px 18px;border-radius:12px;border:1px solid rgba(212,168,67,.25);
+          background:rgba(212,168,67,.04);font-family:'Rajdhani',sans-serif;font-size:14px;
+          color:#c8a870;line-height:1.7;margin-bottom:12px;}
+.warn-box strong{color:var(--gold);}
+
+.ai-card{padding:18px;border:1px solid rgba(212,168,67,.15);border-radius:14px;
+         background:rgba(5,10,20,.6);margin-bottom:10px;}
+.ai-card h4{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;margin-bottom:10px;}
+.ai-card ul{list-style:none;padding:0;}
+.ai-card li{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);
+            padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ai-card li:last-child{border:none;}
+.ai-card li strong{color:var(--text);}
+
+.math-formula{font-family:'Share Tech Mono',monospace;font-size:13px;
+              color:var(--cyan);background:rgba(0,242,255,.06);
+              padding:14px 18px;border-radius:10px;border:1px solid var(--border-cyan);
+              margin:10px 0;line-height:1.9;}
+
+/* SEED */
+.seed-row{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.seed-row label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-dim);white-space:nowrap;}
+.seed-row input{width:120px;padding:7px 12px;font-size:12px;}
+.btn-sm{padding:7px 14px;border-radius:40px;font-family:'Share Tech Mono',monospace;font-size:11px;
+        cursor:pointer;border:1px solid rgba(212,168,67,.3);background:transparent;color:var(--gold);transition:.2s;}
+.btn-sm:hover{background:rgba(212,168,67,.1);}
+
+/* STATS */
+.stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.stat-chip{padding:8px 16px;border-radius:40px;border:1px solid var(--border);
+           background:rgba(5,10,20,.7);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);}
+.stat-chip span{color:var(--gold);font-size:13px;display:block;margin-top:2px;}
+
+.add-scene-btn{background:rgba(212,168,67,.1);border:1px dashed var(--gold);color:var(--gold);padding:8px 16px;border-radius:40px;margin-top:12px;cursor:pointer;width:100%;text-align:center;}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:4px;}
+</style>
 </head>
 <body>
-    <!-- Painel esquerdo: controles principais -->
-    <div id="ui-left" class="glass-panel">
-        <h2>🌬️ BATIMENTO <span>PROMPT SONORO</span></h2>
-        <div>
-            <label>🔮 Elemento Primordial</label>
-            <select id="element-select"></select>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <div class="nav-brand">ALMAFLUXO · QSE v5</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-page="studio">🎛️ STUDIO</button>
+    <button class="nav-tab" data-page="timeline">🎬 TIMELINE</button>
+    <button class="nav-tab" data-page="prompts">📋 PROMPTS</button>
+    <button class="nav-tab" data-page="manual">📖 MANUAL</button>
+  </div>
+  <div class="nav-status">
+    <span class="status-dot"></span>
+    <span id="nav-dur-badge">— s</span>
+  </div>
+</nav>
+
+<!-- PAGE: STUDIO -->
+<div class="page active" id="page-studio">
+  <div class="stats-row">
+    <div class="stat-chip">ELEMENTO<span id="st-sym">H</span></div>
+    <div class="stat-chip">FREQ AUDÍVEL<span id="st-freq">177 Hz</span></div>
+    <div class="stat-chip">DURAÇÃO<span id="st-dur">35s</span></div>
+    <div class="stat-chip">CENAS<span id="st-scenes">10</span></div>
+    <div class="stat-chip">COMBINAÇÕES<span style="color:var(--cyan)">94.6 trilhões</span></div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔮</span>ELEMENTO & PARÂMETROS QUÂNTICOS</div>
+        <div class="el-badge" style="margin-bottom:16px;">
+          <div class="el-sym" id="el-sym">H</div>
+          <div class="el-name" id="el-name">Hidrogênio</div>
+          <div class="el-freq" id="el-freq">f₀: 1420 Hz → audível: 177 Hz</div>
+          <div class="el-role" id="el-role">Semente das Realidades</div>
         </div>
-        <div class="slider-block">
-            <label>💓 Frequência do Pulso (Hz)</label>
-            <div class="slider-row">
-                <input type="range" id="freq-slider" min="60" max="300" value="177" step="1">
-                <span id="freq-val">177</span>
-            </div>
+        <canvas id="wave-canvas" width="600" height="72"></canvas>
+
+        <div style="margin-top:16px;">
+          <span class="ctrl-label">ELEMENTO PRIMORDIAL</span>
+          <select id="el-sel"></select>
         </div>
-        <div class="slider-block">
-            <label>🌀 Força da Singularidade</label>
-            <div class="slider-row">
-                <input type="range" id="grav-slider" min="1.0" max="9.0" value="5.0" step="0.1">
-                <span id="grav-val">5.0</span>
-            </div>
+
+        <div style="margin-top:16px;">
+          <span class="ctrl-label">FREQUÊNCIA DO PULSO (Hz)</span>
+          <div class="slider-row">
+            <input type="range" id="freq-sl" min="60" max="300" value="177" step="1">
+            <span class="slider-val" id="freq-v">177</span>
+          </div>
         </div>
-        <div class="slider-block">
-            <label>🌻 Harmonia Áurea (φ)</label>
-            <div class="slider-row">
-                <input type="range" id="phi-slider" min="1.0" max="3.0" value="1.618" step="0.01">
-                <span id="phi-val">1.618</span>
-            </div>
+
+        <div style="margin-top:14px;">
+          <span class="ctrl-label">FORÇA DA SINGULARIDADE</span>
+          <div class="slider-row">
+            <input type="range" id="grav-sl" min="1.0" max="9.0" value="5.0" step="0.1">
+            <span class="slider-val" id="grav-v">5.0</span>
+          </div>
         </div>
-        <div class="mode-buttons">
-            <button id="mode-normal" class="mode-btn active">🌬️ MODO NORMAL</button>
-            <button id="mode-desentrelacar" class="mode-btn">🌀 DESENTRELAÇAR</button>
+
+        <div style="margin-top:14px;">
+          <span class="ctrl-label">HARMONIA ÁUREA φ</span>
+          <div class="slider-row">
+            <input type="range" id="phi-sl" min="1.0" max="3.0" value="1.618" step="0.01">
+            <span class="slider-val" id="phi-v">1.618</span>
+          </div>
         </div>
+
+        <div style="margin-top:14px;">
+          <span class="ctrl-label">BPM</span>
+          <div class="slider-row">
+            <input type="range" id="bpm-sl" min="60" max="180" value="100" step="1">
+            <span class="slider-val" id="bpm-v">100</span>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <span class="ctrl-label">INTENSIDADE</span>
+          <div class="slider-row">
+            <input type="range" id="int-sl" min="0" max="1" value="0.7" step="0.01">
+            <span class="slider-val" id="int-v">0.70</span>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <span class="ctrl-label">MODO</span>
+          <div class="pill-group">
+            <button class="pill sel" id="mode-n">🌬 NORMAL</button>
+            <button class="pill" id="mode-d">🌀 DESENTRELAÇAR</button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <span class="ctrl-label">BASE RÍTMICA</span>
+          <div class="pill-group" id="genre-pills"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Painel direito: telemetria do elemento + gêneros + prompt -->
-    <div id="ui-right" class="glass-panel">
-        <div id="current-symbol" class="element-badge">H</div>
-        <div id="current-name" style="font-size:20px; font-weight:500;">Hidrogênio</div>
-        <div class="element-detail" id="current-group">PORTAL FÍSICO</div>
-        <div class="element-detail" id="current-freq">f₀: 1420 Hz</div>
-        <div class="element-role" id="current-role">Semente das Realidades</div>
-        <div style="margin-top: 20px;">
-            <div style="font-size:12px; color:#aac8ff;">PULSO ATUAL</div>
-            <div style="font-size:28px; color:#d4a843;" id="pulse-display">177 Hz</div>
+    <div>
+      <div class="card card-cyan">
+        <div class="card-title"><span class="icon">⏱️</span>DURAÇÃO DA FAIXA DE ÁUDIO</div>
+        <div class="tip-box" style="margin-bottom:14px;">
+          <strong>Escolha o tamanho total da trilha</strong> que será criada pela IA. Faixas maiores exigem mais cenas e prompts mais detalhados.
         </div>
-        <div style="margin-top: 24px;">
-            <div style="font-size:12px; color:#aac8ff;">🌌 BASE RÍTMICA (GÊNERO)</div>
-            <div class="genre-selector" id="genre-container">
-                <button data-genre="hiphop" class="genre-btn">HIP HOP</button>
-                <button data-genre="pagode" class="genre-btn">PAGODE</button>
-                <button data-genre="rock" class="genre-btn">ROCK</button>
-                <button data-genre="trap" class="genre-btn">TRAP</button>
-                <button data-genre="classica" class="genre-btn">CLÁSSICA</button>
-                <button data-genre="eletronico" class="genre-btn">ELETRÔNICO</button>
-                <button data-genre="mpb" class="genre-btn">MPB</button>
-                <button data-genre="tango" class="genre-btn">TANGO</button>
-                <button data-genre="forro" class="genre-btn">FORRÓ</button>
-                <button data-genre="salsa" class="genre-btn">SALSA</button>
+        <div class="dur-grid" id="dur-grid"></div>
+        <div style="margin-top:14px;display:flex;align-items:center;gap:14px;">
+          <div style="flex:1;">
+            <span class="ctrl-label">OU DEFINA EM SEGUNDOS (30–240)</span>
+            <input type="number" id="dur-custom" min="30" max="240" value="35" placeholder="ex: 120">
+          </div>
+          <button class="btn btn-cyan" id="dur-apply-btn" style="margin-top:20px;">APLICAR</button>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;border-radius:10px;background:rgba(0,242,255,.05);border:1px solid rgba(0,242,255,.1);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:2px;">CONFIGURAÇÃO ATUAL</div>
+          <div style="display:flex;gap:24px;margin-top:6px;">
+            <div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">TOTAL</div>
+              <div style="font-family:'Orbitron',monospace;font-size:18px;color:var(--cyan);" id="dur-total-disp">35s</div>
             </div>
+            <div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">CENAS</div>
+              <div style="font-family:'Orbitron',monospace;font-size:18px;color:var(--gold);" id="dur-scenes-disp">10</div>
+            </div>
+            <div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">TEMPO/CENA</div>
+              <div style="font-family:'Orbitron',monospace;font-size:18px;color:var(--text);" id="dur-percena-disp">3.5s</div>
+            </div>
+          </div>
         </div>
-        <div class="prompt-area" id="prompt-area">
-            <pre id="prompt-text">Clique em "GERAR PROMPT" para criar a descrição sonora.</pre>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon">🎲</span>SEED DE REPRODUÇÃO</div>
+        <div class="tip-box">
+          <strong>Seed</strong> é um número que "congela" a aleatoriedade da IA. Com a mesma seed + mesmo prompt → a IA gera a mesma música toda vez. Suportado por <strong>Udio</strong> e <strong>Stable Audio</strong>.
         </div>
+        <div class="seed-row">
+          <label>SEED:</label>
+          <input type="number" id="seed-in" min="1" max="999999" placeholder="ex: 42">
+          <button class="btn-sm" id="seed-rand">↺ ALEATÓRIO</button>
+          <button class="btn-sm" id="seed-clear">✕ LIMPAR</button>
+        </div>
+        <div id="seed-display" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:10px;letter-spacing:2px;">Seed: —</div>
+      </div>
+
+      <div class="card card-violet">
+        <div class="card-title"><span class="icon">⚡</span>PROMPT RÁPIDO (SUNO)</div>
+        <div class="prompt-out" id="quick-prompt">Configure os parâmetros e o prompt aparece aqui automaticamente.</div>
+        <div class="btn-row">
+          <button class="btn btn-gold" id="copy-quick">⊕ COPIAR</button>
+          <button class="btn btn-ghost" onclick="switchPage('prompts')">→ VER TODOS OS FORMATOS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: TIMELINE (EDITÁVEL) -->
+<div class="page" id="page-timeline">
+  <div class="card">
+    <div class="card-title"><span class="icon">🎬</span>TIMELINE CINEMATOGRÁFICA (EDITÁVEL)</div>
+    <div class="tip-box">
+      Cada cena: escolha o elemento químico e o efeito sonoro. Clique em ▶ para preview. PLAY TOTAL executa toda a sequência. Use + para adicionar cenas e ✕ para remover.
+    </div>
+    <div id="timeline-container"></div>
+    <button class="add-scene-btn" id="add-scene-btn">+ ADICIONAR CENA</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔊</span>CAMADAS SONORAS DETALHADAS</div>
+    <div id="scene-detail-box" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);line-height:1.9;">
+      Selecione uma cena acima para ver o detalhamento sonoro.
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: PROMPTS -->
+<div class="page" id="page-prompts">
+  <div class="card card-cyan">
+    <div class="card-title"><span class="icon">📋</span>PROMPT ENGINE MULTI-FORMATO</div>
+    <div class="warn-box">
+      <strong>Importante:</strong> prompts em inglês performam 40–60% melhor em todas as IAs de áudio. O engine gera automaticamente em inglês técnico limpo, otimizado para cada plataforma.
+    </div>
+    <div class="prompt-tabs-row" id="prompt-tabs"></div>
+    <div class="prompt-out" id="prompt-main">Selecione uma plataforma acima.</div>
+    <div class="seed-row" style="margin-top:12px;">
+      <label>SEED:</label>
+      <input type="number" id="seed-prompt" min="1" max="999999" placeholder="ex: 42">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" id="copy-main-btn">⊕ COPIAR PROMPT</button>
+      <button class="btn btn-cyan" id="copy-scene-prompt-btn">⊕ COPIAR CENA ATIVA</button>
+      <button class="btn btn-violet" id="export-roteiro-btn">⊕ EXPORTAR ROTEIRO COMPLETO</button>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">📌</span>GUIA RÁPIDO DA PLATAFORMA</div>
+      <div id="ai-guide-box" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);line-height:2;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span>MATEMÁTICA DO UNIVERSO</div>
+      <div class="math-formula" id="math-display"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PAGE: MANUAL ══════════ -->
+<div class="page" id="page-manual">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📖</span>MANUAL COMPLETO DE USO</div>
+    <div class="tip-box">
+      Este manual explica cada seção, como usar a ferramenta passo a passo, e como implementar cada trecho de áudio nas principais IAs de música.
+    </div>
+  </div>
+
+  <!-- SEÇÃO 1 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">1️⃣</span>VISÃO GERAL — O QUE É O QUANTUM SOUND ENGINE</div>
+    <div class="manual-step">
+      <div class="step-num">?</div>
+      <div class="step-body">
+        <h3>O QUE É</h3>
+        <p>O ALMAFLUXO Quantum Sound Engine é um gerador de <strong style="color:var(--gold)">diretrizes sonoras precisas</strong> (prompts) baseado em frequências reais dos elementos químicos da tabela periódica e nos parâmetros matemáticos do FluxoMatemático (φ, MARC, JUBILO, DEUS). Ele <strong>não gera áudio por si só</strong> — ele gera o roteiro perfeito para que uma IA de música o faça.</p>
+      </div>
+    </div>
+    <div class="manual-step">
+      <div class="step-num">!</div>
+      <div class="step-body">
+        <h3>FLUXO DE TRABALHO</h3>
+        <p><code>Studio</code> → configure → <code>Timeline</code> → revise cenas → <code>Prompts</code> → copie → cole na IA → ouça → ajuste seed → repita.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 2 -->
+  <div class="card card-cyan">
+    <div class="card-title"><span class="icon">2️⃣</span>ABA STUDIO — CONFIGURAÇÃO DOS PARÂMETROS</div>
+
+    <div class="manual-step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>ELEMENTO PRIMORDIAL</h3>
+        <p>Cada elemento químico possui uma <strong style="color:var(--cyan)">frequência de ressonância quântica real</strong> (ex: Hidrogênio = 1420 MHz, reduzido para 177 Hz na faixa audível). Escolha o elemento que representa a <em>essência emocional</em> da cena ou da plataforma:<br>
+        • <code>H (Hidrogênio)</code> → abertura, pureza, ponto zero<br>
+        • <code>Au (Ouro)</code> → brilho, valor, permanência<br>
+        • <code>Fe (Ferro)</code> → trabalho, estrutura, realidade<br>
+        • <code>Og (Oganessônio)</code> → limite, fronteira, colapso</p>
+      </div>
     </div>
 
-    <!-- Painel inferior: indicador de batimento + controles de prompt -->
-    <div id="controls-bottom" class="glass-panel">
-        <div id="pulse-bar-container">
-            <div style="font-size:12px; letter-spacing:3px; color:#7aa5d9;">INDICADOR DE BATIMENTO</div>
-            <div id="pulse-bar">
-                <div id="pulse-bar-fill"></div>
-            </div>
-        </div>
-        <div class="extra-controls">
-            <div class="slider-group">
-                <label>🎚️ INTENSIDADE RÍTMICA</label>
-                <input type="range" id="base-vol" min="0" max="1" step="0.01" value="0.7">
-                <span id="base-vol-val" style="font-family:monospace;">0.70</span>
-            </div>
-            <div class="slider-group">
-                <label>🥁 BPM</label>
-                <input type="range" id="bpm-slider" min="60" max="160" step="1" value="100">
-                <span id="bpm-val" style="font-family:monospace;">100</span>
-            </div>
-            <button id="generate-prompt-btn" class="prompt-btn">✨ GERAR PROMPT</button>
-            <button id="copy-prompt-btn" class="prompt-btn">📋 COPIAR PROMPT</button>
-        </div>
+    <div class="manual-step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>FREQUÊNCIA DO PULSO</h3>
+        <p>Controla a frequência audível central do drone principal (60–300 Hz). O sistema já calcula automaticamente a redução por oitavas da frequência quântica do elemento. Você pode ajustar manualmente para criar variações dentro da cena. <strong style="color:var(--cyan)">Frequências mais baixas = mais grave e terreno. Frequências mais altas = mais brilhante e etéreo.</strong></p>
+      </div>
     </div>
 
-    <div id="mode-hint">⚡ ALMAFLUXO · PROMPTS PARA IA DE ÁUDIO ⚡</div>
+    <div class="manual-step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>FORÇA DA SINGULARIDADE (1.0 – 9.0)</h3>
+        <p>Determina a intensidade do <strong style="color:var(--cyan)">subgrave</strong> (30–60 Hz) e a profundidade do LFO (modulação de volume). Valor 9.0 = sensação de "motor cósmico", peso físico no peito. Valor 1.0 = leveza, quase sem corpo baixo. Para Marido de Aluguel: use 6–7. Para ALMAFLUXO contemplativo: use 3–4.</p>
+      </div>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        // ======================== 1. BANCO DE DADOS QUÂNTICO (idêntico ao original) ========================
-        const QUANTUM_ELEMENTS = {};
-        (function buildDatabase() {
-            const base = {
-                'H': {Z:1, raiz:1, grupo:'PORTAL_FISICO', freq:1420.4, grav:7.8, phi:1.618, cor:'#FF6666', nome:'Hidrogênio', role:'Semente das Realidades', estado:'GASOSO'},
-                'He':{Z:2, raiz:2, grupo:'PORTAL_FISICO', freq:1803, grav:2.1, phi:1.618, cor:'#D9FFFF', nome:'Hélio', role:'Espelho Dimensional', estado:'GASOSO'},
-                'Li':{Z:3, raiz:3, grupo:'ATIVACAO_FISICA', freq:671, grav:5.5, phi:1.618, cor:'#CC80FF', nome:'Lítio', role:'Ativador de Campos', estado:'SOLIDO'},
-                'Be':{Z:4, raiz:4, grupo:'ATIVACAO_FISICA', freq:890, grav:4.8, phi:1.618, cor:'#C2FF00', nome:'Berílio', role:'Arquiteto', estado:'SOLIDO'},
-                'B':{Z:5, raiz:5, grupo:'PONTE_ENERGETICA', freq:950, grav:5.0, phi:1.618, cor:'#FFB5B5', nome:'Boro', role:'Filtro Dimensional', estado:'SOLIDO'},
-                'C':{Z:6, raiz:6, grupo:'PONTE_ENERGETICA', freq:1200, grav:5.5, phi:1.618, cor:'#909090', nome:'Carbono', role:'Rede de Consciência', estado:'SOLIDO'},
-                'N':{Z:7, raiz:7, grupo:'PONTE_ENERGETICA', freq:1350, grav:5.2, phi:1.618, cor:'#3050F8', nome:'Nitrogênio', role:'Fixador de Potencial', estado:'GASOSO'},
-                'O':{Z:8, raiz:8, grupo:'PONTE_ENERGETICA', freq:1501, grav:6.0, phi:1.618, cor:'#FF0D0D', nome:'Oxigênio', role:'Portal de Energia', estado:'GASOSO'},
-                'F':{Z:9, raiz:9, grupo:'SINGULARIDADE', freq:1800, grav:7.0, phi:1.618, cor:'#90E050', nome:'Flúor', role:'Transformador de Estados', estado:'GASOSO'},
-                'Ne':{Z:10, raiz:1, grupo:'SINGULARIDADE', freq:1950, grav:6.5, phi:1.618, cor:'#B3E3F5', nome:'Neônio', role:'Emissor de Padrões', estado:'GASOSO'}
-            };
-            Object.entries(base).forEach(([k,v]) => QUANTUM_ELEMENTS[k] = v);
-            
-            const nomes = {
-                'Na':'Sódio','Mg':'Magnésio','Al':'Alumínio','Si':'Silício','P':'Fósforo','S':'Enxofre','Cl':'Cloro','Ar':'Argônio',
-                'K':'Potássio','Ca':'Cálcio','Sc':'Escândio','Ti':'Titânio','V':'Vanádio','Cr':'Cromo','Mn':'Manganês','Fe':'Ferro','Co':'Cobalto','Ni':'Níquel','Cu':'Cobre','Zn':'Zinco','Ga':'Gálio','Ge':'Germânio','As':'Arsênio','Se':'Selênio','Br':'Bromo','Kr':'Criptônio',
-                'Rb':'Rubídio','Sr':'Estrôncio','Y':'Ítrio','Zr':'Zircônio','Nb':'Nióbio','Mo':'Molibdênio','Tc':'Tecnécio','Ru':'Rutênio','Rh':'Ródio','Pd':'Paládio','Ag':'Prata','Cd':'Cádmio','In':'Índio','Sn':'Estanho','Sb':'Antimônio','Te':'Telúrio','I':'Iodo','Xe':'Xenônio',
-                'Cs':'Césio','Ba':'Bário','La':'Lantânio','Ce':'Cério','Pr':'Praseodímio','Nd':'Neodímio','Pm':'Promécio','Sm':'Samário','Eu':'Európio','Gd':'Gadolínio','Tb':'Térbio','Dy':'Disprósio','Ho':'Hólmio','Er':'Érbio','Tm':'Túlio','Yb':'Itérbio','Lu':'Lutécio',
-                'Hf':'Háfnio','Ta':'Tântalo','W':'Tungstênio','Re':'Rênio','Os':'Ósmio','Ir':'Irídio','Pt':'Platina','Au':'Ouro','Hg':'Mercúrio','Tl':'Tálio','Pb':'Chumbo','Bi':'Bismuto','Po':'Polônio','At':'Astato','Rn':'Radônio',
-                'Fr':'Frâncio','Ra':'Rádio','Ac':'Actínio','Th':'Tório','Pa':'Protactínio','U':'Urânio','Np':'Netúnio','Pu':'Plutônio','Am':'Amerício','Cm':'Cúrio','Bk':'Berquélio','Cf':'Califórnio','Es':'Einstênio','Fm':'Férmio','Md':'Mendelévio','No':'Nobélio','Lr':'Laurêncio',
-                'Rf':'Rutherfórdio','Db':'Dúbnio','Sg':'Seabórgio','Bh':'Bóhrio','Hs':'Hássio','Mt':'Meitnério','Ds':'Darmstádtio','Rg':'Roentgênio','Cn':'Copernício','Nh':'Nihônio','Fl':'Fleróvio','Mc':'Moscóvio','Lv':'Livermório','Ts':'Tenessino','Og':'Oganessônio'
-            };
-            const symbols = Object.keys(nomes);
-            symbols.forEach((sym, idx) => {
-                const Z = idx + 11;
-                if (QUANTUM_ELEMENTS[sym]) return;
-                const raiz = ((Z - 1) % 9) + 1;
-                let grupo = 'EIXO_TRANSICAO';
-                if ([3,4,11,12,19,20,37,38,55,56,87,88].includes(Z)) grupo = 'ATIVACAO_FISICA';
-                else if ([5,6,7,8,13,14,15,16,31,32,33,34,49,50,51,52,81,82,83,113,114,115,116].includes(Z)) grupo = 'PONTE_ENERGETICA';
-                else if ([9,10,17,18,35,36,53,54,85,86,117,118].includes(Z) || Z>=109) grupo = 'SINGULARIDADE';
-                
-                QUANTUM_ELEMENTS[sym] = {
-                    Z, raiz, grupo,
-                    freq: Math.round(400 + 350 * Math.log(Z+1) * (raiz/5)),
-                    grav: 4.5 + (raiz/2) + (Z%3)*0.3,
-                    phi: 1.618,
-                    cor: `hsl(${Z*23 % 360}, 80%, 60%)`,
-                    nome: nomes[sym],
-                    role: `Função Quântica ${raiz}`,
-                    estado: Z<20?'SOLIDO':(Z%2?'SOLIDO':'LIQUIDO')
-                };
-            });
-            QUANTUM_ELEMENTS['Fe'] = {...QUANTUM_ELEMENTS['Fe'], freq:1020, grav:6.8, cor:'#E06633', role:'Núcleo da Realidade'};
-            QUANTUM_ELEMENTS['Au'] = {...QUANTUM_ELEMENTS['Au'], freq:1340, grav:8.9, cor:'#FFD700', role:'Armazenador de Tempo', grupo:'SINGULARIDADE'};
-            QUANTUM_ELEMENTS['Og'] = {...QUANTUM_ELEMENTS['Og'], freq:11800, grav:9.0, cor:'#6A0DAD', role:'Unificador Quântico', grupo:'SINGULARIDADE'};
-        })();
+    <div class="manual-step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>HARMONIA ÁUREA φ (1.0 – 3.0)</h3>
+        <p>Controla o filtro passa-baixa do som e as relações harmônicas entre as camadas. <code>φ = 1.618</code> é o padrão ouro — equilibrado. Valores acima de 2.0 abrem frequências mais agudas, criando brilho. Abaixo de 1.2 = escuro e encapsulado. <strong style="color:var(--gold)">Manter φ entre 1.5 e 2.0 garante resultados musicais na maioria das IAs.</strong></p>
+      </div>
+    </div>
 
-        // ======================== 2. FUNÇÕES AUXILIARES (sem áudio) ========================
-        const TARGET_RANGE = { min: 60, max: 300 };
-        function reduceByOctaves(rawFreq) {
-            let freq = rawFreq;
-            while(freq > TARGET_RANGE.max) freq /= 2;
-            if(freq < TARGET_RANGE.min) freq *= 2;
-            return parseFloat(freq.toFixed(1));
-        }
-        function getTimbreDescription(symbol) {
-            const el = QUANTUM_ELEMENTS[symbol];
-            if(!el) return 'senoidal pura';
-            if(el.estado === 'GASOSO' || el.Z === 1) return 'senoidal pura (etérea, suave)';
-            if(['Au','Ag','Pt','Cu','Fe'].includes(symbol)) return 'quadrada (metálica, brilhante)';
-            if(['C','Si'].includes(symbol)) return 'dente de serra (áspera, estruturada)';
-            if(el.Z > 100) return 'triangular (complexa, enigmática)';
-            return 'senoidal';
-        }
+    <div class="manual-step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>BPM E INTENSIDADE</h3>
+        <p><code>BPM</code> = batidas por minuto. 60–80 = contemplativo/ambiente. 90–110 = normal/funcional. 120–140 = energético. 140+ = dança/urgência.<br>
+        <code>Intensidade</code> = 0.0 a 1.0. É o "volume relativo" que informa à IA o quanto o elemento sonoro deve dominar a mixagem. 0.7–0.8 é o ponto de equilíbrio para trilha de fundo.</p>
+      </div>
+    </div>
 
-        // Padrões rítmicos para descrição textual
-        const genrePatterns = {
-            hiphop:   "kick forte nos tempos 1, 5, 9, 13; snare nos tempos 3, 7, 11, 15; hi-hat constante; clap acompanhando a caixa.",
-            pagode:   "kick constante; snare com variação de síncope; hi-hat semi-aberto; tamborim em colcheias.",
-            rock:     "kick pesado; snare acentuada; hi-hat contínuo; crash nos inícios de compasso.",
-            trap:     "kick com padrão de 808, snare arrastada; hi-hat com ritmo de semicolcheia pontuada; clap em destaque.",
-            classica: "tímpanos marcando os tempos fortes; pouca percussão; atmosfera orquestral.",
-            eletronico:"kick em four-on-the-floor; snare eletrônica; hi-hat aberto; clap em off-beat.",
-            mpb:      "kick suave; snare discreta; hi-hat com padrão de bossa; shaker contínuo.",
-            tango:    "kick com síncope característica; snare marcada; hi-hat em staccato.",
-            forro:    "kick marcado; snare; zabumba no contratempo; triângulo.",
-            salsa:    "kick em padrão de clave; snare; cowbell no tempo; conga improvisada."
-        };
+    <div class="manual-step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h3>MODO NORMAL vs DESENTRELAÇAR</h3>
+        <p><strong style="color:var(--cyan)">Normal</strong>: o som permanece estável e harmônico. Ideal para fundo de navegação, apresentação de produto, estado neutro.<br>
+        <strong style="color:var(--gold)">Desentrelaçar</strong>: o som se fragmenta, com ruído branco e glissandos descendentes. Ideal para transições dramáticas, revelações, momentos de ruptura conceitual.</p>
+      </div>
+    </div>
+  </div>
 
-        let currentElementSym = 'H';
-        let currentTerrestrialFreq = 177.5;
-        let currentMode = 'normal';
-        let currentGenre = 'hiphop';
-        let bpm = 100;
-        let intensity = 0.7;
+  <!-- SEÇÃO 3 -->
+  <div class="card card-green">
+    <div class="card-title"><span class="icon">3️⃣</span>DURAÇÃO DA FAIXA — COMO FUNCIONA</div>
 
-        function generatePrompt() {
-            const el = QUANTUM_ELEMENTS[currentElementSym];
-            if (!el) return "Elemento não encontrado.";
-            const rawFreq = el.freq;
-            const audibleFreq = currentTerrestrialFreq;
-            const timbreDesc = getTimbreDescription(currentElementSym);
-            const grav = parseFloat(document.getElementById('grav-slider').value);
-            const phi = parseFloat(document.getElementById('phi-slider').value);
-            const genreDesc = genrePatterns[currentGenre] || "ritmo variado";
-            const modeText = currentMode === 'normal' ? "Batimento harmônico, com LFO de 2.5 Hz criando pulsação suave." : "Modo Desentrelaçar: o som entra em colapso, com ruído branco e frequência descendo em espiral até 20 Hz.";
-            
-            let prompt = `🎧 **ALMAFLUXO · Sinfonia Quântica** 🎧\n\n`;
-            prompt += `🔹 **Elemento**: ${el.nome} (${currentElementSym}) – ${el.role}\n`;
-            prompt += `🔹 **Frequência quântica original**: ${rawFreq} Hz\n`;
-            prompt += `🔹 **Frequência audível (reduzida por oitavas)**: ${audibleFreq} Hz\n`;
-            prompt += `🔹 **Timbre sugerido**: ${timbreDesc}\n`;
-            prompt += `🔹 **Gravidade (Força da Singularidade)**: ${grav} – influencia o subgrave (40 Hz) e a profundidade do LFO.\n`;
-            prompt += `🔹 **Harmonia Áurea (φ)**: ${phi} – controla o filtro passa-baixa (quanto maior φ, mais agudo).\n`;
-            prompt += `🔹 **Modo**: ${modeText}\n\n`;
-            prompt += `🎵 **BASE RÍTMICA**\n`;
-            prompt += `Gênero: ${currentGenre.toUpperCase()} | BPM: ${bpm} | Intensidade rítmica: ${intensity}\n`;
-            prompt += `Padrão: ${genreDesc}\n\n`;
-            prompt += `✨ **Instrução para IA de áudio (Suno / ElevenLabs / Stable Audio)**:\n`;
-            prompt += `Crie uma peça instrumental com duração de 30 a 60 segundos. O elemento principal deve ser um drone contínuo na frequência ${audibleFreq} Hz, com timbre ${timbreDesc}. Adicione uma modulação de amplitude (tremolo) a 2.5 Hz. Acompanhamento rítmico no estilo ${currentGenre.toUpperCase()}, seguindo a descrição de percussão. Inclua um subgrave suave a 40 Hz e um filtro passa-baixa que se abre conforme a harmonia áurea ${phi}. O modo ${currentMode} deve ser interpretado como uma evolução: no modo Normal, o som permanece estável; no Desentrelaçar, o som se desfaz em ruído e glissandos descendentes. A intensidade geral é ${intensity} (0 = silêncio, 1 = máximo).`;
+    <div class="manual-step">
+      <div class="step-num">⏱</div>
+      <div class="step-body">
+        <h3>OPÇÕES DE DURAÇÃO</h3>
+        <p>A ferramenta distribui automaticamente as 10 cenas cinematográficas ao longo da duração escolhida. Cada cena ganha um tempo proporcional. Escolha conforme o uso:</p>
+        <p style="margin-top:8px;">
+        • <code>30–60s</code> → vinheta, intro, transição de tela<br>
+        • <code>90s–2min</code> → loading, apresentação de produto, demo<br>
+        • <code>3min</code> → fundo de sessão de trabalho, meditação curta<br>
+        • <code>4min</code> → trilha completa de navegação ou playlist</p>
+      </div>
+    </div>
 
-            return prompt;
-        }
+    <div class="manual-step">
+      <div class="step-num">!</div>
+      <div class="step-body">
+        <h3>LIMITES DAS PLATAFORMAS DE IA</h3>
+        <p>
+        • <strong style="color:var(--green)">Suno (gratuito)</strong>: até <code>2 minutos</code> por geração. Para faixas maiores: gere em partes e edite no CapCut ou Audacity.<br>
+        • <strong style="color:var(--green)">Udio (gratuito)</strong>: até <code>1:20</code> por geração. Use "Extend" para alongar.<br>
+        • <strong style="color:var(--green)">Stable Audio (gratuito)</strong>: até <code>3 minutos</code> por geração. Mais controle técnico.<br>
+        • <strong style="color:var(--green)">ElevenLabs</strong>: efeitos de até <code>22s</code>. Ideal para cenas individuais, não faixas completas.</p>
+      </div>
+    </div>
 
-        function updatePromptDisplay() {
-            const prompt = generatePrompt();
-            document.getElementById('prompt-text').innerText = prompt;
-        }
+    <div class="warn-box">
+      <strong>Estratégia para faixas longas (3–4 min):</strong> gere 2–3 blocos de 90s no Suno/Udio com a mesma seed e prompts sequenciais, depois monte no CapCut ou Audacity com crossfade de 2s entre os blocos.
+    </div>
+  </div>
 
-        function copyPrompt() {
-            const promptText = document.getElementById('prompt-text').innerText;
-            navigator.clipboard.writeText(promptText).then(() => {
-                const btn = document.getElementById('copy-prompt-btn');
-                const originalText = btn.innerText;
-                btn.innerText = '✅ COPIADO!';
-                setTimeout(() => { btn.innerText = originalText; }, 1500);
-            }).catch(err => console.warn('Erro ao copiar: ', err));
-        }
+  <!-- SEÇÃO 4 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">4️⃣</span>COMO USAR CADA PLATAFORMA DE IA</div>
 
-        // ======================== 3. THREE.JS VISUAL (puramente estético) ========================
-        let scene, camera, renderer, core, particles;
-        const clock = new THREE.Clock();
-        let currentElement = 'H';
+    <div class="grid-2">
+      <div class="ai-card">
+        <h4 style="color:#1db954;">🎵 SUNO AI — suno.ai</h4>
+        <ul>
+          <li><strong>Melhor para:</strong> trilhas completas com melodia e ritmo</li>
+          <li><strong>Passo 1:</strong> vá em suno.ai → Create</li>
+          <li><strong>Passo 2:</strong> ative "Instrumental" (sem letra)</li>
+          <li><strong>Passo 3:</strong> cole o prompt gerado pelo engine</li>
+          <li><strong>Passo 4:</strong> clique em Create (plano gratuito: 5 gerações/dia)</li>
+          <li><strong>Duração:</strong> até 2min. Para mais: use "Extend Song"</li>
+          <li><strong>Seed:</strong> não suportado (cada geração é única)</li>
+          <li><strong>Dica:</strong> regenere 3–5 vezes com o mesmo prompt</li>
+        </ul>
+      </div>
+      <div class="ai-card">
+        <h4 style="color:#5865f2;">🎵 UDIO — udio.com</h4>
+        <ul>
+          <li><strong>Melhor para:</strong> qualidade sonora profissional</li>
+          <li><strong>Passo 1:</strong> udio.com → campo de prompt</li>
+          <li><strong>Passo 2:</strong> adicione tags: [instrumental] [no vocals]</li>
+          <li><strong>Passo 3:</strong> informe a seed no campo específico</li>
+          <li><strong>Passo 4:</strong> gere e use "Extend" para alongar</li>
+          <li><strong>Duração:</strong> 1:20 por geração, extensível</li>
+          <li><strong>Seed:</strong> ✅ SUPORTADO — reprodução exata</li>
+          <li><strong>Dica:</strong> melhor qualidade de mixagem das IAs</li>
+        </ul>
+      </div>
+      <div class="ai-card">
+        <h4 style="color:#ff6b35;">🎵 STABLE AUDIO — stableaudio.com</h4>
+        <ul>
+          <li><strong>Melhor para:</strong> controle técnico de frequências</li>
+          <li><strong>Passo 1:</strong> stableaudio.com → Login</li>
+          <li><strong>Passo 2:</strong> cole prompt técnico do engine</li>
+          <li><strong>Passo 3:</strong> defina duração (até 3min)</li>
+          <li><strong>Passo 4:</strong> informe seed para reprodução</li>
+          <li><strong>Duração:</strong> até 3 minutos por geração</li>
+          <li><strong>Seed:</strong> ✅ SUPORTADO — resultado idêntico</li>
+          <li><strong>Dica:</strong> melhor para drones e frequências Hz</li>
+        </ul>
+      </div>
+      <div class="ai-card">
+        <h4 style="color:#00b4d8;">🎵 ELEVENLABS SOUND — elevenlabs.io</h4>
+        <ul>
+          <li><strong>Melhor para:</strong> efeitos de cena individuais</li>
+          <li><strong>Passo 1:</strong> elevenlabs.io → Sound Effects</li>
+          <li><strong>Passo 2:</strong> cole descrição de textura/efeito da cena</li>
+          <li><strong>Passo 3:</strong> ajuste duração (máx 22s)</li>
+          <li><strong>Passo 4:</strong> gere e baixe o WAV</li>
+          <li><strong>Duração:</strong> até 22s — ideal para efeitos de transição</li>
+          <li><strong>Uso ideal:</strong> cenas individuais (whoosh, subgrave, etc)</li>
+          <li><strong>Dica:</strong> combine com Suno em DAW/CapCut</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-        function initThree() {
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x05050A);
-            scene.fog = new THREE.FogExp2(0x05050A, 0.008);
-            camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
-            camera.position.set(0, 2, 12);
-            camera.lookAt(0, 0, 0);
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(innerWidth, innerHeight);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            document.body.appendChild(renderer.domElement);
-            const ambient = new THREE.AmbientLight(0x1a2440); scene.add(ambient);
-            const l1 = new THREE.PointLight(0x446688, 1.8, 40); l1.position.set(6, 8, 6); scene.add(l1);
-            const l2 = new THREE.PointLight(0xd4a843, 1.2, 40); l2.position.set(-5, 4, 8); scene.add(l2);
-            const l3 = new THREE.PointLight(0x8844aa, 0.9, 30); l3.position.set(4, -3, -8); scene.add(l3);
-            updateCoreGeometry(currentElement);
-            const pGeo = new THREE.BufferGeometry();
-            const count = 5000;
-            const pos = new Float32Array(count * 3);
-            for (let i=0; i<count*3; i+=3) {
-                const r = 5 + Math.random() * 7;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(2 * Math.random() - 1);
-                pos[i] = r * Math.sin(phi) * Math.cos(theta);
-                pos[i+1] = r * Math.sin(phi) * Math.sin(theta);
-                pos[i+2] = r * Math.cos(phi);
-            }
-            pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0xd4a843, size: 0.05, transparent: true, blending: THREE.AdditiveBlending }));
-            scene.add(particles);
-            const sGeo = new THREE.BufferGeometry();
-            const sPos = new Float32Array(3000 * 3);
-            for (let i=0; i<3000*3; i+=3) {
-                sPos[i] = (Math.random() - 0.5) * 400;
-                sPos[i+1] = (Math.random() - 0.5) * 400;
-                sPos[i+2] = (Math.random() - 0.5) * 400;
-            }
-            sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-            scene.add(new THREE.Points(sGeo, new THREE.PointsMaterial({color: 0xffffff, size: 0.2})));
-        }
+  <!-- SEÇÃO 5 -->
+  <div class="card card-violet">
+    <div class="card-title"><span class="icon">5️⃣</span>IMPLEMENTAÇÃO CENA POR CENA — PASSO A PASSO</div>
 
-        function updateCoreGeometry(symbol) {
-            if (core) scene.remove(core);
-            const el = QUANTUM_ELEMENTS[symbol];
-            if (!el) return;
-            let geo;
-            switch(el.raiz) {
-                case 1: geo = new THREE.SphereGeometry(1.8, 64, 32); break;
-                case 2: geo = new THREE.TorusKnotGeometry(1.4, 0.4, 48, 8); break;
-                case 3: geo = new THREE.TetrahedronGeometry(1.9); break;
-                case 4: geo = new THREE.OctahedronGeometry(1.8); break;
-                case 5: geo = new THREE.DodecahedronGeometry(1.6); break;
-                case 6: geo = new THREE.IcosahedronGeometry(1.8); break;
-                case 7: geo = new THREE.ConeGeometry(1.7, 2.3, 7); break;
-                case 8: geo = new THREE.BoxGeometry(2.2, 2.2, 2.2); break;
-                default: geo = new THREE.IcosahedronGeometry(1.8, 1);
-            }
-            const mat = new THREE.MeshStandardMaterial({
-                color: el.cor,
-                emissive: new THREE.Color(el.cor).multiplyScalar(0.5),
-                roughness: 0.25,
-                metalness: 0.1,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.9
-            });
-            core = new THREE.Mesh(geo, mat);
-            core.castShadow = true;
-            core.receiveShadow = true;
-            scene.add(core);
-        }
+    <div class="manual-step">
+      <div class="step-num">A</div>
+      <div class="step-body">
+        <h3>MÉTODO RÁPIDO (faixa única)</h3>
+        <p>1. Configure os parâmetros no Studio<br>
+        2. Escolha a duração (30s a 4min)<br>
+        3. Vá em Prompts → selecione SUNO ou STABLE AUDIO<br>
+        4. Copie o prompt completo<br>
+        5. Cole na IA e gere<br>
+        6. Ajuste seed e regenere até satisfeito</p>
+      </div>
+    </div>
 
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = clock.getElapsedTime();
-            const freqAud = parseFloat(document.getElementById('freq-slider').value);
-            const grav = parseFloat(document.getElementById('grav-slider').value);
-            const phi = parseFloat(document.getElementById('phi-slider').value);
-            const pulseScale = Math.sin(time * (freqAud / 55)) * 0.25 + 1.15;
-            core.scale.set(pulseScale, pulseScale, pulseScale);
-            core.rotation.y += 0.008;
-            core.rotation.x += 0.002;
-            const barVal = (Math.sin(time * (freqAud / 35)) * 0.4 + 0.6) * 100;
-            document.getElementById('pulse-bar-fill').style.width = barVal + '%';
-            document.getElementById('pulse-display').innerText = Math.round(freqAud) + ' Hz';
-            const positions = particles.geometry.attributes.position.array;
-            const factor = currentMode === 'normal' ? (0.99 + grav*0.002) : (1.01 - grav*0.0018);
-            for (let i=0; i<positions.length; i+=3) {
-                positions[i] *= factor; positions[i+1] *= factor; positions[i+2] *= factor;
-                if (currentMode === 'normal' && Math.abs(positions[i]) < 0.25) {
-                    const ang = Math.random() * Math.PI*2;
-                    const rad = 9 * phi;
-                    positions[i] = Math.cos(ang)*rad;
-                    positions[i+1] = (Math.random()-0.5)*rad;
-                    positions[i+2] = Math.sin(ang)*rad;
-                }
-            }
-            particles.geometry.attributes.position.needsUpdate = true;
-            particles.rotation.y += 0.0008;
-            renderer.render(scene, camera);
-        }
+    <div class="manual-step">
+      <div class="step-num">B</div>
+      <div class="step-body">
+        <h3>MÉTODO PROFISSIONAL (cena a cena)</h3>
+        <p>1. Vá em Prompts → selecione <code>SUNO (CENA)</code><br>
+        2. Na Timeline, clique em cada cena<br>
+        3. O prompt se atualiza para aquela cena específica<br>
+        4. Copie e gere na IA — defina a duração da cena<br>
+        5. Baixe cada trecho em WAV/MP3<br>
+        6. Monte no CapCut ou Audacity com crossfade entre cenas<br>
+        7. Use <code>EXPORTAR ROTEIRO</code> para ter todas as 10 cenas de uma vez</p>
+      </div>
+    </div>
 
-        // ======================== 4. UI E EVENTOS ========================
-        function populateSelectors() {
-            const sel = document.getElementById('element-select');
-            const syms = Object.keys(QUANTUM_ELEMENTS).sort((a,b) => QUANTUM_ELEMENTS[a].Z - QUANTUM_ELEMENTS[b].Z);
-            syms.forEach(sym => {
-                const opt = document.createElement('option');
-                opt.value = sym;
-                opt.textContent = `${sym} - ${QUANTUM_ELEMENTS[sym].nome}`;
-                sel.appendChild(opt);
-            });
-            sel.value = 'H';
-        }
+    <div class="manual-step">
+      <div class="step-num">C</div>
+      <div class="step-body">
+        <h3>MONTAGEM NO CAPCUT (gratuito)</h3>
+        <p>1. Abra CapCut → Novo Projeto<br>
+        2. Importe todos os trechos de áudio gerados<br>
+        3. Posicione na ordem da timeline (cena 1, 2, 3...)<br>
+        4. Entre cada trecho: adicione transição de áudio <code>Crossfade 0.5–1s</code><br>
+        5. Exporte como MP3/WAV na qualidade máxima<br>
+        6. A trilha final terá a duração total configurada</p>
+      </div>
+    </div>
 
-        function updateUI() {
-            const sym = document.getElementById('element-select').value;
-            const el = QUANTUM_ELEMENTS[sym];
-            if (!el) return;
-            currentElementSym = sym;
-            currentTerrestrialFreq = reduceByOctaves(el.freq);
-            document.getElementById('current-symbol').textContent = sym;
-            document.getElementById('current-name').textContent = el.nome;
-            document.getElementById('current-group').textContent = el.grupo.replace(/_/g, ' ');
-            document.getElementById('current-freq').textContent = `f₀: ${Math.round(el.freq)} Hz`;
-            document.getElementById('current-role').textContent = el.role;
-            document.getElementById('grav-slider').value = el.grav;
-            document.getElementById('phi-slider').value = el.phi;
-            document.getElementById('grav-val').textContent = el.grav.toFixed(1);
-            document.getElementById('phi-val').textContent = el.phi.toFixed(3);
-            document.getElementById('freq-slider').value = Math.floor(currentTerrestrialFreq);
-            document.getElementById('freq-val').innerText = Math.floor(currentTerrestrialFreq);
-            updateCoreGeometry(sym);
-            particles.material.color.set(el.cor);
-            updatePromptDisplay(); // atualiza o prompt ao trocar elemento
-        }
+    <div class="warn-box">
+      <strong>Crossfade é obrigatório:</strong> sem ele, o corte entre cenas soa abrupto. No CapCut, selecione a junção entre dois clipes de áudio e aplique "Fade In + Fade Out" de 0.5 a 1 segundo.
+    </div>
+  </div>
 
-        function setupEvents() {
-            document.getElementById('element-select').addEventListener('change', updateUI);
-            document.getElementById('freq-slider').addEventListener('input', e => {
-                const val = e.target.value;
-                document.getElementById('freq-val').textContent = val;
-                currentTerrestrialFreq = parseFloat(val);
-                updatePromptDisplay();
-            });
-            document.getElementById('grav-slider').addEventListener('input', e => {
-                document.getElementById('grav-val').textContent = parseFloat(e.target.value).toFixed(1);
-                updatePromptDisplay();
-            });
-            document.getElementById('phi-slider').addEventListener('input', e => {
-                document.getElementById('phi-val').textContent = parseFloat(e.target.value).toFixed(3);
-                updatePromptDisplay();
-            });
-            document.getElementById('mode-normal').addEventListener('click', () => {
-                currentMode = 'normal';
-                document.getElementById('mode-normal').classList.add('active');
-                document.getElementById('mode-desentrelacar').classList.remove('active');
-                updatePromptDisplay();
-            });
-            document.getElementById('mode-desentrelacar').addEventListener('click', () => {
-                currentMode = 'desentrelacar';
-                document.getElementById('mode-desentrelacar').classList.add('active');
-                document.getElementById('mode-normal').classList.remove('active');
-                updatePromptDisplay();
-            });
-            document.getElementById('base-vol').addEventListener('input', e => {
-                intensity = parseFloat(e.target.value);
-                document.getElementById('base-vol-val').innerText = intensity.toFixed(2);
-                updatePromptDisplay();
-            });
-            document.getElementById('bpm-slider').addEventListener('input', e => {
-                bpm = parseInt(e.target.value);
-                document.getElementById('bpm-val').innerText = bpm;
-                updatePromptDisplay();
-            });
-            document.querySelectorAll('.genre-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    currentGenre = btn.dataset.genre;
-                    document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active-genre'));
-                    btn.classList.add('active-genre');
-                    updatePromptDisplay();
-                });
-            });
-            document.getElementById('generate-prompt-btn').addEventListener('click', updatePromptDisplay);
-            document.getElementById('copy-prompt-btn').addEventListener('click', copyPrompt);
-            window.addEventListener('resize', () => {
-                camera.aspect = innerWidth / innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(innerWidth, innerHeight);
-            });
-        }
+  <!-- SEÇÃO 6 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">6️⃣</span>PARÂMETROS RECOMENDADOS POR USO</div>
+    <div class="grid-3">
+      <div class="ai-card">
+        <h4 style="color:var(--gold);">🏠 MARIDO DE ALUGUEL</h4>
+        <ul>
+          <li><strong>Elemento:</strong> Fe (Ferro)</li>
+          <li><strong>Frequência:</strong> 127 Hz</li>
+          <li><strong>Gênero:</strong> Hip Hop</li>
+          <li><strong>BPM:</strong> 95–105</li>
+          <li><strong>Singularidade:</strong> 6.8</li>
+          <li><strong>φ:</strong> 1.618</li>
+          <li><strong>Modo:</strong> Normal</li>
+          <li><strong>Duração:</strong> 90s–2min</li>
+          <li><strong>Tom:</strong> urbano, confiável, sólido</li>
+        </ul>
+      </div>
+      <div class="ai-card">
+        <h4 style="color:var(--cyan);">✨ ALMAFLUXO (navegação)</h4>
+        <ul>
+          <li><strong>Elemento:</strong> Au (Ouro)</li>
+          <li><strong>Frequência:</strong> 167 Hz</li>
+          <li><strong>Gênero:</strong> Eletrônico</li>
+          <li><strong>BPM:</strong> 85–95</li>
+          <li><strong>Singularidade:</strong> 4.5</li>
+          <li><strong>φ:</strong> 1.618</li>
+          <li><strong>Modo:</strong> Normal</li>
+          <li><strong>Duração:</strong> 3–4 min</li>
+          <li><strong>Tom:</strong> místico, dourado, etéreo</li>
+        </ul>
+      </div>
+      <div class="ai-card">
+        <h4 style="color:#a87de8;">🧘 MEDITAÇÃO / OBSERVADOR</h4>
+        <ul>
+          <li><strong>Elemento:</strong> H (Hidrogênio)</li>
+          <li><strong>Frequência:</strong> 177 Hz</li>
+          <li><strong>Gênero:</strong> Clássica</li>
+          <li><strong>BPM:</strong> 60–70</li>
+          <li><strong>Singularidade:</strong> 3.0</li>
+          <li><strong>φ:</strong> 1.618</li>
+          <li><strong>Modo:</strong> Normal</li>
+          <li><strong>Duração:</strong> 4 min</li>
+          <li><strong>Tom:</strong> puro, silencioso, expandido</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-        // INICIALIZAÇÃO
-        populateSelectors();
-        initThree();
-        updateUI();
-        setupEvents();
-        animate();
-        // Define gênero inicial ativo
-        document.querySelector('.genre-btn[data-genre="hiphop"]').classList.add('active-genre');
-        updatePromptDisplay();
-    </script>
+  <!-- SEÇÃO 7 -->
+  <div class="card card-green">
+    <div class="card-title"><span class="icon">7️⃣</span>A MATEMÁTICA DO SISTEMA</div>
+    <p style="font-family:'Rajdhani',sans-serif;font-size:15px;color:var(--text-dim);line-height:1.8;margin-bottom:16px;">
+      O número de prompts únicos que este engine pode gerar (sem considerar seeds) é:
+    </p>
+    <div class="math-formula">
+118 elementos × 241 frequências × 81 gravidades × 201 φ valores<br>
+× 2 modos × 10 gêneros × 101 intensidades × 101 BPMs<br>
+<br>
+= <span style="color:var(--gold);font-size:15px;">94.636.564.383.600 combinações únicas</span><br>
+≈ <span style="color:var(--cyan)">3.000.000 anos para esgotar a 1 prompt/segundo</span><br>
+<br>
++ seed aleatória → espaço de saídas = <span style="color:var(--gold);">∞ (infinito)</span>
+    </div>
+    <div class="tip-box" style="margin-top:12px;">
+      Quando você entrega um prompt a uma IA de difusão, ela usa uma <strong>semente de ruído aleatório</strong> interna. O mesmo prompt gerado 50 vezes produz 50 músicas diferentes — cada uma usa seus parâmetros como esqueleto, mas cria uma "pele" nova. Você não gera a música: você <strong>gera as leis físicas que a IA deve obedecer</strong>.
+    </div>
+  </div>
+
+</div><!-- /page-manual -->
+
+<!-- PLAYBACK BAR -->
+<div class="play-bar">
+  <button class="play-master" id="play-master-btn">▶</button>
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="pb-time">00:00</span>
+      <span id="pb-scene" style="color:var(--text-dim)">—</span>
+      <span id="pb-total">00:35</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="pb-fill"></div></div>
+  </div>
+  <div class="play-info">
+    <div class="play-info-label">CENA ATIVA</div>
+    <div class="play-info-val" id="pb-sym">—</div>
+  </div>
+  <div class="play-dur-badge" id="pb-dur-badge">35s</div>
+</div>
+
+<script>
+// ======================== DADOS COMPLETOS (118 ELEMENTOS) ========================
+const ELEMENTS = {
+  'H': {Z:1,nome:'Hidrogênio',freq:1420,grav:2.0,phi:1.618,cor:'#a0c8ff',grupo:'PORTAL_FISICO',role:'Semente das Realidades',estado:'GASOSO',timbre:'sine'},
+  'He':{Z:2,nome:'Hélio',freq:660,grav:1.5,phi:1.618,cor:'#ffe0a0',grupo:'SINGULARIDADE',role:'Observador Eterno',estado:'GASOSO',timbre:'sine'},
+  'Li':{Z:3,nome:'Lítio',freq:700,grav:3.0,phi:1.618,cor:'#ffd0a0',grupo:'ATIVACAO_FISICA',role:'Ativador de Memória',estado:'SOLIDO',timbre:'sine'},
+  'C': {Z:6,nome:'Carbono',freq:1200,grav:5.5,phi:1.618,cor:'#a8c8a8',grupo:'PONTE_ENERGETICA',role:'Arquiteto da Vida',estado:'SOLIDO',timbre:'sawtooth'},
+  'N': {Z:7,nome:'Nitrogênio',freq:900,grav:3.5,phi:1.618,cor:'#90b8f8',grupo:'PORTAL_FISICO',role:'Veículo da Consciência',estado:'GASOSO',timbre:'sine'},
+  'O': {Z:8,nome:'Oxigênio',freq:1100,grav:4.8,phi:1.618,cor:'#80d0ff',grupo:'PORTAL_FISICO',role:'Combustível do Trajeto',estado:'GASOSO',timbre:'sine'},
+  'Na':{Z:11,nome:'Sódio',freq:760,grav:4.0,phi:1.618,cor:'#f0d060',grupo:'ATIVACAO_FISICA',role:'Impulso Elétrico',estado:'SOLIDO',timbre:'square'},
+  'Si':{Z:14,nome:'Silício',freq:1050,grav:5.0,phi:1.618,cor:'#b0b8c8',grupo:'PONTE_ENERGETICA',role:'Memória Cristalina',estado:'SOLIDO',timbre:'sawtooth'},
+  'Ca':{Z:20,nome:'Cálcio',freq:880,grav:5.0,phi:1.618,cor:'#f8f0d8',grupo:'ATIVACAO_FISICA',role:'Estrutura do Ser',estado:'SOLIDO',timbre:'sine'},
+  'Fe':{Z:26,nome:'Ferro',freq:1020,grav:6.8,phi:1.618,cor:'#E06633',grupo:'EIXO_TRANSICAO',role:'Núcleo da Realidade',estado:'SOLIDO',timbre:'square'},
+  'Cu':{Z:29,nome:'Cobre',freq:930,grav:6.0,phi:1.618,cor:'#d4845a',grupo:'EIXO_TRANSICAO',role:'Condutor do Fluxo',estado:'SOLIDO',timbre:'square'},
+  'Ag':{Z:47,nome:'Prata',freq:980,grav:7.0,phi:1.618,cor:'#d0d8e8',grupo:'EIXO_TRANSICAO',role:'Espelho do Fluxo',estado:'SOLIDO',timbre:'square'},
+  'Au':{Z:79,nome:'Ouro',freq:1340,grav:8.9,phi:1.618,cor:'#FFD700',grupo:'SINGULARIDADE',role:'Armazenador de Tempo',estado:'SOLIDO',timbre:'square'},
+  'Pt':{Z:78,nome:'Platina',freq:1180,grav:8.5,phi:1.618,cor:'#c8d8f8',grupo:'SINGULARIDADE',role:'Catalisador Supremo',estado:'SOLIDO',timbre:'square'},
+  'Pb':{Z:82,nome:'Chumbo',freq:850,grav:7.5,phi:1.618,cor:'#909098',grupo:'PONTE_ENERGETICA',role:'Memória Densa',estado:'SOLIDO',timbre:'sawtooth'},
+  'U': {Z:92,nome:'Urânio',freq:2200,grav:8.8,phi:1.618,cor:'#60c860',grupo:'SINGULARIDADE',role:'Potencial Latente',estado:'SOLIDO',timbre:'sawtooth'},
+  'Og':{Z:118,nome:'Oganessônio',freq:11800,grav:9.0,phi:1.618,cor:'#6A0DAD',grupo:'SINGULARIDADE',role:'Unificador Quântico',estado:'SINTETICO',timbre:'triangle'},
+};
+
+// Adicionar elementos extras (todos os 118)
+(function(){
+  const extra={
+    'Be':4,'B':5,'F':9,'Ne':10,'Mg':12,'Al':13,'P':15,'S':16,'Cl':17,'Ar':18,'K':19,
+    'Cr':24,'Mn':25,'Co':27,'Ni':28,'Zn':30,'Ga':31,'Ge':32,'As':33,'Se':34,'Br':35,'Kr':36,
+    'Rb':37,'Sr':38,'Y':39,'Zr':40,'Nb':41,'Mo':42,'Tc':43,'Ru':44,'Rh':45,'Pd':46,'Cd':48,
+    'In':49,'Sn':50,'Sb':51,'Te':52,'I':53,'Xe':54,'Cs':55,'Ba':56,'La':57,'Ce':58,
+    'W':74,'Re':75,'Os':76,'Ir':77,'Tl':81,'Bi':83,'Po':84,'At':85,'Rn':86,'Ra':88,
+    'Th':90,'Pa':91,'Np':93,'Pu':94,'Am':95,'Cm':96
+  };
+  const nomes={'Be':'Berílio','B':'Boro','F':'Flúor','Ne':'Neônio','Mg':'Magnésio','Al':'Alumínio','P':'Fósforo','S':'Enxofre','Cl':'Cloro','Ar':'Argônio','K':'Potássio','Cr':'Cromo','Mn':'Manganês','Co':'Cobalto','Ni':'Níquel','Zn':'Zinco','Ga':'Gálio','Ge':'Germânio','As':'Arsênio','Se':'Selênio','Br':'Bromo','Kr':'Criptônio','Rb':'Rubídio','Sr':'Estrôncio','Y':'Ítrio','Zr':'Zircônio','Nb':'Nióbio','Mo':'Molibdênio','Tc':'Tecnécio','Ru':'Rutênio','Rh':'Ródio','Pd':'Paládio','Cd':'Cádmio','In':'Índio','Sn':'Estanho','Sb':'Antimônio','Te':'Telúrio','I':'Iodo','Xe':'Xenônio','Cs':'Césio','Ba':'Bário','La':'Lantânio','Ce':'Cério','W':'Tungstênio','Re':'Rênio','Os':'Ósmio','Ir':'Irídio','Tl':'Tálio','Bi':'Bismuto','Po':'Polônio','At':'Astato','Rn':'Radônio','Ra':'Rádio','Th':'Tório','Pa':'Protactínio','Np':'Netúnio','Pu':'Plutônio','Am':'Amerício','Cm':'Cúrio'};
+  Object.entries(extra).forEach(([sym,Z])=>{
+    if(ELEMENTS[sym])return;
+    const raiz=((Z-1)%9)+1;
+    ELEMENTS[sym]={Z,raiz,nome:nomes[sym]||sym,freq:Math.round(400+350*Math.log(Z+1)*(raiz/5)),
+      grav:4.5+(raiz/2)+(Z%3)*.3,phi:1.618,cor:`hsl(${Z*23%360},70%,60%)`,
+      grupo:'EIXO_TRANSICAO',role:`Função Quântica ${raiz}`,estado:'SOLIDO',timbre:'sine'};
+  });
+})();
+
+function reduceOctaves(f){let r=f;while(r>300)r/=2;if(r<60)r*=2;return parseFloat(r.toFixed(1));}
+function getTimbreEN(sym){const e=ELEMENTS[sym];if(!e)return'pure sine wave';if(e.timbre==='sine')return'pure sine wave, ethereal and smooth';if(e.timbre==='square')return'square wave, metallic and bright';if(e.timbre==='sawtooth')return'sawtooth wave, raw and structured';return'triangle wave, complex and enigmatic';}
+
+// ======================== ESTADO EDITÁVEL DA TIMELINE ========================
+let userScenes = [
+  {sym:'H', effect:'sine_lfo', label:'Abertura · Hidrogênio pulsando', layer:'Tom senoidal puro em 1420 Hz, pulsação lenta (LFO 2 Hz), volume baixo. Representa o ponto zero, o nascimento.', color:'#a0c8ff'},
+  {sym:'H', effect:'whoosh', label:'Dropdown / Seleção Hidrogênio', layer:'Mantém o tom de H. Adiciona ruído "whoosh" (0.5s) ao abrir o dropdown. Continuidade com leveza de transição.', color:'#a0c8ff'},
+  {sym:'C', effect:'crossfade', label:'Seleção Carbono', layer:'Crossfade de 1s: H some, entra 1200 Hz. Pulsação levemente mais rápida (LFO 2.5 Hz). Mudança de estado.', color:'#a8c8a8'},
+  {sym:'Au', effect:'harmonic', label:'Seleção Ouro', layer:'Tom 1340 Hz + harmônico sutil em 2680 Hz (oitava acima). Timbre metálico brilhante. Sensação de valor e permanência.', color:'#FFD700'},
+  {sym:'Og', effect:'cosmic', label:'Seleção Oganessônio', layer:'Tom agudo em 11800 Hz (quase limite audível). Deve ser sentido como pressão sonora, não apenas ouvido. Cósmico.', color:'#6A0DAD'},
+  {sym:'H', effect:'glissando', label:'Slider Frequência → aceleração', layer:'Glissando ascendente do tom atual até pico (290 Hz range), depois corte abrupto. Efeito de aceleração quântica.', color:'#ff6060'},
+  {sym:'H', effect:'subgrave', label:'Singularidade 9.0 → motor cósmico', layer:'Subgrave 30–60 Hz crescendo em intensidade. Como um motor cósmico sendo ligado. Sentido no corpo, não apenas no ouvido.', color:'#c060ff'},
+  {sym:'H', effect:'desentrelaca', label:'Modo Desentrelaçar', layer:'Ruído branco filtrado que se expande em stereo, como partículas se afastando. Sensação de dissolução.', color:'#ff8840'},
+  {sym:'H', effect:'heartbeat', label:'Retorno · Hidrogênio + Batimento', layer:'Retorno ao tom puro de 1420 Hz. Kick profundo (55 Hz) sincronizado como batimento cardíaco. Reconexão.', color:'#a0c8ff'},
+  {sym:'H', effect:'fade_out', label:'Fade final · Silêncio', layer:'Tom de H desvanece lentamente. Batimento cardíaco por 2s isolado. Silêncio total. Conclusão do ciclo.', color:'#4a6a8a'},
+];
+let totalDur = 35;
+let curMode = 'normal', curGenre = 'hiphop', curPlatform = 'suno';
+let activeSceneIdx = 0;
+let isPlaying = false, audioCtx = null, masterGain = null, currentNodes = [], playTimers = [], animFrame = null;
+let wavePhase = 0;
+
+const GENRES = {
+  hiphop:   {label:'HIP HOP',   en:'boom-bap hip hop, heavy 808 kick on 1&3, snare on 2&4, constant hi-hat, layered clap'},
+  pagode:   {label:'PAGODE',    en:'pagode samba, constant kick, syncopated snare, semi-open hi-hat, tamborim on eighth notes'},
+  rock:     {label:'ROCK',      en:'rock, heavy kick, accented snare, driving hi-hat, crash on downbeats'},
+  trap:     {label:'TRAP',      en:'trap, 808 kick pattern, dragged snare, triplet hi-hat rolls, sharp clap accents'},
+  classica: {label:'CLÁSSICA',  en:'orchestral, tympani on strong beats, minimal percussion, full string ensemble, no drums'},
+  eletronico:{label:'ELETRÔNICO',en:'electronic, four-on-the-floor kick, electronic snare, open hi-hat, off-beat clap'},
+  mpb:      {label:'MPB',       en:'bossa nova MPB, soft kick, discrete snare, bossa-style hi-hat, continuous shaker'},
+  tango:    {label:'TANGO',     en:'tango, syncopated kick, accented snare, staccato hi-hat, bandoneon texture'},
+  forro:    {label:'FORRÓ',     en:'forró, marked kick, zabumba on upbeat, triangle bell, syncopated rhythm'},
+  salsa:    {label:'SALSA',     en:'salsa, clave pattern kick, cowbell on beat, improvised conga, full brass section'},
+};
+const EFFECTS = ['sine_lfo','whoosh','crossfade','harmonic','cosmic','glissando','subgrave','desentrelaca','heartbeat','fade_out'];
+
+const AI_PLATFORMS=[
+  {id:'suno',      label:'SUNO',         color:'#1db954'},
+  {id:'udio',      label:'UDIO',         color:'#5865f2'},
+  {id:'stable',    label:'STABLE AUDIO', color:'#ff6b35'},
+  {id:'elevenlabs',label:'ELEVENLABS',   color:'#00b4d8'},
+  {id:'gemini',    label:'GEMINI/DAW',   color:'#4285f4'},
+  {id:'scene',     label:'SUNO (CENA)',  color:'#d4a843'},
+];
+const AI_GUIDES={
+  suno:      '1. Acesse suno.ai/create\n2. Ative "Instrumental" (sem letra)\n3. Cole o prompt gerado\n4. Clique em Create\n5. Regenere 3–5x com o mesmo prompt\n6. Use "Extend" para faixas mais longas',
+  udio:      '1. Acesse udio.com\n2. Cole o prompt no campo\n3. Informe a seed no campo específico\n4. Clique em Create\n5. Use "Extend" para alongar a faixa\n6. Download em WAV ou MP3',
+  stable:    '1. Acesse stableaudio.com → Login\n2. Cole o prompt técnico\n3. Defina a duração exata em segundos\n4. Informe a seed para reprodução\n5. Clique em Generate\n6. Melhor para drones e frequências Hz',
+  elevenlabs:'1. Acesse elevenlabs.io/sound-effects\n2. Cole a descrição da cena (efeito)\n3. Ajuste a duração (máx 22s)\n4. Clique em Generate\n5. Use para efeitos individuais de cena\n6. Combine com Suno no CapCut',
+  gemini:    '1. Abra Gemini AI ou seu DAW\n2. Cole o prompt técnico completo\n3. Siga as instruções de síntese\n4. Crie tons senoidais nas freq indicadas\n5. Aplique LFO e filtros conforme o roteiro\n6. Mixe conforme as camadas especificadas',
+  scene:     '1. Selecione uma cena na Timeline\n2. O prompt se atualiza para essa cena\n3. Defina duração = tempo da cena\n4. Gere cada cena individualmente\n5. Baixe em WAV/MP3\n6. Monte no CapCut com crossfade 1s',
+};
+
+// ======================== FUNÇÕES AUXILIARES ========================
+function getSceneTimes() {
+  const cnt = userScenes.length;
+  const durPer = totalDur / cnt;
+  return userScenes.map((_, i) => ({ t0: i * durPer, t1: (i + 1) * durPer }));
+}
+function seed(){ return document.getElementById('seed-in').value || document.getElementById('seed-prompt').value || null; }
+function fmtTime(s){ const m=Math.floor(s/60), ss=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'); }
+
+// ======================== PROMPT GENERATOR (ATUALIZADO PARA TIMELINE EDITÁVEL) ========================
+function generatePrompt(platform, sceneIdx){
+  const freq = parseFloat(document.getElementById('freq-sl').value)||177;
+  const grav = parseFloat(document.getElementById('grav-sl').value)||5;
+  const phi = parseFloat(document.getElementById('phi-sl').value)||1.618;
+  const bpm = parseInt(document.getElementById('bpm-sl').value)||100;
+  const intensity = parseFloat(document.getElementById('int-sl').value)||0.7;
+  const genre = GENRES[curGenre]?.en||GENRES.hiphop.en;
+  const modeDesc = curMode==='normal'
+    ?'stable harmonic resonance, grounded and continuous'
+    :'quantum disentanglement: sound dissolves into white noise with descending glissandos to 20 Hz';
+  const seedLine = seed()?`\nSEED: ${seed()}`:'';
+  const durSec = totalDur;
+  const durMin = durSec>=60?`${Math.floor(durSec/60)}:${String(durSec%60).padStart(2,'0')} minutes`:`${durSec} seconds`;
+  const times = getSceneTimes();
+
+  if(platform==='scene' && sceneIdx!==undefined){
+    const sc = userScenes[sceneIdx];
+    const el = ELEMENTS[sc.sym];
+    if(!el) return 'Erro: elemento não encontrado.';
+    const scFreq = reduceOctaves(el.freq);
+    const scDur = (times[sceneIdx].t1 - times[sceneIdx].t0).toFixed(1);
+    return [
+      `=== SCENE ${sceneIdx+1}/${userScenes.length}: ${sc.label.toUpperCase()} ===`,
+      `Time: ${times[sceneIdx].t0.toFixed(1)}s – ${times[sceneIdx].t1.toFixed(1)}s (${scDur} seconds)`,
+      ``,
+      `Instrumental only. No vocals. Duration: ${scDur} seconds.`,
+      `Element: ${el.nome} (${sc.sym}) — ${el.role}`,
+      `Core frequency: ${scFreq} Hz (${getTimbreEN(sc.sym)})`,
+      ``,
+      `SOUND LAYER: ${sc.layer}`,
+      `Rhythm foundation: ${genre}. BPM: ${bpm}. Intensity: ${Math.round(intensity*100)}%.`,
+      sc.effect==='desentrelaca'?'APPLY: stereo white noise expanding from center to full width.':'',
+      sc.effect==='heartbeat'?'APPLY: deep kick drum at 55 Hz every 500ms simulating heartbeat.':'',
+      sc.effect==='glissando'?'APPLY: pitch glissando ascending, then hard cut to silence.':'',
+      sc.effect==='subgrave'?'APPLY: subgrave rumble 30–60 Hz crescendo from 0 to max over 3 seconds.':'',
+      sc.effect==='whoosh'?'APPLY: 0.5s broadband whoosh noise at scene start, then sustain.':'',
+      sc.effect==='harmonic'?`APPLY: fundamental ${scFreq} Hz + harmonic at ${scFreq*2} Hz at 15% volume.`:'',
+      seedLine
+    ].filter(Boolean).join('\n');
+  }
+
+  // Resumo das cenas para prompts multi-plataforma
+  const scenesSummary = userScenes.map((sc, idx) => {
+    const el = ELEMENTS[sc.sym];
+    return el ? `Scene ${idx+1} (${times[idx].t0.toFixed(0)}-${times[idx].t1.toFixed(0)}s): ${el.nome} ${reduceOctaves(el.freq)}Hz effect:${sc.effect}` : '';
+  }).filter(Boolean).join('\n');
+
+  if(platform==='suno') return [
+    `Instrumental only. No vocals. No lyrics.`,
+    `CONCEPT: Quantum harmonic composition based on ${userScenes.map(s=>s.sym).join(' → ')}.`,
+    `CORE DRONE: ${freq} Hz, ${getTimbreEN(userScenes[0].sym)}. Amplitude modulated (tremolo) at 2.5 Hz.`,
+    `RHYTHM: ${genre}. BPM: ${bpm}. Master intensity: ${Math.round(intensity*100)}%.`,
+    `SUBGRAVE: gentle layer at 40 Hz (volume ~20%). Low-pass filter phi-ratio: ${phi}.`,
+    `GRAVITY DEPTH: ${grav}/9.0 — heavier gravity = deeper subgrave and slower LFO.`,
+    `SOUND CHARACTER: ${modeDesc}.`,
+    `DURATION: ${durMin}, seamless loop.`,
+    `TIMELINE:\n${scenesSummary}`,
+    seedLine
+  ].filter(Boolean).join('\n');
+
+  if(platform==='udio') return [
+    `[INSTRUMENTAL] [NO VOCALS] [LOOP]`,
+    `Element sequence: ${userScenes.map(s=>s.sym).join(' → ')}`,
+    `Style: ${genre}. Tempo: ${bpm} BPM.`,
+    `Timeline:\n${scenesSummary}`,
+    `Target duration: ${durMin}. No fade.`,
+    seedLine
+  ].join('\n');
+
+  if(platform==='stable') return [
+    `Generate a ${durSec}-second instrumental piece.`,
+    `PRIMARY TONE: sine drone at ${freq} Hz, volume modulated by LFO at 2.5 Hz (tremolo).`,
+    `RHYTHM: ${genre}. Tempo: ${bpm} BPM.`,
+    `SCENES:\n${scenesSummary}`,
+    `LOW-PASS FILTER: cutoff = ${Math.round(200+phi*300)} Hz (phi=${phi}).`,
+    `DYNAMIC: ${modeDesc}.`,
+    seedLine
+  ].join('\n');
+
+  if(platform==='elevenlabs') return [
+    `Sound texture / ambient effect design:`,
+    `A cosmic pulsating drone at approximately ${freq} Hz with 2.5 Hz tremolo oscillation.`,
+    `Element identity: ${userScenes.map(s=>s.sym).join(' → ')}.`,
+    `Timeline:\n${scenesSummary}`,
+    seedLine
+  ].join('\n');
+
+  if(platform==='gemini') return [
+    `=== ALMAFLUXO QUANTUM SOUNDTRACK — TECHNICAL BRIEF ===`,
+    `Target duration: ${durMin}`,
+    `SYNTHESIS STEPS:`,
+    `1. Generate sine oscillator at ${freq} Hz`,
+    `2. Apply LFO at 2.5 Hz to amplitude gain`,
+    `3. Rhythm layer: ${genre}. BPM: ${bpm}`,
+    `SCENE BREAKDOWN:\n${scenesSummary}`,
+    seedLine
+  ].join('\n');
+
+  return 'Selecione uma plataforma.';
+}
+
+// ======================== UI E ATUALIZAÇÕES ========================
+function updateStats(){
+  const times = getSceneTimes();
+  document.getElementById('dur-scenes-disp').textContent = userScenes.length;
+  document.getElementById('st-scenes').textContent = userScenes.length;
+  document.getElementById('dur-percena-disp').textContent = (totalDur/userScenes.length).toFixed(1)+'s';
+  document.getElementById('dur-total-disp').textContent = totalDur+'s';
+  document.getElementById('st-dur').textContent = totalDur<60?totalDur+'s':fmtTime(totalDur);
+  document.getElementById('pb-total').textContent = fmtTime(totalDur);
+  document.getElementById('pb-dur-badge').textContent = totalDur<60?totalDur+'s':fmtTime(totalDur);
+  document.getElementById('nav-dur-badge').textContent = totalDur<60?totalDur+'s':fmtTime(totalDur);
+}
+
+function buildTimeline(){
+  const container = document.getElementById('timeline-container');
+  container.innerHTML = '';
+  const times = getSceneTimes();
+  userScenes.forEach((scene, idx) => {
+    const el = ELEMENTS[scene.sym] || ELEMENTS['H'];
+    const audible = reduceOctaves(el.freq);
+    const row = document.createElement('div');
+    row.className = `scene-row ${idx===activeSceneIdx?'active-s':''}`;
+    row.dataset.idx = idx;
+    row.innerHTML = `
+      <span class="sc-time">${times[idx].t0.toFixed(1)}s–${times[idx].t1.toFixed(1)}s</span>
+      <select class="sc-select">${Object.keys(ELEMENTS).sort((a,b)=>ELEMENTS[a].Z-ELEMENTS[b].Z).map(sym=>`<option value="${sym}" ${scene.sym===sym?'selected':''}>${sym} — ${ELEMENTS[sym].nome}</option>`).join('')}</select>
+      <select class="sc-effect-select">${EFFECTS.map(eff=>`<option value="${eff}" ${scene.effect===eff?'selected':''}>${eff}</option>`).join('')}</select>
+      <span class="sc-freq">${el.freq} Hz → ${audible} Hz</span>
+      <span class="sc-time" style="color:var(--text-dim)">${scene.effect}</span>
+      <button class="sc-play" title="Preview cena">▶</button>
+      <button class="sc-del" title="Remover cena">✕</button>
+    `;
+    row.querySelector('.sc-select').addEventListener('change', e => {
+      scene.sym = e.target.value;
+      updateUIFromScenes();
+    });
+    row.querySelector('.sc-effect-select').addEventListener('change', e => {
+      scene.effect = e.target.value;
+      updateUIFromScenes();
+    });
+    row.querySelector('.sc-play').addEventListener('click', e => {
+      e.stopPropagation(); stopAll(); activeSceneIdx = idx;
+      playSingleScene(idx);
+      highlightScene(idx);
+    });
+    row.querySelector('.sc-del').addEventListener('click', e => {
+      e.stopPropagation();
+      if(userScenes.length>1) {
+        userScenes.splice(idx,1);
+        if(activeSceneIdx>=userScenes.length) activeSceneIdx = userScenes.length-1;
+        updateUIFromScenes();
+      }
+    });
+    row.addEventListener('click', () => { activeSceneIdx = idx; selectScene(idx); });
+    container.appendChild(row);
+  });
+  selectScene(activeSceneIdx);
+}
+
+function selectScene(idx){
+  activeSceneIdx = idx;
+  document.querySelectorAll('.scene-row').forEach((r,i)=>r.classList.toggle('active-s',i===idx));
+  const scene = userScenes[idx];
+  const el = ELEMENTS[scene.sym];
+  const times = getSceneTimes();
+  document.getElementById('scene-detail-box').innerHTML = `
+    <div style="color:var(--gold);margin-bottom:8px;">CENA ${idx+1}: ${scene.label}</div>
+    <div>Tempo: ${times[idx].t0.toFixed(1)}s → ${times[idx].t1.toFixed(1)}s (${(times[idx].t1-times[idx].t0).toFixed(1)}s)</div>
+    <div>Elemento: ${el.nome} (${scene.sym}) — ${el.role}</div>
+    <div>Freq quântica: ${el.freq} Hz → audível: ${reduceOctaves(el.freq)} Hz</div>
+    <div>Efeito: ${scene.effect}</div>
+    <div style="margin-top:10px;">${scene.layer}</div>
+  `;
+  updatePrompts();
+}
+
+function updateUIFromScenes(){
+  buildTimeline();
+  updateStats();
+  updatePrompts();
+}
+
+function updatePrompts(){
+  document.getElementById('quick-prompt').textContent = generatePrompt('suno');
+  document.getElementById('prompt-main').textContent = generatePrompt(curPlatform);
+}
+
+// ======================== ÁUDIO ========================
+function getCtx(){ if(!audioCtx){ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); masterGain=audioCtx.createGain(); masterGain.gain.value=0.45; masterGain.connect(audioCtx.destination); } if(audioCtx.state==='suspended')audioCtx.resume(); return audioCtx; }
+function stopAll(){ currentNodes.forEach(n=>{try{n.stop();}catch(e){}}); currentNodes=[]; playTimers.forEach(t=>clearTimeout(t)); playTimers=[]; if(animFrame)cancelAnimationFrame(animFrame); isPlaying=false; document.getElementById('play-master-btn').innerHTML='▶'; document.querySelectorAll('.scene-row').forEach(r=>r.classList.remove('playing-s')); }
+function playTone(freq,type='sine',dur=2,vol=0.28,lfoRate=0,fi=0.1,fo=0.3){ const ctx=getCtx(), osc=ctx.createOscillator(), g=ctx.createGain(); osc.type=type; osc.frequency.value=freq; g.gain.setValueAtTime(0,ctx.currentTime); g.gain.linearRampToValueAtTime(vol,ctx.currentTime+fi); g.gain.setValueAtTime(vol,ctx.currentTime+dur-fo); g.gain.linearRampToValueAtTime(0,ctx.currentTime+dur); if(lfoRate>0){ const lfo=ctx.createOscillator(), lg=ctx.createGain(); lfo.frequency.value=lfoRate; lg.gain.value=vol*.45; lfo.connect(lg); lg.connect(g.gain); lfo.start(); lfo.stop(ctx.currentTime+dur); currentNodes.push(lfo); } osc.connect(g); g.connect(masterGain); osc.start(); osc.stop(ctx.currentTime+dur); currentNodes.push(osc); }
+function playNoise(dur=1,vol=0.15){ const ctx=getCtx(), sz=ctx.sampleRate*dur; const buf=ctx.createBuffer(2,sz,ctx.sampleRate); for(let ch=0;ch<2;ch++){const d=buf.getChannelData(ch);for(let i=0;i<sz;i++)d[i]=Math.random()*2-1;} const src=ctx.createBufferSource(), g=ctx.createGain(); src.buffer=buf; g.gain.setValueAtTime(0,ctx.currentTime); g.gain.linearRampToValueAtTime(vol,ctx.currentTime+.05); g.gain.linearRampToValueAtTime(0,ctx.currentTime+dur); src.connect(g); g.connect(masterGain); src.start(); currentNodes.push(src); }
+function playSingleScene(idx){
+  const scene = userScenes[idx];
+  const el = ELEMENTS[scene.sym];
+  const times = getSceneTimes();
+  const dur = times[idx].t1 - times[idx].t0;
+  const freq = reduceOctaves(el.freq);
+  stopAll(); getCtx();
+  switch(scene.effect){
+    case 'sine_lfo': playTone(freq,'sine',dur,.22,2,.3,.5); break;
+    case 'whoosh': playTone(freq,'sine',dur,.18,2.2,.2,.5); playNoise(.5,.12); break;
+    case 'crossfade': playTone(reduceOctaves(ELEMENTS['H'].freq),'sine',1.2,.18,0,.1,.8); setTimeout(()=>playTone(freq,'sawtooth',dur-.5,.22,2.5,.8,.5),800); break;
+    case 'harmonic': playTone(freq,'square',dur,.2,2,.3,.5); playTone(freq*2,'sine',dur,.06,2,.3,.5); break;
+    case 'cosmic': playTone(reduceOctaves(11800),'triangle',dur,.16,3,.5,.8); playNoise(dur,.03); break;
+    case 'glissando':{ const ctx=getCtx(),o=ctx.createOscillator(),g=ctx.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(reduceOctaves(11800),ctx.currentTime); o.frequency.exponentialRampToValueAtTime(290,ctx.currentTime+2); g.gain.setValueAtTime(.2,ctx.currentTime); g.gain.linearRampToValueAtTime(0,ctx.currentTime+dur); o.connect(g); g.connect(masterGain); o.start(); o.stop(ctx.currentTime+dur); currentNodes.push(o); break; }
+    case 'subgrave': playTone(40,'sine',dur,.32,0,.5,.5); playTone(60,'sine',dur,.18,0,.5,.5); break;
+    case 'desentrelaca': playNoise(dur,.22); break;
+    case 'heartbeat': playTone(freq,'sine',dur,.18,2,.5,.8); for(let i=0;i<Math.floor(dur*2);i++)setTimeout(()=>playTone(55,'sine',.15,.4,0,.02,.08),i*500); break;
+    case 'fade_out': playTone(freq,'sine',Math.min(4,dur),.18,2,.2,2.5); setTimeout(()=>playTone(55,'sine',.15,.38,0,.02,.08),500); setTimeout(()=>playTone(55,'sine',.15,.38,0,.02,.08),1000); break;
+    default: playTone(freq,'sine',dur,.22,2,.3,.5);
+  }
+}
+function playAllScenes(){ if(isPlaying){stopAll();return;} getCtx(); isPlaying=true; playStart=performance.now(); document.getElementById('play-master-btn').innerHTML='⏹'; const times=getSceneTimes(); userScenes.forEach((_,idx)=>{ const t=setTimeout(()=>{ stopAll(); playSingleScene(idx); highlightScene(idx); },times[idx].t0*1000); playTimers.push(t); }); const endT=setTimeout(()=>{stopAll();updateProgress(totalDur);},totalDur*1000+300); playTimers.push(endT); animateProgress(); }
+function highlightScene(idx){ document.querySelectorAll('.scene-row').forEach((r,i)=>r.classList.toggle('playing-s',i===idx)); }
+function animateProgress(){ const elapsed=(performance.now()-playStart)/1000; updateProgress(Math.min(elapsed,totalDur)); if(isPlaying&&elapsed<totalDur+.5) animFrame=requestAnimationFrame(animateProgress); }
+function updateProgress(elapsed){ const pct=Math.min((elapsed/totalDur)*100,100); document.getElementById('pb-fill').style.width=pct+'%'; document.getElementById('pb-time').textContent=fmtTime(elapsed); const times=getSceneTimes(); const idx=times.findIndex(t=>elapsed>=t.t0&&elapsed<t.t1); if(idx>=0){ document.getElementById('pb-scene').textContent=userScenes[idx].label; document.getElementById('pb-sym').textContent=userScenes[idx].sym; } }
+
+// ======================== WAVEFORM ========================
+function drawWave(){
+  const cv=document.getElementById('wave-canvas'); if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.offsetWidth||600,H=cv.offsetHeight||72;
+  cv.width=W; cv.height=H; ctx.clearRect(0,0,W,H);
+  const freq=parseFloat(document.getElementById('freq-sl').value)||177;
+  const phi=parseFloat(document.getElementById('phi-sl').value)||1.618;
+  const grav=parseFloat(document.getElementById('grav-sl').value)||5;
+  const elSym = document.getElementById('el-sel').value || 'H';
+  const el = ELEMENTS[elSym] || ELEMENTS['H'];
+  const gr=ctx.createLinearGradient(0,0,W,0);
+  gr.addColorStop(0,el.cor||'#a0c8ff'); gr.addColorStop(1,'#00f2ff');
+  ctx.strokeStyle=gr; ctx.lineWidth=2; ctx.shadowColor=el.cor||'#00f2ff'; ctx.shadowBlur=8;
+  ctx.beginPath();
+  for(let x=0;x<W;x++){
+    const t=(x/W)*Math.PI*2*(freq/55);
+    const amp=(H/2-8)*(0.45+0.45*Math.sin(wavePhase*1.8))*.9;
+    const y=H/2+Math.sin(t+wavePhase)*amp*.7+Math.sin(t*phi+wavePhase*1.4)*amp*.18+Math.sin(t*grav*.25+wavePhase)*amp*.12;
+    x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke(); wavePhase+=.035;
+  requestAnimationFrame(drawWave);
+}
+
+// ======================== INICIALIZAÇÃO E EVENTOS ========================
+function buildElementSelect(){
+  const sel=document.getElementById('el-sel'); sel.innerHTML='';
+  Object.keys(ELEMENTS).sort((a,b)=>ELEMENTS[a].Z-ELEMENTS[b].Z).forEach(sym=>{
+    const o=document.createElement('option'); o.value=sym;
+    o.textContent=`${sym} — ${ELEMENTS[sym].nome} (${ELEMENTS[sym].freq} Hz)`;
+    sel.appendChild(o);
+  });
+  sel.value='H';
+}
+function buildDurGrid(){
+  const g=document.getElementById('dur-grid'); g.innerHTML='';
+  [30,45,60,90,120,180,240].forEach(sec=>{
+    const b=document.createElement('button');
+    b.className='dur-btn'+(sec===totalDur?' sel':'');
+    b.dataset.sec=sec;
+    b.innerHTML=`${sec<60?sec+'s':Math.floor(sec/60)+'min'}<div class="dur-label">${sec<60?'Vinheta':sec===60?'1 min':sec===90?'Loading':'Trilha'}</div>`;
+    b.addEventListener('click',()=>{
+      totalDur=sec;
+      document.getElementById('dur-custom').value=sec;
+      document.querySelectorAll('.dur-btn').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      updateUIFromScenes();
+    });
+    g.appendChild(b);
+  });
+}
+function buildGenrePills(){
+  const g=document.getElementById('genre-pills'); g.innerHTML='';
+  Object.entries(GENRES).forEach(([k,v])=>{
+    const b=document.createElement('button');
+    b.className='pill'+(k===curGenre?' sel':'');
+    b.textContent=v.label;
+    b.addEventListener('click',()=>{
+      curGenre=k;
+      document.querySelectorAll('#genre-pills .pill').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      updatePrompts();
+    });
+    g.appendChild(b);
+  });
+}
+function buildPromptTabs(){
+  const t=document.getElementById('prompt-tabs'); t.innerHTML='';
+  AI_PLATFORMS.forEach(ai=>{
+    const b=document.createElement('button');
+    b.className='ptab'+(ai.id===curPlatform?' sel':'');
+    b.textContent=ai.label;
+    if(ai.id===curPlatform){b.style.borderColor=ai.color;b.style.color=ai.color;}
+    b.addEventListener('click',()=>{
+      curPlatform=ai.id;
+      document.querySelectorAll('.ptab').forEach(x=>{x.classList.remove('sel');x.style.borderColor='';x.style.color='';});
+      b.classList.add('sel'); b.style.borderColor=ai.color; b.style.color=ai.color;
+      document.getElementById('ai-guide-box').textContent=AI_GUIDES[ai.id]||'';
+      updatePrompts();
+    });
+    t.appendChild(b);
+  });
+}
+function buildMath(){
+  document.getElementById('math-display').innerHTML=
+  `118 × 241 × 81 × 201 × 2 × 10 × 101 × 101\n`+
+  `= <span style="color:var(--gold)">94.636.564.383.600 combinações</span>\n`+
+  `≈ 3.000.000 anos a 1 prompt/s\n`+
+  `+ seed → resultado = <span style="color:var(--cyan)">∞ infinito</span>`;
+}
+function switchPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.page===name));
+  if(name==='timeline') buildTimeline();
+}
+function setupEvents(){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.addEventListener('click',()=>switchPage(t.dataset.page)));
+  document.getElementById('el-sel').addEventListener('change',e=>{
+    const el=ELEMENTS[e.target.value];
+    document.getElementById('freq-sl').value=Math.min(300,Math.max(60,reduceOctaves(el.freq)));
+    document.getElementById('freq-v').textContent=document.getElementById('freq-sl').value;
+    document.getElementById('grav-sl').value=el.grav;
+    document.getElementById('grav-v').textContent=el.grav.toFixed(1);
+    document.getElementById('el-sym').textContent=e.target.value;
+    document.getElementById('el-name').textContent=el.nome;
+    document.getElementById('el-freq').textContent=`f₀: ${el.freq} Hz → audível: ${reduceOctaves(el.freq)} Hz`;
+    document.getElementById('el-role').textContent=el.role;
+    document.getElementById('st-sym').textContent=e.target.value;
+    document.getElementById('st-freq').textContent=reduceOctaves(el.freq)+' Hz';
+    updatePrompts();
+  });
+  [{id:'freq',fmt:v=>v},{id:'grav',fmt:v=>parseFloat(v).toFixed(1)},{id:'phi',fmt:v=>parseFloat(v).toFixed(3)},{id:'bpm',fmt:v=>v},{id:'int',fmt:v=>parseFloat(v).toFixed(2)}].forEach(({id,fmt})=>{
+    const sl=document.getElementById(id+'-sl'), vl=document.getElementById(id+'-v');
+    sl.addEventListener('input',()=>{vl.textContent=fmt(sl.value);updatePrompts();});
+  });
+  document.getElementById('mode-n').addEventListener('click',()=>{curMode='normal'; document.getElementById('mode-n').classList.add('sel'); document.getElementById('mode-d').classList.remove('sel'); updatePrompts();});
+  document.getElementById('mode-d').addEventListener('click',()=>{curMode='desentrelacar'; document.getElementById('mode-d').classList.add('sel'); document.getElementById('mode-n').classList.remove('sel'); updatePrompts();});
+  document.getElementById('dur-apply-btn').addEventListener('click',()=>{
+    const v=parseInt(document.getElementById('dur-custom').value)||35;
+    totalDur=Math.min(240,Math.max(30,v));
+    document.getElementById('dur-custom').value=totalDur;
+    document.querySelectorAll('.dur-btn').forEach(b=>b.classList.toggle('sel',parseInt(b.dataset.sec)===totalDur));
+    updateUIFromScenes();
+  });
+  document.getElementById('play-master-btn').addEventListener('click',playAllScenes);
+  document.getElementById('copy-quick').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('quick-prompt').textContent); alert('Copiado!');});
+  document.getElementById('copy-main-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('prompt-main').textContent); alert('Copiado!');});
+  document.getElementById('copy-scene-prompt-btn').addEventListener('click',()=>{navigator.clipboard.writeText(generatePrompt('scene',activeSceneIdx)); alert('Copiado!');});
+  document.getElementById('export-roteiro-btn').addEventListener('click',()=>{
+    let rot=`=== ALMAFLUXO · ROTEIRO COMPLETO ===\nGerado: ${new Date().toLocaleString('pt-BR')} | Duração: ${fmtTime(totalDur)}\n\n`;
+    for(let i=0;i<userScenes.length;i++) rot+=generatePrompt('scene',i)+'\n\n---\n\n';
+    navigator.clipboard.writeText(rot); alert('Roteiro exportado!');
+  });
+  document.getElementById('seed-rand').addEventListener('click',()=>{
+    const s=Math.floor(Math.random()*999999)+1;
+    document.getElementById('seed-in').value=s; document.getElementById('seed-prompt').value=s;
+    document.getElementById('seed-display').textContent=`Seed fixada: ${s}`; updatePrompts();
+  });
+  document.getElementById('seed-clear').addEventListener('click',()=>{
+    document.getElementById('seed-in').value=''; document.getElementById('seed-prompt').value='';
+    document.getElementById('seed-display').textContent='Seed: —'; updatePrompts();
+  });
+  document.getElementById('seed-in').addEventListener('input',e=>{
+    document.getElementById('seed-prompt').value=e.target.value;
+    document.getElementById('seed-display').textContent=e.target.value?`Seed fixada: ${e.target.value}`:'Seed: —';
+    updatePrompts();
+  });
+  document.getElementById('seed-prompt').addEventListener('input',e=>{
+    document.getElementById('seed-in').value=e.target.value;
+    updatePrompts();
+  });
+  document.getElementById('add-scene-btn').addEventListener('click',()=>{
+    userScenes.push({sym:'H', effect:'sine_lfo', label:'Nova Cena', layer:'Cena personalizada', color:'#88aaff'});
+    updateUIFromScenes();
+  });
+}
+// INIT
+(function init(){
+  buildElementSelect();
+  buildDurGrid();
+  buildGenrePills();
+  buildPromptTabs();
+  buildMath();
+  buildTimeline();
+  updateStats();
+  updatePrompts();
+  setupEvents();
+  drawWave();
+  document.getElementById('ai-guide-box').textContent = AI_GUIDES.suno;
+  document.getElementById('el-sel').dispatchEvent(new Event('change'));
+})();
+</script>
 </body>
 </html>
