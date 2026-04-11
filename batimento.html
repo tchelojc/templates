@@ -99,7 +99,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .dur-btn .dur-label{font-size:9px;color:var(--text-dim);margin-top:4px;font-family:'Rajdhani',sans-serif;letter-spacing:1px;}
 
 /* TIMELINE SCENES (EDITÁVEL) */
-.scene-row{display:grid;grid-template-columns:70px 1.6fr 1fr 90px 100px 80px 36px 30px;
+.scene-row{display:grid;grid-template-columns:70px 1.4fr 1fr 70px 80px 60px 60px 80px 36px 30px;
            align-items:center;gap:10px;padding:8px 12px;border-radius:12px;
            border:1px solid rgba(212,168,67,.1);background:rgba(5,10,20,.6);
            cursor:pointer;transition:.2s;font-family:'Share Tech Mono',monospace;font-size:11px;margin-bottom:6px;}
@@ -392,10 +392,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="card">
     <div class="card-title"><span class="icon">🎬</span>TIMELINE CINEMATOGRÁFICA (EDITÁVEL)</div>
     <div class="tip-box">
-      Cada cena: escolha o elemento químico e o efeito sonoro. Clique em ▶ para preview. PLAY TOTAL executa toda a sequência. Use + para adicionar cenas e ✕ para remover.
+    <strong>🎬 Timeline Cinematográfica Editável</strong><br>
+    Cada cena possui <strong>elemento químico</strong>, <strong>efeito sonoro</strong>, <strong>BPM"100"</strong> e <strong>intensidade"0,70"</strong> independentes. 
+    Clique em ▶ para preview da cena. O botão <strong>PLAY TOTAL</strong> executa a sequência completa com os tempos proporcionais. 
+    Use <strong>+</strong> para adicionar cenas, <strong>✕</strong> para remover e <strong>📋 ENVIAR TIMELINE PARA PROMPT</strong> para gerar o roteiro completo com todas as configurações por cena.
     </div>
     <div id="timeline-container"></div>
     <button class="add-scene-btn" id="add-scene-btn">+ ADICIONAR CENA</button>
+    <button class="add-scene-btn" id="timeline-to-prompt-btn" style="margin-top: 8px; background: rgba(0,242,255,0.08); border-color: var(--cyan); color: var(--cyan);">📋 ENVIAR TIMELINE PARA PROMPT</button>
   </div>
 
   <div class="card">
@@ -805,16 +809,16 @@ function getTimbreEN(sym){const e=ELEMENTS[sym];if(!e)return'pure sine wave';if(
 
 // ======================== ESTADO EDITÁVEL DA TIMELINE ========================
 let userScenes = [
-  {sym:'H', effect:'sine_lfo', label:'Abertura · Hidrogênio pulsando', layer:'Tom senoidal puro em 1420 Hz, pulsação lenta (LFO 2 Hz), volume baixo. Representa o ponto zero, o nascimento.', color:'#a0c8ff'},
-  {sym:'H', effect:'whoosh', label:'Dropdown / Seleção Hidrogênio', layer:'Mantém o tom de H. Adiciona ruído "whoosh" (0.5s) ao abrir o dropdown. Continuidade com leveza de transição.', color:'#a0c8ff'},
-  {sym:'C', effect:'crossfade', label:'Seleção Carbono', layer:'Crossfade de 1s: H some, entra 1200 Hz. Pulsação levemente mais rápida (LFO 2.5 Hz). Mudança de estado.', color:'#a8c8a8'},
-  {sym:'Au', effect:'harmonic', label:'Seleção Ouro', layer:'Tom 1340 Hz + harmônico sutil em 2680 Hz (oitava acima). Timbre metálico brilhante. Sensação de valor e permanência.', color:'#FFD700'},
-  {sym:'Og', effect:'cosmic', label:'Seleção Oganessônio', layer:'Tom agudo em 11800 Hz (quase limite audível). Deve ser sentido como pressão sonora, não apenas ouvido. Cósmico.', color:'#6A0DAD'},
-  {sym:'H', effect:'glissando', label:'Slider Frequência → aceleração', layer:'Glissando ascendente do tom atual até pico (290 Hz range), depois corte abrupto. Efeito de aceleração quântica.', color:'#ff6060'},
-  {sym:'H', effect:'subgrave', label:'Singularidade 9.0 → motor cósmico', layer:'Subgrave 30–60 Hz crescendo em intensidade. Como um motor cósmico sendo ligado. Sentido no corpo, não apenas no ouvido.', color:'#c060ff'},
-  {sym:'H', effect:'desentrelaca', label:'Modo Desentrelaçar', layer:'Ruído branco filtrado que se expande em stereo, como partículas se afastando. Sensação de dissolução.', color:'#ff8840'},
-  {sym:'H', effect:'heartbeat', label:'Retorno · Hidrogênio + Batimento', layer:'Retorno ao tom puro de 1420 Hz. Kick profundo (55 Hz) sincronizado como batimento cardíaco. Reconexão.', color:'#a0c8ff'},
-  {sym:'H', effect:'fade_out', label:'Fade final · Silêncio', layer:'Tom de H desvanece lentamente. Batimento cardíaco por 2s isolado. Silêncio total. Conclusão do ciclo.', color:'#4a6a8a'},
+  {sym:'H', effect:'sine_lfo', bpm: 100, intensity: 0.7, label:'Abertura · Hidrogênio pulsando', layer:'Tom senoidal puro em 1420 Hz, pulsação lenta (LFO 2 Hz), volume baixo. Representa o ponto zero, o nascimento.', color:'#a0c8ff'},
+  {sym:'H', effect:'whoosh', bpm: 100, intensity: 0.7, label:'Dropdown / Seleção Hidrogênio', layer:'Mantém o tom de H. Adiciona ruído "whoosh" (0.5s) ao abrir o dropdown. Continuidade com leveza de transição.', color:'#a0c8ff'},
+  {sym:'C', effect:'crossfade', bpm: 100, intensity: 0.7, label:'Seleção Carbono', layer:'Crossfade de 1s: H some, entra 1200 Hz. Pulsação levemente mais rápida (LFO 2.5 Hz). Mudança de estado.', color:'#a8c8a8'},
+  {sym:'Au', effect:'harmonic', bpm: 100, intensity: 0.7, label:'Seleção Ouro', layer:'Tom 1340 Hz + harmônico sutil em 2680 Hz (oitava acima). Timbre metálico brilhante. Sensação de valor e permanência.', color:'#FFD700'},
+  {sym:'Og', effect:'cosmic', bpm: 100, intensity: 0.7, label:'Seleção Oganessônio', layer:'Tom agudo em 11800 Hz (quase limite audível). Deve ser sentido como pressão sonora, não apenas ouvido. Cósmico.', color:'#6A0DAD'},
+  {sym:'H', effect:'glissando', bpm: 100, intensity: 0.7, label:'Slider Frequência → aceleração', layer:'Glissando ascendente do tom atual até pico (290 Hz range), depois corte abrupto. Efeito de aceleração quântica.', color:'#ff6060'},
+  {sym:'H', effect:'subgrave', bpm: 100, intensity: 0.7, label:'Singularidade 9.0 → motor cósmico', layer:'Subgrave 30–60 Hz crescendo em intensidade. Como um motor cósmico sendo ligado. Sentido no corpo, não apenas no ouvido.', color:'#c060ff'},
+  {sym:'H', effect:'desentrelaca', bpm: 100, intensity: 0.7, label:'Modo Desentrelaçar', layer:'Ruído branco filtrado que se expande em stereo, como partículas se afastando. Sensação de dissolução.', color:'#ff8840'},
+  {sym:'H', effect:'heartbeat', bpm: 100, intensity: 0.7, label:'Retorno · Hidrogênio + Batimento', layer:'Retorno ao tom puro de 1420 Hz. Kick profundo (55 Hz) sincronizado como batimento cardíaco. Reconexão.', color:'#a0c8ff'},
+  {sym:'H', effect:'fade_out', bpm: 100, intensity: 0.7, label:'Fade final · Silêncio', layer:'Tom de H desvanece lentamente. Batimento cardíaco por 2s isolado. Silêncio total. Conclusão do ciclo.', color:'#4a6a8a'},
 ];
 let totalDur = 35;
 let curMode = 'normal', curGenre = 'hiphop', curPlatform = 'suno';
@@ -863,12 +867,13 @@ function seed(){ return document.getElementById('seed-in').value || document.get
 function fmtTime(s){ const m=Math.floor(s/60), ss=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'); }
 
 // ======================== PROMPT GENERATOR (ATUALIZADO PARA TIMELINE EDITÁVEL) ========================
+// ======================== PROMPT GENERATOR (ATUALIZADO PARA TIMELINE EDITÁVEL) ========================
 function generatePrompt(platform, sceneIdx){
   const freq = parseFloat(document.getElementById('freq-sl').value)||177;
   const grav = parseFloat(document.getElementById('grav-sl').value)||5;
   const phi = parseFloat(document.getElementById('phi-sl').value)||1.618;
-  const bpm = parseInt(document.getElementById('bpm-sl').value)||100;
-  const intensity = parseFloat(document.getElementById('int-sl').value)||0.7;
+  const globalBpm = parseInt(document.getElementById('bpm-sl').value)||100;
+  const globalIntensity = parseFloat(document.getElementById('int-sl').value)||0.7;
   const genre = GENRES[curGenre]?.en||GENRES.hiphop.en;
   const modeDesc = curMode==='normal'
     ?'stable harmonic resonance, grounded and continuous'
@@ -878,12 +883,15 @@ function generatePrompt(platform, sceneIdx){
   const durMin = durSec>=60?`${Math.floor(durSec/60)}:${String(durSec%60).padStart(2,'0')} minutes`:`${durSec} seconds`;
   const times = getSceneTimes();
 
+  // Prompt para uma cena específica (SUNO CENA)
   if(platform==='scene' && sceneIdx!==undefined){
     const sc = userScenes[sceneIdx];
     const el = ELEMENTS[sc.sym];
     if(!el) return 'Erro: elemento não encontrado.';
     const scFreq = reduceOctaves(el.freq);
     const scDur = (times[sceneIdx].t1 - times[sceneIdx].t0).toFixed(1);
+    const sceneBpm = sc.bpm !== undefined ? sc.bpm : globalBpm;
+    const sceneIntensity = sc.intensity !== undefined ? sc.intensity : globalIntensity;
     return [
       `=== SCENE ${sceneIdx+1}/${userScenes.length}: ${sc.label.toUpperCase()} ===`,
       `Time: ${times[sceneIdx].t0.toFixed(1)}s – ${times[sceneIdx].t1.toFixed(1)}s (${scDur} seconds)`,
@@ -893,7 +901,7 @@ function generatePrompt(platform, sceneIdx){
       `Core frequency: ${scFreq} Hz (${getTimbreEN(sc.sym)})`,
       ``,
       `SOUND LAYER: ${sc.layer}`,
-      `Rhythm foundation: ${genre}. BPM: ${bpm}. Intensity: ${Math.round(intensity*100)}%.`,
+      `Rhythm foundation: ${genre}. BPM: ${sceneBpm}. Intensity: ${Math.round(sceneIntensity*100)}%.`,
       sc.effect==='desentrelaca'?'APPLY: stereo white noise expanding from center to full width.':'',
       sc.effect==='heartbeat'?'APPLY: deep kick drum at 55 Hz every 500ms simulating heartbeat.':'',
       sc.effect==='glissando'?'APPLY: pitch glissando ascending, then hard cut to silence.':'',
@@ -910,11 +918,12 @@ function generatePrompt(platform, sceneIdx){
     return el ? `Scene ${idx+1} (${times[idx].t0.toFixed(0)}-${times[idx].t1.toFixed(0)}s): ${el.nome} ${reduceOctaves(el.freq)}Hz effect:${sc.effect}` : '';
   }).filter(Boolean).join('\n');
 
+  // Prompts para plataformas específicas
   if(platform==='suno') return [
     `Instrumental only. No vocals. No lyrics.`,
     `CONCEPT: Quantum harmonic composition based on ${userScenes.map(s=>s.sym).join(' → ')}.`,
     `CORE DRONE: ${freq} Hz, ${getTimbreEN(userScenes[0].sym)}. Amplitude modulated (tremolo) at 2.5 Hz.`,
-    `RHYTHM: ${genre}. BPM: ${bpm}. Master intensity: ${Math.round(intensity*100)}%.`,
+    `RHYTHM: ${genre}. BPM: ${globalBpm}. Master intensity: ${Math.round(globalIntensity*100)}%.`,
     `SUBGRAVE: gentle layer at 40 Hz (volume ~20%). Low-pass filter phi-ratio: ${phi}.`,
     `GRAVITY DEPTH: ${grav}/9.0 — heavier gravity = deeper subgrave and slower LFO.`,
     `SOUND CHARACTER: ${modeDesc}.`,
@@ -926,7 +935,7 @@ function generatePrompt(platform, sceneIdx){
   if(platform==='udio') return [
     `[INSTRUMENTAL] [NO VOCALS] [LOOP]`,
     `Element sequence: ${userScenes.map(s=>s.sym).join(' → ')}`,
-    `Style: ${genre}. Tempo: ${bpm} BPM.`,
+    `Style: ${genre}. Tempo: ${globalBpm} BPM.`,
     `Timeline:\n${scenesSummary}`,
     `Target duration: ${durMin}. No fade.`,
     seedLine
@@ -935,7 +944,7 @@ function generatePrompt(platform, sceneIdx){
   if(platform==='stable') return [
     `Generate a ${durSec}-second instrumental piece.`,
     `PRIMARY TONE: sine drone at ${freq} Hz, volume modulated by LFO at 2.5 Hz (tremolo).`,
-    `RHYTHM: ${genre}. Tempo: ${bpm} BPM.`,
+    `RHYTHM: ${genre}. Tempo: ${globalBpm} BPM.`,
     `SCENES:\n${scenesSummary}`,
     `LOW-PASS FILTER: cutoff = ${Math.round(200+phi*300)} Hz (phi=${phi}).`,
     `DYNAMIC: ${modeDesc}.`,
@@ -956,12 +965,61 @@ function generatePrompt(platform, sceneIdx){
     `SYNTHESIS STEPS:`,
     `1. Generate sine oscillator at ${freq} Hz`,
     `2. Apply LFO at 2.5 Hz to amplitude gain`,
-    `3. Rhythm layer: ${genre}. BPM: ${bpm}`,
+    `3. Rhythm layer: ${genre}. BPM: ${globalBpm}`,
     `SCENE BREAKDOWN:\n${scenesSummary}`,
     seedLine
   ].join('\n');
 
   return 'Selecione uma plataforma.';
+}
+
+// Geração de prompt mestre da timeline (botão "ENVIAR TIMELINE PARA PROMPT")
+function generateTimelinePrompt() {
+  const times = getSceneTimes();
+  const globalFreq = parseFloat(document.getElementById('freq-sl').value) || 177;
+  const globalGrav = parseFloat(document.getElementById('grav-sl').value) || 5;
+  const globalPhi = parseFloat(document.getElementById('phi-sl').value) || 1.618;
+  const globalMode = curMode;
+  const globalGenre = GENRES[curGenre]?.en || GENRES.hiphop.en;
+  const seedLine = seed() ? `\nSEED: ${seed()}` : '';
+
+  let prompt = `=== ALMAFLUXO TIMELINE MASTER PROMPT ===\n`;
+  prompt += `Global settings: Base Freq ${globalFreq} Hz | Gravity ${globalGrav} | Phi ${globalPhi} | Mode: ${globalMode} | Genre: ${globalGenre}\n`;
+  prompt += `Total duration: ${fmtTime(totalDur)} (${totalDur}s) | Scenes: ${userScenes.length}\n\n`;
+
+  userScenes.forEach((scene, idx) => {
+    const el = ELEMENTS[scene.sym];
+    if (!el) return;
+    const audible = reduceOctaves(el.freq);
+    const t = times[idx];
+    const bpm = scene.bpm !== undefined ? scene.bpm : 100;
+    const intensity = scene.intensity !== undefined ? scene.intensity : 0.7;
+
+    prompt += `SCENE ${idx+1} [${t.t0.toFixed(1)}s - ${t.t1.toFixed(1)}s] (${(t.t1-t.t0).toFixed(1)}s)\n`;
+    prompt += `  Element: ${el.nome} (${scene.sym}) | Role: ${el.role}\n`;
+    prompt += `  Frequency: ${el.freq} Hz → audible ${audible} Hz | Timbre: ${getTimbreEN(scene.sym)}\n`;
+    prompt += `  Effect: ${scene.effect}\n`;
+    prompt += `  BPM: ${bpm} | Intensity: ${Math.round(intensity*100)}%\n`;
+    prompt += `  Layer: ${scene.layer}\n`;
+    prompt += `  ---\n`;
+  });
+
+  prompt += `\n[INSTRUMENTAL] Generate a seamless ${totalDur}s piece following the scene sequence above. ${globalGenre} rhythm, with scene-specific BPM and intensity variations.`;
+  prompt += seedLine;
+
+  return prompt;
+}
+
+// Envia o prompt mestre para a interface e área de transferência
+function sendTimelineToPrompt() {
+  const timelinePrompt = generateTimelinePrompt();
+  document.getElementById('quick-prompt').textContent = timelinePrompt;
+  document.getElementById('prompt-main').textContent = timelinePrompt;
+  navigator.clipboard.writeText(timelinePrompt).then(() => {
+    alert('✅ Timeline enviada para o prompt e copiada!');
+  }).catch(() => {
+    alert('📋 Timeline enviada para o prompt.');
+  });
 }
 
 // ======================== UI E ATUALIZAÇÕES ========================
@@ -991,6 +1049,8 @@ function buildTimeline(){
       <span class="sc-time">${times[idx].t0.toFixed(1)}s–${times[idx].t1.toFixed(1)}s</span>
       <select class="sc-select">${Object.keys(ELEMENTS).sort((a,b)=>ELEMENTS[a].Z-ELEMENTS[b].Z).map(sym=>`<option value="${sym}" ${scene.sym===sym?'selected':''}>${sym} — ${ELEMENTS[sym].nome}</option>`).join('')}</select>
       <select class="sc-effect-select">${EFFECTS.map(eff=>`<option value="${eff}" ${scene.effect===eff?'selected':''}>${eff}</option>`).join('')}</select>
+      <input type="number" class="sc-bpm" value="${scene.bpm || 100}" min="60" max="180" step="1" style="width:100%;background:rgba(5,10,20,.9);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:2px 6px;font-size:11px;text-align:center;">
+      <input type="number" class="sc-intensity" value="${scene.intensity || 0.7}" min="0" max="1" step="0.01" style="width:100%;background:rgba(5,10,20,.9);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:2px 6px;font-size:11px;text-align:center;">
       <span class="sc-freq">${el.freq} Hz → ${audible} Hz</span>
       <span class="sc-time" style="color:var(--text-dim)">${scene.effect}</span>
       <button class="sc-play" title="Preview cena">▶</button>
@@ -1003,6 +1063,14 @@ function buildTimeline(){
     row.querySelector('.sc-effect-select').addEventListener('change', e => {
       scene.effect = e.target.value;
       updateUIFromScenes();
+    });
+    row.querySelector('.sc-bpm').addEventListener('change', e => {
+    scene.bpm = parseInt(e.target.value) || 100;
+    updateUIFromScenes();
+    });
+    row.querySelector('.sc-intensity').addEventListener('change', e => {
+    scene.intensity = parseFloat(e.target.value) || 0.7;
+    updateUIFromScenes();
     });
     row.querySelector('.sc-play').addEventListener('click', e => {
       e.stopPropagation(); stopAll(); activeSceneIdx = idx;
@@ -1179,7 +1247,10 @@ function switchPage(name){
   if(name==='timeline') buildTimeline();
 }
 function setupEvents(){
+  // Navegação
   document.querySelectorAll('.nav-tab').forEach(t=>t.addEventListener('click',()=>switchPage(t.dataset.page)));
+
+  // Elemento primordial
   document.getElementById('el-sel').addEventListener('change',e=>{
     const el=ELEMENTS[e.target.value];
     document.getElementById('freq-sl').value=Math.min(300,Math.max(60,reduceOctaves(el.freq)));
@@ -1194,12 +1265,28 @@ function setupEvents(){
     document.getElementById('st-freq').textContent=reduceOctaves(el.freq)+' Hz';
     updatePrompts();
   });
+
+  // Sliders
   [{id:'freq',fmt:v=>v},{id:'grav',fmt:v=>parseFloat(v).toFixed(1)},{id:'phi',fmt:v=>parseFloat(v).toFixed(3)},{id:'bpm',fmt:v=>v},{id:'int',fmt:v=>parseFloat(v).toFixed(2)}].forEach(({id,fmt})=>{
     const sl=document.getElementById(id+'-sl'), vl=document.getElementById(id+'-v');
     sl.addEventListener('input',()=>{vl.textContent=fmt(sl.value);updatePrompts();});
   });
-  document.getElementById('mode-n').addEventListener('click',()=>{curMode='normal'; document.getElementById('mode-n').classList.add('sel'); document.getElementById('mode-d').classList.remove('sel'); updatePrompts();});
-  document.getElementById('mode-d').addEventListener('click',()=>{curMode='desentrelacar'; document.getElementById('mode-d').classList.add('sel'); document.getElementById('mode-n').classList.remove('sel'); updatePrompts();});
+
+  // Modo
+  document.getElementById('mode-n').addEventListener('click',()=>{
+    curMode='normal'; 
+    document.getElementById('mode-n').classList.add('sel'); 
+    document.getElementById('mode-d').classList.remove('sel'); 
+    updatePrompts();
+  });
+  document.getElementById('mode-d').addEventListener('click',()=>{
+    curMode='desentrelacar'; 
+    document.getElementById('mode-d').classList.add('sel'); 
+    document.getElementById('mode-n').classList.remove('sel'); 
+    updatePrompts();
+  });
+
+  // Duração customizada
   document.getElementById('dur-apply-btn').addEventListener('click',()=>{
     const v=parseInt(document.getElementById('dur-custom').value)||35;
     totalDur=Math.min(240,Math.max(30,v));
@@ -1207,23 +1294,45 @@ function setupEvents(){
     document.querySelectorAll('.dur-btn').forEach(b=>b.classList.toggle('sel',parseInt(b.dataset.sec)===totalDur));
     updateUIFromScenes();
   });
+
+  // Playback
   document.getElementById('play-master-btn').addEventListener('click',playAllScenes);
-  document.getElementById('copy-quick').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('quick-prompt').textContent); alert('Copiado!');});
-  document.getElementById('copy-main-btn').addEventListener('click',()=>{navigator.clipboard.writeText(document.getElementById('prompt-main').textContent); alert('Copiado!');});
-  document.getElementById('copy-scene-prompt-btn').addEventListener('click',()=>{navigator.clipboard.writeText(generatePrompt('scene',activeSceneIdx)); alert('Copiado!');});
+
+  // Cópias
+  document.getElementById('copy-quick').addEventListener('click',()=>{
+    navigator.clipboard.writeText(document.getElementById('quick-prompt').textContent); 
+    alert('Copiado!');
+  });
+  document.getElementById('copy-main-btn').addEventListener('click',()=>{
+    navigator.clipboard.writeText(document.getElementById('prompt-main').textContent); 
+    alert('Copiado!');
+  });
+  document.getElementById('copy-scene-prompt-btn').addEventListener('click',()=>{
+    navigator.clipboard.writeText(generatePrompt('scene',activeSceneIdx)); 
+    alert('Copiado!');
+  });
+
+  // Exportar roteiro completo
   document.getElementById('export-roteiro-btn').addEventListener('click',()=>{
     let rot=`=== ALMAFLUXO · ROTEIRO COMPLETO ===\nGerado: ${new Date().toLocaleString('pt-BR')} | Duração: ${fmtTime(totalDur)}\n\n`;
     for(let i=0;i<userScenes.length;i++) rot+=generatePrompt('scene',i)+'\n\n---\n\n';
-    navigator.clipboard.writeText(rot); alert('Roteiro exportado!');
+    navigator.clipboard.writeText(rot); 
+    alert('Roteiro exportado!');
   });
+
+  // Seeds
   document.getElementById('seed-rand').addEventListener('click',()=>{
     const s=Math.floor(Math.random()*999999)+1;
-    document.getElementById('seed-in').value=s; document.getElementById('seed-prompt').value=s;
-    document.getElementById('seed-display').textContent=`Seed fixada: ${s}`; updatePrompts();
+    document.getElementById('seed-in').value=s; 
+    document.getElementById('seed-prompt').value=s;
+    document.getElementById('seed-display').textContent=`Seed fixada: ${s}`; 
+    updatePrompts();
   });
   document.getElementById('seed-clear').addEventListener('click',()=>{
-    document.getElementById('seed-in').value=''; document.getElementById('seed-prompt').value='';
-    document.getElementById('seed-display').textContent='Seed: —'; updatePrompts();
+    document.getElementById('seed-in').value=''; 
+    document.getElementById('seed-prompt').value='';
+    document.getElementById('seed-display').textContent='Seed: —'; 
+    updatePrompts();
   });
   document.getElementById('seed-in').addEventListener('input',e=>{
     document.getElementById('seed-prompt').value=e.target.value;
@@ -1234,10 +1343,15 @@ function setupEvents(){
     document.getElementById('seed-in').value=e.target.value;
     updatePrompts();
   });
+
+  // Timeline: adicionar cena
   document.getElementById('add-scene-btn').addEventListener('click',()=>{
-    userScenes.push({sym:'H', effect:'sine_lfo', label:'Nova Cena', layer:'Cena personalizada', color:'#88aaff'});
+    userScenes.push({sym:'H', effect:'sine_lfo', bpm: 100, intensity: 0.7, label:'Nova Cena', layer:'Cena personalizada', color:'#88aaff'});
     updateUIFromScenes();
   });
+
+  // Timeline: enviar para prompt (listener corrigido, fora do change do elemento)
+  document.getElementById('timeline-to-prompt-btn').addEventListener('click', sendTimelineToPrompt);
 }
 // INIT
 (function init(){
