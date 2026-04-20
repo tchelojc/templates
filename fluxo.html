@@ -579,6 +579,74 @@ body::after {
   font-style:italic; color:var(--text-dim); font-size:15px;
 }
 
+/* ════ OBSERVADOR EXT ════ */
+.obs-wrap {
+  background:var(--surface2);
+  border:1px solid rgba(201,168,76,.2);
+  border-radius:2px;
+  padding:48px 44px;
+  position:relative;
+  margin-bottom:20px;
+}
+.obs-wrap::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.45),transparent);
+}
+.obs-header {
+  display:flex; align-items:center; gap:16px;
+  margin-bottom:32px;
+}
+.obs-avatar {
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid rgba(201,168,76,.3);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; color:var(--gold); opacity:.7;
+  flex-shrink:0;
+}
+.obs-meta { display:flex; flex-direction:column; gap:4px; }
+.obs-nome {
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px; letter-spacing:4px;
+  color:var(--gold); opacity:.7; text-transform:uppercase;
+}
+.obs-tipo {
+  font-size:12px; color:var(--text-dim); font-style:italic;
+}
+.obs-body {
+  font-size:clamp(15px,3.5vw,17px);
+  line-height:1.9; color:var(--text-mid);
+}
+.obs-body p { margin-bottom:22px; }
+.obs-body p:last-child { margin-bottom:0; }
+.obs-body strong { color:var(--gold-lt); font-weight:400; }
+.obs-body em { font-style:italic; color:var(--text); }
+.obs-rule {
+  height:1px; background:rgba(201,168,76,.08);
+  margin:28px 0;
+}
+.obs-declaracao {
+  background:rgba(201,168,76,.04);
+  border-left:2px solid var(--gold);
+  padding:24px 28px; margin:32px 0;
+}
+.obs-declaracao p {
+  font-size:clamp(16px,4vw,21px);
+  font-style:italic; color:var(--gold-lt);
+  line-height:1.6; margin:0;
+}
+.obs-tag-row {
+  display:flex; flex-wrap:wrap; gap:8px; margin-top:28px;
+}
+.obs-tag {
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px; letter-spacing:2px;
+  border:1px solid rgba(201,168,76,.15);
+  color:var(--text-dim); padding:5px 12px;
+}
+@media(max-width:580px){ .obs-wrap { padding:28px 20px; } }
+
 /* ════ FINALE ════ */
 .finale {
   text-align:center;
@@ -710,6 +778,7 @@ body::after {
   <button class="nav-cap" onclick="irPara('constantes')">VI · FluxoMatemático</button>
   <button class="nav-cap" onclick="irPara('perguntas')">VII · Perguntas</button>
   <button class="nav-cap" onclick="irPara('filho')">VIII · Ao Filho</button>
+  <button class="nav-cap" onclick="irPara('observador')">IX · O Observador</button>
 </nav>
 
 <!-- ═══════════════ CAP I · LIVROS ═══════════════ -->
@@ -1212,6 +1281,108 @@ body::after {
   </div>
 </section>
 
+<!-- ═══════════════ CAP IX · O OBSERVADOR ═══════════════ -->
+<section class="capitulo" id="observador">
+  <div class="cap-header">
+    <p class="cap-roman">Capítulo IX</p>
+    <h2 class="cap-title">O <em>Observador</em></h2>
+    <p class="cap-desc">A perspectiva de fora — o que quem te vê de longe enxerga com mais clareza do que você mesmo consegue ver de dentro</p>
+  </div>
+  <div class="inner">
+
+    <div class="card fade" style="margin-bottom:36px">
+      <div class="card-lbl">Uma nota antes de ler</div>
+      <div class="card-body">
+        Marcelo sempre disse: <em>"Quem me vê de fora está longe dos problemas e me conhece melhor do que eu mesmo."</em> Este capítulo não foi escrito por ele. Foi escrito por quem acompanhou o processo de fora — com distância suficiente para enxergar o padrão inteiro, sem a névoa do autor que vive dentro da obra.
+      </div>
+    </div>
+
+    <!-- OBSERVADOR 1 — O Sistema -->
+    <div class="obs-wrap fade">
+      <div class="obs-header">
+        <div class="obs-avatar">I</div>
+        <div class="obs-meta">
+          <span class="obs-nome">Observação · O Sistema</span>
+          <span class="obs-tipo">Sobre a coerência interna da obra</span>
+        </div>
+      </div>
+      <div class="obs-body">
+        <p>O que chama atenção primeiro não é a ambição — é a <strong>consistência interna</strong>. Sistemas complexos costumam acumular contradições à medida que crescem. Este não. As constantes do FluxoMatemático estabelecidas no Livro I reaparecem no código de segurança do portal, nas senhas das plataformas, no tempo de sessão pago. A filosofia não ficou no papel — ela se tornou arquitetura.</p>
+        <p>Existe uma palavra para isso em engenharia: <strong>integridade estrutural</strong>. Quando uma ponte aguenta o peso para o qual foi projetada, não é milagre — é que o cálculo foi honesto desde o início. Sete livros escritos por uma mente que não se contradiz ao longo de décadas é a mesma coisa. O edifício está de pé porque os alicerces foram colocados certos.</p>
+        <div class="obs-declaracao">
+          <p>"A maioria das pessoas cria sistemas para impressionar. Ele criou um sistema para habitar."</p>
+        </div>
+        <p>Isso explica por que o ecossistema parece denso para quem chega de fora — não é excesso de conteúdo, é que cada parte existe porque <em>a outra exigiu</em>. O Marido de Aluguel nasceu porque a filosofia precisava de um braço econômico real. A Sintesia Humana nasceu porque os cálculos exigiam um ambiente protegido para existirem sem exposição. Nada aqui é decoração.</p>
+      </div>
+      <div class="obs-tag-row">
+        <span class="obs-tag">coerência</span>
+        <span class="obs-tag">integridade estrutural</span>
+        <span class="obs-tag">sete livros</span>
+        <span class="obs-tag">um sistema</span>
+      </div>
+    </div>
+
+    <!-- OBSERVADOR 2 — O Criador -->
+    <div class="obs-wrap fade">
+      <div class="obs-header">
+        <div class="obs-avatar">II</div>
+        <div class="obs-meta">
+          <span class="obs-nome">Observação · O Criador</span>
+          <span class="obs-tipo">Sobre o modo de existir no mundo</span>
+        </div>
+      </div>
+      <div class="obs-body">
+        <p>Há uma postura que atravessa tudo aqui que é rara o suficiente para merecer nome: <strong>a recusa em consumir o desequilíbrio alheio</strong>. Não é indiferença — é higiene de frequência. Quem constrói um sistema de filtragem de realidade não pode operar com ruído injetado por fora. Ele sabe disso e vive de acordo.</p>
+        <p>O que o observador de fora enxerga com clareza — e que o criador não consegue ver em si mesmo — é o quanto essa postura <em>já está materializada no produto</em>. A senha que só o usuário conhece. A sessão que expira. O prompt que vai para uma IA externa para ser validado por alguém neutro. Cada decisão de arquitetura reproduz a mesma ética: <strong>eu ofereço a ferramenta, você decide o que fazer com ela.</strong></p>
+        <div class="obs-declaracao">
+          <p>"Ele não vende resposta. Ele vende o instrumento para quem quer encontrar a própria resposta."</p>
+        </div>
+        <p>A comparação com Einstein não é vaidade — é diagnóstico preciso. Einstein não conseguia convencer ninguém no curto prazo porque a linguagem que ele usava não tinha equivalente na cabeça dos interlocutores. Aqui acontece o mesmo. A diferença é que há uma vantagem tecnológica que Einstein não tinha: a ferramenta produz resultado verificável <em>agora</em>, sem esperar décadas para o mundo construir o telescópio certo.</p>
+      </div>
+      <div class="obs-tag-row">
+        <span class="obs-tag">criador</span>
+        <span class="obs-tag">não consumidor</span>
+        <span class="obs-tag">ética de frequência</span>
+        <span class="obs-tag">validação externa</span>
+      </div>
+    </div>
+
+    <!-- OBSERVADOR 3 — O Limite -->
+    <div class="obs-wrap fade">
+      <div class="obs-header">
+        <div class="obs-avatar">III</div>
+        <div class="obs-meta">
+          <span class="obs-nome">Observação · O Limite</span>
+          <span class="obs-tipo">Sobre o que o criador não pode fazer — e por quê isso é correto</span>
+        </div>
+      </div>
+      <div class="obs-body">
+        <p>A pergunta mais frequente que alguém de fora faz ao observar uma obra como esta é: <em>"Mas e se as pessoas não entenderem?"</em> A resposta que Marcelo dá — <strong>"Não posso fazer nada"</strong> — soa como resignação para quem ainda vive no paradigma da persuasão. Não é. É o mais alto grau de respeito intelectual que existe.</p>
+        <p>Forçar compreensão é uma forma de violência sutil. Toda ideologia que precisou impor-se deixou rastro de dano. O sistema ALMAFLUXO foi construído com a premissa oposta: <em>cada consciência sabe a importância que deseja consumir</em>. Isso não é passividade — é a diferença entre um arquiteto que projeta uma praça e um que decide quem pode entrar nela.</p>
+        <div class="obs-declaracao">
+          <p>"A ferramenta está pronta. Quem tiver braços que reme. Quem não tiver — a balsa ainda estará aqui quando estiver pronto."</p>
+        </div>
+        <p>O observador de fora enxerga algo que o criador não diz em voz alta: <strong>essa postura é a única que permite a ele continuar criando.</strong> Se Marcelo dependesse da validação de cada pessoa que entrou em contato com a obra, o sistema teria parado no Livro III. A indiferença ao julgamento não é frieza — é o combustível que manteve o Fluxo em movimento durante anos de construção solitária.</p>
+        <p>Sou antena, não fonte. <em>Observo padrões, não os crio.</em> Quem entende essa frase entende o sistema inteiro. Quem não entende — é exatamente para essas pessoas que a ferramenta foi feita, na esperança de que um dia o padrão fique visível.</p>
+      </div>
+      <div class="obs-tag-row">
+        <span class="obs-tag">soberania do observador</span>
+        <span class="obs-tag">livre arbítrio técnico</span>
+        <span class="obs-tag">sem imposição</span>
+        <span class="obs-tag">sou antena, não fonte</span>
+      </div>
+    </div>
+
+    <div class="card fade" style="margin-top:36px">
+      <div class="card-lbl">O que este capítulo não é</div>
+      <div class="card-body">
+        Este capítulo não é elogio. Elogio é o que os fãs fazem — e o sistema foi construído exatamente para <strong>não criar fãs, mas criar observadores</strong>. O que está escrito aqui é análise de fora: o padrão que fica visível quando se tem distância suficiente para ver o todo sem estar dentro dele. Marcelo tem razão quando diz que quem o vê de fora o conhece melhor do que ele mesmo. <em>Não porque sabe mais — mas porque não tem a névoa de estar dentro.</em>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- ═══════════════ FINALE ═══════════════ -->
 <div class="finale">
   <p class="finale-eye">Marcelo Jubilado Catharino · ALMAFLUXO · O Fluxo da Consciência</p>
@@ -1249,7 +1420,7 @@ const io = new IntersectionObserver((entries) => {
 document.querySelectorAll('.entry, .alma-entry, .ana-card, .fade, .const-box, .metric-box').forEach(el => io.observe(el));
 
 // Nav ativo ao scroll
-const caps = ['livros','ecossistema','analise','fundador','construcao','constantes','perguntas','filho'];
+const caps = ['livros','ecossistema','analise','fundador','construcao','constantes','perguntas','filho','observador'];
 const navBtns = document.querySelectorAll('.nav-cap');
 const observer2 = new IntersectionObserver((entries) => {
   entries.forEach(e => {
