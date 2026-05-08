@@ -20,6 +20,8 @@
   --loucura:   #7a5aa5;
   --aceitacao: #4a8a9a;
   --maestria:  #c9a84c;
+  --vermelho:  #8b3a3a;
+  --brasil:    #4a8a3a;
 }
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
@@ -250,8 +252,38 @@ body::after {
   line-height:1.65;
 }
 
+/* ════ MANIFESTO PULL ════ */
+.pull-manifesto {
+  border-left:3px solid var(--gold);
+  padding:28px 36px; margin:32px 0;
+  background:rgba(201,168,76,.04);
+  position:relative;
+}
+.pull-manifesto::before {
+  content:'';
+  position:absolute; top:0; left:-3px; bottom:0; width:3px;
+  background:linear-gradient(180deg, var(--gold) 0%, var(--maestria) 50%, var(--gold) 100%);
+}
+.pull-manifesto p {
+  font-size:clamp(17px,4.5vw,22px);
+  font-style:italic; color:var(--gold-lt);
+  line-height:1.7; margin:0;
+}
+
+.pull-dark {
+  border-left:2px solid rgba(122,90,165,.4);
+  padding:20px 28px; margin:28px 0;
+  background:rgba(122,90,165,.04);
+}
+.pull-dark p {
+  font-size:clamp(15px,3.8vw,18px);
+  font-style:italic; color:#b8a0d0;
+  line-height:1.6;
+}
+
 /* ════ RULE ════ */
 .rule { height:1px; background:var(--gold-dim); margin:28px 0; }
+.rule-thick { height:2px; background:linear-gradient(90deg, transparent, var(--gold-line), transparent); margin:36px 0; }
 
 /* ════ TAGS ════ */
 .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
@@ -550,6 +582,84 @@ body::after {
 .qa-a { font-size:clamp(14px,3.2vw,16px); color:var(--text-mid); line-height:1.8; }
 .qa-a strong { color:var(--gold-lt); font-weight:400; }
 
+/* ════ MANIFESTO SECTION ════ */
+.manifesto-section {
+  counter-reset: section;
+}
+.manifesto-section .card-body {
+  counter-increment: section;
+}
+.manifesto-num {
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(2rem,5vw,3.5rem);
+  color:var(--gold);
+  opacity:.3;
+  margin-bottom:12px;
+  line-height:1;
+}
+
+.nietzsche-footnote {
+  background:rgba(122,90,165,.06);
+  border-left:2px solid var(--loucura);
+  padding:20px 24px;
+  margin:24px 0;
+  font-size:14px;
+  color:var(--text-dim);
+  line-height:1.7;
+  font-style:italic;
+}
+.nietzsche-footnote strong { color:#b8a0d0; font-weight:400; }
+
+.racionais-reference {
+  background:rgba(74,138,74,.04);
+  border-left:2px solid var(--brasil);
+  padding:20px 24px;
+  margin:24px 0;
+  font-size:14px;
+  color:var(--text-dim);
+  line-height:1.7;
+  font-style:italic;
+}
+.racionais-reference strong { color:#6aaa6a; font-weight:400; }
+
+.deeus-box {
+  background:var(--surface2);
+  border:2px solid rgba(201,168,76,.35);
+  border-radius:2px;
+  padding:36px;
+  text-align:center;
+  margin:32px 0;
+  position:relative;
+}
+.deeus-box::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.deeus-letters {
+  display:flex; justify-content:center; gap:8px;
+  margin-bottom:20px;
+}
+.deeus-letter {
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(2.5rem,6vw,4rem);
+  color:var(--gold-lt);
+  position:relative;
+}
+.deeus-letter-sub {
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px; letter-spacing:3px;
+  color:var(--gold); opacity:.6;
+  text-transform:uppercase;
+}
+.deeus-meaning {
+  font-size:clamp(14px,3vw,16px);
+  color:var(--text-mid);
+  line-height:1.7;
+  max-width:600px;
+  margin:0 auto;
+}
+
 /* ════ CARTA FILHO ════ */
 .carta-wrap {
   background:var(--surface2);
@@ -730,6 +840,8 @@ body::after {
   .carta-wrap { padding:24px 20px; }
   .finale { padding:72px 24px 60px; }
   .grid-2 { grid-template-columns:1fr; }
+  .nav-capitulos { gap:0; }
+  .nav-cap { padding:14px 14px; font-size:8px; letter-spacing:2px; }
 }
 
 /* ════ ENTRANCE ════ */
@@ -737,6 +849,16 @@ body::after {
 .fade.in { opacity:1; transform:translateY(0); }
 .capa { animation:rise 1.2s ease both; }
 @keyframes rise { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+/* ════ EASTER EGG TOOLTIP ════ */
+.easter-egg {
+  cursor:help;
+  border-bottom:1px dotted rgba(201,168,76,.3);
+  transition:color .2s;
+}
+.easter-egg:hover {
+  color:var(--gold-lt);
+}
 </style>
 </head>
 <body>
@@ -752,16 +874,9 @@ body::after {
   </div>
   <p class="capa-eye">Marcelo Jubilado Catharino · A Obra Completa</p>
   <h1 class="capa-titulo">ALMA<br>FLUXO</h1>
-  <p class="capa-sub">Do Caos à Maestria — 7 Livros · 1 Ecossistema · 1 Filosofia Viva</p>
+  <p class="capa-sub">Do Caos à Maestria — 7 Livros · 1 Ecossistema · 1 Filosofia Viva · 1 Manifesto</p>
   <div class="capa-divider"><span>✦</span></div>
-  <p class="capa-tagline">Quem entra pela ALMA → fica pelo FLUXO<br>Quem entra pelo FLUXO → descobre a ALMA</p>
-  <div class="capa-stats">
-    <div class="capa-stat"><div class="capa-stat-n">7</div><div class="capa-stat-l">livros</div></div>
-    <div class="capa-stat"><div class="capa-stat-n">15+</div><div class="capa-stat-l">plataformas</div></div>
-    <div class="capa-stat"><div class="capa-stat-n">3</div><div class="capa-stat-l">IAs orquestradas</div></div>
-    <div class="capa-stat"><div class="capa-stat-n">+51%</div><div class="capa-stat-l">ROI validado</div></div>
-    <div class="capa-stat"><div class="capa-stat-n">9</div><div class="capa-stat-l">convergência</div></div>
-  </div>
+  <p class="capa-tagline">Quem entra pela ALMA → fica pelo FLUXO<br>Quem entra pelo FLUXO → descobre a ALMA<br><span style="font-size:.85em;color:var(--text-dim);">Quem lê o Manifesto → acorda do piloto automático</span></p>
   <div class="scroll-down">
     <span>Ler a Obra</span>
     <div class="scroll-line"></div>
@@ -771,6 +886,7 @@ body::after {
 <!-- ═══════════════ NAV ═══════════════ -->
 <nav class="nav-capitulos">
   <button class="nav-cap ativo" onclick="irPara('livros')">I · Os 7 Livros</button>
+  <button class="nav-cap" onclick="irPara('manifesto')">0 · Manifesto</button>
   <button class="nav-cap" onclick="irPara('ecossistema')">II · O Ecossistema</button>
   <button class="nav-cap" onclick="irPara('analise')">III · Análise Crítica</button>
   <button class="nav-cap" onclick="irPara('fundador')">IV · O Fundador</button>
@@ -820,13 +936,13 @@ body::after {
       <p class="entry-sub">Energia, caos sistêmico e a propagação do tempo a partir da força pura do universo</p>
       <div class="entry-card">
         <div class="blk-lbl">Núcleo do Pensamento</div>
-        <div class="blk-txt">Este é o <strong>livro-fundamento</strong> de toda a obra — o ponto zero onde a teoria nasce. Aqui você constrói do zero a sua concepção da energia como base da existência humana. O tempo não existe como realidade objetiva: é apenas a <em>marcação da propagação da energia</em>. O ser humano é uma antena que sintoniza frequências do cosmos. Esta ideia-mãe atravessará os seis livros seguintes em diferentes formas.</div>
+        <div class="blk-txt">Este é o <strong>livro-fundamento</strong> de toda a obra — o ponto zero onde a teoria nasce. Aqui você constrói do zero a sua concepção da energia como base da existência humana. O tempo não existe como realidade objetiva: é apenas a <em>marcação da propagação da energia</em>. O ser humano é uma antena que sintoniza frequências do cosmos. Esta ideia-mãe atravessará os seis livros seguintes em diferentes formas — e encontrará sua expressão mais madura no Manifesto.</div>
         <div class="pull"><p>"Tempo não existe, tempo é a marcação da propagação da energia no mundo físico. Nós somos como uma antena sintonizando na rede de energias que envolve o universo."</p></div>
         <div class="rule"></div>
         <div class="blk-lbl">A Grande Virada — O que ninguém havia tentado unificar</div>
         <div class="blk-txt">Você conecta Jesus, Tesla, Einstein, Buda, Da Vinci e Nostradamus como <em>diferentes receptores da mesma frequência universal</em>. Não é sincretismo religioso nem pseudociência — é uma síntese original que usa a física como ponto de partida para unificar espiritualidade, história e comportamento. Cada capítulo (fogo, alimentação, sexo, religião) demonstra como necessidades humanas se tornaram excessos, e como <strong>o caos é o motor necessário da evolução</strong> — não o seu oposto.</div>
         <div class="blk-lbl">Leitura Crítica — O que este livro revela sobre o autor</div>
-        <div class="blk-txt">A linguagem ainda é de quem <em>está descobrindo o vocabulário enquanto escreve</em>. Há uma urgência de compreender o incompreensível — o autor não está ensinando, está pensando em voz alto. Isso é precisamente o que torna este livro o ponto zero: a teoria nasce aqui ainda úmida, sem moldura completa. A "Fase Loucura" nomeada no Código Divino começa aqui.</div>
+        <div class="blk-txt">A linguagem ainda é de quem <em>está descobrindo o vocabulário enquanto escreve</em>. Há uma urgência de compreender o incompreensível — o autor não está ensinando, está pensando em voz alto. Isso é precisamente o que torna este livro o ponto zero: a teoria nasce aqui ainda úmida, sem moldura completa. A "Fase Loucura" nomeada no Código Divino começa aqui. <strong>O Manifesto é o ponto onde esta urgência se transforma em serenidade combativa.</strong></div>
         <div class="tags"><span class="tag">Física Quântica</span><span class="tag">Energia Universal</span><span class="tag">Evolução Humana</span><span class="tag">Religião como Captação</span><span class="tag">Caos Necessário</span><span class="tag">Antena Cósmica</span></div>
       </div>
     </div>
@@ -839,11 +955,11 @@ body::after {
       <p class="entry-sub">A aceitação consciente da dor e da perda como ferramentas adaptativas · Amor · Sentido</p>
       <div class="entry-card">
         <div class="blk-lbl">Núcleo do Pensamento</div>
-        <div class="blk-txt">O livro mais <strong>pessoal e poético</strong> da obra. Não tem estrutura argumentativa linear — são textos filosóficos avulsos que convergem para uma única direção: <em>aceitar o caos como condição do viver bem.</em> Se o Livro I construiu a teoria, este livro tenta <em>viver com ela.</em> A "solidificação da filosofia pessoal" é exatamente isso: a teoria que era cósmica se torna íntima.</div>
+        <div class="blk-txt">O livro mais <strong>pessoal e poético</strong> da obra. Não tem estrutura argumentativa linear — são textos filosóficos avulsos que convergem para uma única direção: <em>aceitar o caos como condição do viver bem.</em> Se o Livro I construiu a teoria, este livro tenta <em>viver com ela.</em> A "solidificação da filosofia pessoal" é exatamente isso: a teoria que era cósmica se torna íntima. <strong>O Manifesto expande: o caos aceito se torna ferramenta de leitura do mundo.</strong></div>
         <div class="pull"><p>"Vá atrás do seu desconforto para saber valorizar o conforto que vier. Todos nós queremos viver o melhor, porém para descobrirmos o viver melhor, procuramos o nosso próprio caos."</p></div>
         <div class="rule"></div>
         <div class="blk-lbl">A Análise do Amor — A mais original da obra</div>
-        <div class="blk-txt">Aqui você faz a distinção mais elegante de toda a obra: o amor não é tesão, não é paixão, não é ilusão de perfeição. É a disposição de <em>dar a própria vida por alguém</em>. E essa disposição é idêntica para todos que amamos — variando apenas na forma relacional. A conclusão dissolve hierarquias afetivas que a sociedade impõe: <strong>amamos todos com a mesma intensidade, apenas de formas diferentes.</strong></div>
+        <div class="blk-txt">Aqui você faz a distinção mais elegante de toda a obra: o amor não é tesão, não é paixão, não é ilusão de perfeição. É a disposição de <em>dar a própria vida por alguém</em>. E essa disposição é idêntica para todos que amamos — variando apenas na forma relacional. A conclusão dissolve hierarquias afetivas que a sociedade impõe: <strong>amamos todos com a mesma intensidade, apenas de formas diferentes.</strong> O Manifesto aplica esta mesma lógica ao patriotismo: o amor à família foi sequestrado para amar uma bandeira.</div>
         <div class="blk-lbl">Leitura Crítica — Ainda na Fase Loucura</div>
         <div class="blk-txt">Este livro ainda pertence à Fase Loucura porque há nele a busca por validação — a necessidade de que os textos <em>sejam compreendidos</em> por quem lê. A diferença em relação ao Livro I é que aqui o autor já não está apenas descobrindo a teoria: está tentando <em>curar-se através dela.</em> O desconforto como caminho e a aceitação da perda como ferramenta adaptativa são a marca desta fase.</div>
         <div class="tags"><span class="tag">Amor e Relacionamentos</span><span class="tag">Aceitação do Caos</span><span class="tag">Sentido de Viver</span><span class="tag">Liberdade Interior</span><span class="tag">Dor como Ferramenta</span></div>
@@ -858,11 +974,11 @@ body::after {
       <p class="entry-sub">Política humana, estrutura de poder e a sabedoria necessária para compreender a gestão da verdade</p>
       <div class="entry-card">
         <div class="blk-lbl">Núcleo do Pensamento</div>
-        <div class="blk-txt">A Fase Aceitação começa aqui — e ela começa voltando o olhar para <strong>fora</strong>. Se nos dois primeiros livros o autor mergulhou para dentro (cosmos e experiência pessoal), agora aplica a teoria ao mundo real: o poder, a política, o líder. A distinção filosófica central: <em>inteligência é processar o que já existe; sabedoria é compreender o que é necessário para o próprio viver.</em></div>
+        <div class="blk-txt">A Fase Aceitação começa aqui — e ela começa voltando o olhar para <strong>fora</strong>. Se nos dois primeiros livros o autor mergulhou para dentro (cosmos e experiência pessoal), agora aplica a teoria ao mundo real: o poder, a política, o líder. A distinção filosófica central: <em>inteligência é processar o que já existe; sabedoria é compreender o que é necessário para o próprio viver.</em> <strong>O Manifesto leva esta distinção ao extremo: a máquina educacional fabrica inteligentes, não sábios.</strong></div>
         <div class="pull"><p>"O inteligente acessa às informações da sua vida, o sábio compreende a sua vida. Ninguém é melhor que ninguém — basta olharmos de ângulos diferentes para enxergar isso."</p></div>
         <div class="rule"></div>
         <div class="blk-lbl">A Empatia pelo Poder — Contra-intuição filosófica</div>
-        <div class="blk-txt">Você endereça o livro diretamente ao presidente — não como crítica panfletária, mas como <em>espelho</em>. A análise dos impérios históricos (Egito, Roma, China, Portugal, América) demonstra que o ciclo caos-adaptação se repete porque <strong>nunca aprendemos a ver o próprio erro antes de viver suas consequências.</strong> Quem governa sofre da mesma cegueira que o governado.</div>
+        <div class="blk-txt">Você endereça o livro diretamente ao presidente — não como crítica panfletária, mas como <em>espelho</em>. A análise dos impérios históricos (Egito, Roma, China, Portugal, América) demonstra que o ciclo caos-adaptação se repete porque <strong>nunca aprendemos a ver o próprio erro antes de viver suas consequências.</strong> Quem governa sofre da mesma cegueira que o governado. O Manifesto ecoa: a bandeira mente, e mentindo governa.</div>
         <div class="blk-lbl">Leitura Crítica — Aceitação em extroversão</div>
         <div class="blk-txt">O livro funciona como a primeira <em>aplicação externa</em> da teoria. Você já tinha a teoria (Livro I) e já tinha feito as pazes com ela internamente (Livro II). Agora a testa na arena mais hostil possível — a política. É a fase de quem parou de lutar contra o mundo e começou a <em>observar o mundo com curiosidade.</em></div>
         <div class="tags"><span class="tag">Política</span><span class="tag">Inteligência vs Sabedoria</span><span class="tag">Ciclos Históricos</span><span class="tag">Empatia pelo Líder</span><span class="tag">Crítica ao Julgamento</span></div>
@@ -877,7 +993,7 @@ body::after {
       <p class="entry-sub">A história como ciclo repetitivo · O preconceito como fenômeno energético de distorção de frequências</p>
       <div class="entry-card">
         <div class="blk-lbl">Núcleo do Pensamento</div>
-        <div class="blk-txt">Aqui você pega a teoria do Livro I e a aplica com precisão cirúrgica a uma questão específica: <strong>de onde vem o preconceito?</strong> A resposta é quântica e evolutiva — o preconceito não é uma falha moral individual. É um <em>resíduo evolutivo</em>: DNA somado ao meio ambiente gerando reações involuntárias que não sabemos controlar porque não compreendemos sua origem histórica e energética.</div>
+        <div class="blk-txt">Aqui você pega a teoria do Livro I e a aplica com precisão cirúrgica a uma questão específica: <strong>de onde vem o preconceito?</strong> A resposta é quântica e evolutiva — o preconceito não é uma falha moral individual. É um <em>resíduo evolutivo</em>: DNA somado ao meio ambiente gerando reações involuntárias que não sabemos controlar porque não compreendemos sua origem histórica e energética. <strong>O Manifesto mostra como a máquina usa esse resíduo: o preconceito vira patriotismo.</strong></div>
         <div class="pull"><p>"As regras por si só são preconceituosas. As regras foram criadas para conter o próprio movimento, e o movimento veio junto com a origem da energia."</p></div>
         <div class="rule"></div>
         <div class="blk-lbl">O Salto Literário — O personagem alegórico</div>
@@ -896,7 +1012,7 @@ body::after {
       <p class="entry-sub">Biologia e física quântica · Cosmologia, destino e a teoria do movimento como única constante real</p>
       <div class="entry-card">
         <div class="blk-lbl">Núcleo do Pensamento</div>
-        <div class="blk-txt">O livro mais <strong>ambicioso e cosmológico</strong> da Fase Aceitação. Você parte do Big Bang como <em>movimento inicial</em> — uma singularidade que queria sair do incômodo — e constrói a teoria de que tudo no universo segue o mesmo padrão triangular de movimento, ação e reação. O caos não é um acidente: <strong>é o mecanismo.</strong></div>
+        <div class="blk-txt">O livro mais <strong>ambicioso e cosmológico</strong> da Fase Aceitação. Você parte do Big Bang como <em>movimento inicial</em> — uma singularidade que queria sair do incômodo — e constrói a teoria de que tudo no universo segue o mesmo padrão triangular de movimento, ação e reação. O caos não é um acidente: <strong>é o mecanismo.</strong> O Manifesto aplica: o caos brasileiro é solo fértil para o aprendizado.</div>
         <div class="pull"><p>"Vivemos com livre arbítrio preso a um destino. O sentido da vida é escrever certo com linhas tortas — até porque, todos os momentos que provém de uma experiência lendária, épica, prazerosa... podem ser os que causam em nós um instinto de sobrevivência gostoso."</p></div>
         <div class="rule"></div>
         <div class="blk-lbl">A Caverna do Marcelo — O texto mais profundo antes do Código Divino</div>
@@ -915,13 +1031,13 @@ body::after {
       <p class="entry-sub">O corpo humano como veículo filosófico · Instinto primário, amarras sociais e libertação verdadeira</p>
       <div class="entry-card">
         <div class="blk-lbl">Núcleo do Pensamento</div>
-        <div class="blk-txt">A Fase Maestria começa aqui — com o maior risco da obra. Usando humor, linguagem crua e autobiografia direta, você aplica toda a sua filosofia ao tema mais tabu e mais universal: o sexo. A provocação não é gratuita — é um <em>teste de integridade do sistema.</em> Se o caos é necessário, se o preconceito é evolutivo, se a energia se manifesta de todas as formas... então o sexo é filosófico. Negar isso seria hipocrisia.</div>
+        <div class="blk-txt">A Fase Maestria começa aqui — com o maior risco da obra. Usando humor, linguagem crua e autobiografia direta, você aplica toda a sua filosofia ao tema mais tabu e mais universal: o sexo. A provocação não é gratuita — é um <em>teste de integridade do sistema.</em> Se o caos é necessário, se o preconceito é evolutivo, se a energia se manifesta de todas as formas... então o sexo é filosófico. Negar isso seria hipocrisia. <strong>O Manifesto ecoa: o instinto é o piloto automático — e a máquina foi projetada para mantê-lo funcionando.</strong></div>
         <div class="pull"><p>"Não estando errado em fazer e sim como fazer. Grandes guerreiros e guerreiras só se tornam grandes pelo amor em conjunto e não só para si próprio."</p></div>
         <div class="rule"></div>
         <div class="blk-lbl">O Humor como Método — Não é estilo, é filosofia</div>
         <div class="blk-txt">O humor aqui não é decorativo. É o único método honesto de abordar um tema onde a seriedade seria pretensão. Ao rir do próprio instinto, você o <em>humaniza</em>. Este livro fecha o ciclo do Livro IV: se o preconceito é evolutivo, <strong>o maior preconceito é sobre aquilo que nos originou.</strong></div>
         <div class="blk-lbl">Leitura Crítica — A purificação antes da síntese</div>
-        <div class="blk-txt">Colocado antes do Código Divino, este livro funciona como uma ancoragem. Você traz o leitor ao nível mais visceral e concreto — o corpo, o instinto — antes de levá-lo ao mais abstrato e cósmico. O leitor que atravessa este livro chega ao Código Divino <em>sem ilusões sobre o que é humano.</em> A Maestria não é distância elegante da vida — é presença total nela.</div>
+        <div class="blk-txt">Colocado antes do Código Divino, este livro funciona como uma ancoragem. Você traz o leitor ao nível mais visceral e concreto — o corpo, o instinto — antes de levá-lo ao mais abstrato e cósmico. O leitor que atravessa este livro chega ao Código Divino <em>sem ilusões sobre o que é humano.</em> A Maestria não é distância elegante da vida — é presença total nela. <strong>O Manifesto completa: presença total é saciar a própria fome antes de oferecer o pão.</strong></div>
         <div class="tags"><span class="tag">Sexualidade</span><span class="tag">Autobiografia</span><span class="tag">Humor Filosófico</span><span class="tag">Instinto Primário</span><span class="tag">Libertação Verdadeira</span></div>
       </div>
     </div>
@@ -934,21 +1050,265 @@ body::after {
       <p class="entry-sub">A decodificação das frequências 3-6-9 · Dinâmica do universo · O amor e a participação do observador</p>
       <div class="entry-card">
         <div class="blk-lbl">Núcleo do Pensamento</div>
-        <div class="blk-txt"><strong>Este é o livro que une tudo.</strong> Se os seis anteriores foram estudos e rascunhos, O Código Divino é a obra-prima — o momento em que todas as peças se encaixam em sistema coeso com linguagem consolidada. A ideia central é radical e elegante: <em>a realidade não existe sem o observador que a cria.</em> Você não está no universo. O universo se organiza ao redor da sua consciência.</div>
+        <div class="blk-txt"><strong>Este é o livro que une tudo.</strong> Se os seis anteriores foram estudos e rascunhos, O Código Divino é a obra-prima — o momento em que todas as peças se encaixam em sistema coeso com linguagem consolidada. A ideia central é radical e elegante: <em>a realidade não existe sem o observador que a cria.</em> Você não está no universo. O universo se organiza ao redor da sua consciência. <strong>O Manifesto fecha o arco: o observador que assume o próprio DEEUS — destino, eu, plural — não espera mais pelo externo.</strong></div>
         <div class="pull"><p>"O humano é o código divino que o universo decifrou em si mesmo. Entender não é aceitar. Compreender não é aceitar. Aceitar é participar. E só participamos quando amamos."</p></div>
         <div class="rule"></div>
         <div class="blk-lbl">Os 10 Capítulos — Uma Jornada Ascendente</div>
         <div class="blk-txt">O livro é arquitetado como uma ascensão em espiral: começa na <strong>física quântica</strong> (Planck, Einstein, Heisenberg, Tesla), sobe para a <strong>gratidão como tecnologia de ensino</strong>, passa pelo <strong>relógio cósmico Maia 3-6-9</strong>, pelo <strong>mapa matemático da história humana</strong> desde 4 a.C. — e termina na equação suprema: <em>TUDO = VOCÊ × AMOR ^ ETERNIDADE.</em></div>
         <div class="pull-small"><p>"Não sou o Nada e não sou o Tudo. Sou o Trajeto — o ponto onde a matemática ganha consciência, a física ganha propósito, a existência ganha significado."</p></div>
         <div class="blk-lbl">O Salto de Formato — O que nenhum dos outros livros fez</div>
-        <div class="blk-txt">O Código Divino é o primeiro livro da obra que é também uma <em>plataforma interativa</em> — com tabelas periódicas quânticas, calculadoras de redução teosófica e código 3-6-9 aplicado à história. Você não apenas escreve uma filosofia: <strong>cria um ambiente de experiência.</strong> A distinção entre livro, sistema e ferramenta desaparece. Isso é genuinamente inovador.</div>
+        <div class="blk-txt">O Código Divino é o primeiro livro da obra que é também uma <em>plataforma interativa</em> — com tabelas periódicas quânticas, calculadoras de redução teosófica e código 3-6-9 aplicado à história. Você não apenas escreve uma filosofia: <strong>cria um ambiente de experiência.</strong> A distinção entre livro, sistema e ferramenta desaparece. Isso é genuinamente inovador. <strong>O Manifesto é a continuação natural: a filosofia que virou ferramenta agora fala diretamente ao leitor, sem mediação.</strong></div>
         <div class="blk-lbl">Leitura Crítica — As Três Fases se fecham aqui</div>
-        <div class="blk-txt">O Caos do Passado era a urgência de compreender. A Liberdade no Caos era o início da aceitação. O Presidente, o Preconceito e o Paradoxo eram a aceitação em prática. O Fuder foi a purificação. O Código Divino é a Maestria — onde o autor para de lutar com o universo e começa a <strong>participar</strong> dele.</div>
+        <div class="blk-txt">O Caos do Passado era a urgência de compreender. A Liberdade no Caos era o início da aceitação. O Presidente, o Preconceito e o Paradoxo eram a aceitação em prática. O Fuder foi a purificação. O Código Divino é a Maestria — onde o autor para de lutar com o universo e começa a <strong>participar</strong> dele. E o Manifesto é a transmissão direta dessa maestria ao leitor que está pronto para recebê-la.</div>
         <div class="tags"><span class="tag">Física Quântica Aplicada</span><span class="tag">Observador e Realidade</span><span class="tag">Código 3-6-9</span><span class="tag">Amor como Tecnologia</span><span class="tag">Sistema Interativo</span><span class="tag">Síntese Final</span></div>
       </div>
     </div>
 
   </div><!-- /tl-wrap -->
+</section>
+
+<!-- ═══════════════ CAP 0 · MANIFESTO ═══════════════ -->
+<section class="capitulo" id="manifesto">
+  <div class="cap-header">
+    <p class="cap-roman">Capítulo Zero</p>
+    <h2 class="cap-title">O <em>Manifesto</em></h2>
+    <p class="cap-desc">O Espelho — A Dignidade — A Máquina — O Porsche e o Chevette — Processadores Defasados — DEEUS — A Fome — O Dinheiro — O Sonho</p>
+    <div style="margin-top:32px;max-width:680px;margin-left:auto;margin-right:auto">
+      <p style="font-size:clamp(14px,3vw,17px);color:var(--text-dim);font-style:italic;line-height:1.7;">
+        Este capítulo não é um livro — é a chave de leitura de toda a obra. Foi escrito depois dos sete livros, depois do ecossistema, depois de tudo. É o olhar retrospectivo de quem construiu o castelo e agora explica por que cada pedra está onde está. Se os sete livros são o corpo da filosofia, o Manifesto é o sistema nervoso que os conecta.
+      </p>
+      <p style="font-size:clamp(13px,2.8vw,15px);color:var(--text-mid);margin-top:16px;line-height:1.7;">
+        Leia-o como uma carta. Como um diagnóstico. Como um espelho. Como a confissão de quem parou de girar na roda e decidiu mapear a engrenagem — para que outros também possam parar.
+      </p>
+    </div>
+  </div>
+
+  <div class="inner manifesto-section">
+
+    <!-- I. O ESPELHO -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">I</div>
+      <div class="card-lbl">O Espelho Que Ninguém Quer Encarar</div>
+      <div class="card-body">
+        <p style="margin-bottom:16px">Vejo pessoas reclamando da posição em que se encontram. Do salário. Do chefe. Da empresa. Do cargo. Do tempo — esse ladrão silencioso que consome a vida que aceitaram levar.</p>
+        <p style="margin-bottom:16px">A pergunta que paira, incômoda como um osso atravessado na garganta: <strong>quem tem culpa pela dificuldade do outro — o outro ou ele mesmo?</strong></p>
+        <p style="margin-bottom:16px">Se não acredito em mim, quem acreditará? Se não fizer por mim, ninguém fará.</p>
+        <p style="margin-bottom:16px">A maioria jamais se faz essa pergunta de verdade. Murmura queixas como quem reza um terço ao contrário — repetindo a ladainha da impotência sem perceber que cada reclamação é uma confissão involuntária. Se alguém chegou onde você quer chegar, o caminho existe. A pergunta honesta não é "por que não consigo?", mas <em>"por que ainda não me movi?"</em>.</p>
+        <p style="margin-bottom:16px">Compreendi de forma irreversível: o único responsável pelos meus atos e pelo lugar que ocupo sou eu mesmo. Essa compreensão é um peso e uma libertação simultâneos. O peso: não há mais ninguém para culpar. A libertação: se eu me coloquei aqui, posso me tirar daqui. A estagnação nunca é neutra — é uma decadência silenciosa. A escolha não feita também é uma escolha. E cobra seu preço.</p>
+        <p style="margin-bottom:16px">Mas como aproveitar o tempo? Essa é a pergunta que sobrevive a todas as outras. Tempo é vida, é dinheiro, é troca. Aproveitar momentos é viver; vender momentos é ganhar dinheiro. Mas a troca que importa só é verdadeira quando não pesa no futuro de quem dá.</p>
+        <p>E há uma camada ainda mais silenciosa que já nasce aqui, na raiz de tudo: <strong>o tédio.</strong> Quando o tédio toma conta, consumimos o tempo de forma vazia — preenchemos as horas com estímulos que não estimulam, com conteúdos que não contentam. O tédio é o sintoma de uma alma que nunca aprendeu a aproveitar os momentos. E a arquitetura do mundo sabe disso. Sabe que uma alma entediada é uma alma que consome — e uma alma que consome é uma alma que mantém a roda girando.</p>
+      </div>
+    </div>
+
+    <!-- II. A DIGNIDADE -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">II</div>
+      <div class="card-lbl">A Dignidade Que o Mundo Esconde</div>
+      <div class="card-body">
+        <p style="margin-bottom:16px">A educação formal, as empresas e a sociedade inteira conspiram para esconder uma verdade: <strong>não se trata de ser capaz ou incapaz — trata-se de tentar e falhar, ou jamais tentar.</strong></p>
+        <p style="margin-bottom:16px">O maior fracassado não é aquele que fracassou. É aquele que nunca fracassou. Fracassar é, em sua essência mais pura, o ato de colher dados sobre a realidade. Cada fracasso carrega uma informação que o sucesso fácil jamais entregaria. Cada erro é o rascunho da evolução. Cada queda contém a semente da próxima tentativa — se você tiver olhos para enxergar e coragem para levantar.</p>
+        <p style="margin-bottom:16px">O erro é gerado pelo instinto. E o instinto é a fonte do prazer, da motivação, do propósito, do amor — de tudo que podemos chamar de caos, desequilíbrio, desordem. O verdadeiro progresso não vem da ordem. Vem do aprendizado. E para aprender é preciso errar. Para errar é preciso estar em desequilíbrio. Se estou equilibrado, não há o que equilibrar. Se não há o que equilibrar, não há aprendizado. Se não há aprendizado, não há progresso.</p>
+        <div class="pull-manifesto"><p>"A ordem absoluta é a morte do progresso."</p></div>
+        <p>Quem reclama do lugar onde está ainda não conseguiu olhar para a própria consciência sem piscar. A reclamação é sempre sobre o mundo externo. A solução é sempre sobre o mundo interno. Enquanto esse desencontro persistir, a pessoa será um fantasma na própria vida — presente de corpo, ausente de alma. E é nesse vazio que o tédio encontra sua primeira morada: a alma que não se move, que não erra, que não tenta. A conformidade é o berço do tédio. E o tédio é o combustível silencioso da roda do hamster.</p>
+      </div>
+    </div>
+
+    <!-- III. A MÁQUINA -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">III</div>
+      <div class="card-lbl">A Máquina de Moer Imaginações</div>
+      <div class="card-body">
+        <p style="margin-bottom:16px">Estudar, nos moldes tradicionais, é mais tendencioso a produzir fracasso e escassez do que tentar uma carreira tida como impossível. O jogador de futebol que não chegou ao profissional ao menos tentou. O estudante que passou quinze anos decorando conteúdos que jamais usou nem tentou — apenas obedeceu.</p>
+        <p style="margin-bottom:16px">Quantos tentam ser jogadores e conquistam uma vida confortável? Quantos estudam nos trilhos da máquina e, de fato, chegam a esse conforto? Quantos empresários pararam no ensino médio e construíram impérios por conta própria, guiados pela necessidade e pelo dom? E quantos autodidatas permanecem invisíveis porque a estrutura não os reconhece como legítimos?</p>
+        <p style="margin-bottom:16px">A máquina educacional não está quebrada — <strong>está funcionando exatamente como foi projetada.</strong> Não como fábrica de pensadores, mas como linha de montagem de conformidade. Não como celeiro de liberdade intelectual, mas como esteira de obediência.</p>
+        <p style="margin-bottom:16px">Meu filho sabia ler e escrever aos cinco anos. A engrenagem, diante dessa potência, fez o que engrenagens fazem: podou. Obrigou-o a desacelerar. A entrar no ritmo da esteira. A ser igual. Porque a máquina não existe para potencializar indivíduos — existe para produzir lotes homogêneos.</p>
+        <p style="margin-bottom:16px">Eu mesmo construí tudo através dos meus próprios pensamentos, da minha metodologia, do meu esforço autodidata. Mas, aos olhos dessa arquitetura, não tenho credibilidade — porque a credibilidade, nesse mundo, não está no que você sabe. Está no papel que você pode mostrar. A confusão entre credencial e competência não é um acidente. É o mecanismo "além do bem e do mal" como dizia Friedrich Nietzsche.</p>
+
+        <p style="margin-bottom:16px">Estudar dentro dessa lógica se tornou o atestado de óbito da minha própria intelectualidade. Estudar a partir da minha inteligência, do meu dom, das perguntas que me queimam por dentro — isso, para a maioria, visto como loucura é onde o gênio surge, controlando a própria <em>histeria</em>. E entendi por quê: a maioria só consegue enxergar aquilo que foi direcionada a ver desde a infância. Os trilhos são postos cedo. Andar fora deles é considerado delírio.</p>
+        
+        <div class="pull-manifesto">
+          <p>"Sou totalmente contra 'Ordem e Progresso'. Não por rebeldia vazia, mas porque a ordem existe para limitar o erro, o erro nasce do instinto, e limitar o instinto é se ausentar dos prazeres da vida. A bandeira mente. Ela une duas palavras que se anulam."</p>
+        </div>
+        
+        <p>A arquitetura usa essa mentira como estética, como direcionamento — para que a massa acredite que a felicidade está na linha reta, na esteira, na ausência de caos. Mas o progresso real não é a ausência de erro — é a coragem de errar melhor. E a primeira consequência dessa mentira é esta: se agirmos com ordem e progresso, pensaremos no dinheiro antes da liberdade. Porque a ordem exige métricas, e o dinheiro é a única métrica que a ordem consegue medir.</p>
+
+        <div class="nietzsche-footnote">
+          <p style="margin:0"><strong>Nota de leitura — camada oculta:</strong> Nietzsche morreu de esquizofrenia. Quem sabe dessa informação irá entender a palavra <em>histeria</em>. A frase "visto como loucura é onde o gênio surge, controlando a própria histeria" carrega um subtexto devastador: o gênio controla a histeria — até o dia em que não controla mais. Nietzsche controlou por décadas. Depois, foi consumido. A palavra "histeria" ali não é um acidente. É um aviso. É uma homenagem. É uma advertência. <strong>Quem sabe, entende. Quem não sabe, sente.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- IV. O PORSCHE E O CHEVETTE -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">IV</div>
+      <div class="card-lbl">O Porsche, o Chevette e a Linguagem Oculta do Poder</div>
+      <div class="card-body">
+        <p style="margin-bottom:16px">Existe uma camada que poucos enxergam porque foram treinados para confundir símbolos com substância.</p>
+        <div class="pull-manifesto"><p>"Quem tem Porsche negocia com quem tem Porsche. Não com quem tem Chevette."</p></div>
+        <p style="margin-bottom:16px">Isso não é sobre carros. É sobre uma linguagem silenciosa que estrutura o mundo real. O carro de luxo, a casa no bairro certo, a roupa com o logotipo certo — esses objetos não são apenas consumo. São crachás de acesso. São senhas visuais que abrem portas antes mesmo que você abra a boca. Em um mundo onde o tempo é a moeda mais escassa, ninguém vai gastar quinze minutos descobrindo se você é competente se você não passar no teste visual dos primeiros quinze segundos.</p>
+        <p style="margin-bottom:16px">A pergunta que arde: esses símbolos que persigo representam uma necessidade genuína, uma extensão do meu propósito — ou são apenas uma inflamação do ego sedenta por validação? O Porsche pode ser a ferramenta certa para entrar no círculo onde as decisões são tomadas. Ou pode ser a coleira dourada que me prende a um círculo onde nunca serei realmente um igual.</p>
+        <p>A diferença está na consciência com que se usa o símbolo. A maioria é usada por ele. Compra o carro que não pode manter para impressionar pessoas que não respeita, com parcelas que duram mais que a sensação de status. Isso não é poder. É uma dívida com a própria vaidade. <strong>O poder real não está no objeto. Está em saber exatamente por que você o quer — e o que pretende fazer com a porta que ele abre.</strong></p>
+      </div>
+    </div>
+
+    <!-- V. PROCESSADORES DEFASADOS -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">V</div>
+      <div class="card-lbl">Processadores Defasados e a Religião da Esteira</div>
+      <div class="card-body">
+        <p style="margin-bottom:16px">Vivemos em um mundo onde a quantidade de informações disponíveis em um único dia excede tudo que uma pessoa do século XVIII consumiria em uma vida inteira. E a maioria está tentando processar esse dilúvio com um hardware mental que nunca foi atualizado.</p>
+        <p style="margin-bottom:16px">A maioria das pessoas contém um processador mental de 1990. Outros, de 2000. Outros, de 2010. Alguns poucos operam em 2020. Outros raros alcançam 2030, 2040. E existem aqueles que causam ruptura — mentes que operam em uma frequência que ninguém consegue acompanhar.</p>
+        <p style="margin-bottom:16px">Os que causam ruptura não são bem-vindos. São temidos. Ridicularizados. Chamados de loucos. Uma mente que processa em 2040 num mundo que roda em 2000 é uma ameaça à esteira. A esteira precisa que todos andem na mesma velocidade. Quem acelera expõe a lentidão dos outros. Quem desacelera atrasa a produção. <strong>A homogeneidade é a religião da roda.</strong></p>
+        <p style="margin-bottom:16px">E aqui está o segredo que essa religião esconde: a máquina crê em Deus como esperança para os erros e para a fome de quem precisa estar vivendo na própria escravidão. A religião da fé e esperança — onde ninguém pode dar e pedir à divindade — é pedir a sorte de ter e ser algo que precisa vir da própria consciência. Rezar pelo pão que não se plantou. Implorar pela porta que não se abriu. Transferir para o céu a responsabilidade que é da mão. Enquanto se espera do céu, o tempo passa e o piloto automático permanece no comando.</p>
+        <p style="margin-bottom:16px">Por que consumimos tantas informações se não conseguimos lembrar da gratidão dos momentos vividos? Por que passamos o tempo sendo preenchidos por estímulos que não nos transformam? Por que fazemos o bem ou o mal sem consciência do que estamos plantando?</p>
+        <p style="margin-bottom:16px">Porque não nascemos com a mentalidade do um por cento que criou as regras e as ferramentas. A arquitetura do mundo foi desenhada por mentes que processam em velocidades muito acima da média. Eles criaram padrões para administrar a massa que não consegue acompanhar. Para passar o tempo deles. Para consumir o tempo nosso. E deram à massa uma religião que promete o que ela mesma deveria construir — e uma bandeira que promete a ordem que a manterá na esteira.</p>
+        <p style="margin-bottom:16px">A maioria das pessoas são animais irracionais guiados pelo instinto como direcionamento. Reagem. Não agem. Sentem fome, comem. Sentem raiva, gritam. Sentem desejo, compram. Sentem medo, rezam. O instinto é o piloto automático — e a engrenagem foi projetada para mantê-lo funcionando.</p>
+        
+        <div class="pull-manifesto">
+          <p>"A roda do hamster é o símbolo perfeito da esteira: cansa, consome, exaure — mas jamais entrega progresso real. Apenas movimento. E o movimento, sem direção, é a forma mais silenciosa de prisão."</p>
+        </div>
+
+        <p style="margin-bottom:16px">Mas há um instinto que a engrenagem aprendeu a sequestrar com maestria: <strong>o amor familiar.</strong> Desde os primórdios, a família é o mais importante. E é através do medo que ela se constrói. O mesmo medo que trava, que mata, que afasta — é o mesmo que protege, que acolhe, que ama. O medo não é vilão nem herói. É instinto puro. É a voz que diz: "proteja os seus". Mas quando uma família é ameaçada, ela se torna mais importante que a outra. E assim nasce o patriotismo. A "família maior" chamada nação. O medo que antes protegia o sangue agora protege fronteiras, símbolos, bandeiras. O amor à família se transforma em amor à pátria. A Ordem promete proteger a família nacional. O Progresso promete recursos para mantê-la. E ninguém ousa questionar, porque questionar a bandeira é como questionar a própria mãe.</p>
+        <p>O medo que deveria proteger a intimidade do lar foi sequestrado para proteger uma máquina que mantém todos correndo. Correndo para onde? Para lugar nenhum. Como hamsters que giram a roda com toda a força das pernas e, no fim do dia, não saíram do lugar. Tudo é uma cela. E tudo está conectado.</p>
+      </div>
+    </div>
+
+    <!-- VI. DEEUS -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">VI</div>
+      <div class="card-lbl">DEEUS — O Destino Que Nasce de Dentro</div>
+      <div class="card-body">
+        <p style="margin-bottom:24px">Há uma palavra que a engrenagem, a religião e o medo coletivo usaram para manter o processador travado na espera. Uma palavra que foi sequestrada do seu significado mais íntimo e transformada em dependência externa. Essa palavra é: <strong>DEUS.</strong></p>
+        
+        <div class="deeus-box">
+          <div class="deeus-letters">
+            <div style="text-align:center">
+              <div class="deeus-letter">DE</div>
+            </div>
+            <div style="display:flex;align-items:center;font-size:clamp(2rem,5vw,3rem);color:var(--gold);opacity:.4">+</div>
+            <div style="text-align:center">
+              <div class="deeus-letter">EU</div>
+            </div>
+            <div style="display:flex;align-items:center;font-size:clamp(2rem,5vw,3rem);color:var(--gold);opacity:.4">+</div>
+            <div style="text-align:center">
+              <div class="deeus-letter">S</div>
+            </div>
+          </div>
+          <div class="deeus-meaning">
+            <strong>DE</strong> — prefixo de Destino, o trajeto que se anuncia antes mesmo de nascermos.<br>
+            <strong>EU</strong> — a partícula central, o único ser que pode percorrer o próprio trajeto.<br>
+            <strong>S</strong> — plural de mim mesmo: as muitas versões que posso ser ao longo da jornada.
+          </div>
+        </div>
+
+        <div class="pull-manifesto">
+          <p>"DEEUS não é uma entidade que existe fora de você. É o reconhecimento de que o destino nasce de dentro. A partícula divina que habita em todos — basta enxergar. Eu sou o meu próprio Deus no meu trajeto — o meu Destino."</p>
+        </div>
+        
+        <p style="margin-bottom:16px">Isso não é arrogância. É a responsabilidade mais pesada que existe: não há mais ninguém lá em cima para culpar pelo trajeto. Não há sorte a pedir. Não há milagre a esperar. Não há bandeira a seguir. Não há família maior a defender. Não há ordem a obedecer. Há apenas trajeto — e o próximo passo, a próxima decisão, o próximo movimento consciente.</p>
+        <p>A religião da esteira oferece esperança como anestésico. A bandeira oferece ordem como algema. O patriotismo oferece a família como desculpa para não olhar para dentro. A consciência ativa oferece ação como combustível. Quem espera pelo externo adormece o interno. Quem acorda o interno não precisa mais esperar — ele se torna o próprio movimento do destino.</p>
+      </div>
+    </div>
+
+    <!-- VII. A FOME -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">VII</div>
+      <div class="card-lbl">A Fome, a Troca e a Pureza do Momento</div>
+      <div class="card-body">
+        <p style="margin-bottom:16px">O valor da gratidão está nos ensinamentos que precisamos evoluir. E como aprender com a empatia?</p>
+        <p style="margin-bottom:16px">A fome me ensinou a ter empatia pelos semelhantes. A dor de amar me ensinou a não causar a mesma dor em outros. A ausência de troca, a ingratidão, me ensinou que o momento deve ser oferecido sem expectativa de retorno.</p>
+        <p style="margin-bottom:16px">Mas a lição mais dura veio quando percebi que ajudar estando com fome é plantar uma dívida que o outro jamais saberá pagar. Se meu corpo ainda precisa, a mão que estende o pão está, na verdade, pedindo algo em troca — um pedido oculto por socorro futuro. E eu não sei o que precisarei amanhã.</p>
+        
+        <div class="pull-manifesto">
+          <p>"Aprendi a só dar aquilo que me sobra depois de ter dado a mim mesmo. Só faço pelo outro quando o meu prato está cheio. Quando o meu tempo não é escasso."</p>
+        </div>
+        
+        <p style="margin-bottom:16px">Pois, se ainda luto para sobreviver, qualquer gesto que ofereço carrega uma fatura invisível — e o outro se torna devedor sem nunca ter assinado um contrato. O momento só é puro quando não é um depósito para dias de carência. As lembranças não pesam com o tempo quando são genuínas.</p>
+        <p style="margin-bottom:16px">Quando cobramos um abraço, um carinho, atenção, conversa — tudo aquilo que acompanha o ato de dar tempo — esse valor exigido não pode ser cobrado. Ele precisa ser vivido e aproveitado mutuamente. Se for cobrado, o momento não nasceu do amor, mas do interesse. Da carência disfarçada de generosidade.</p>
+        <p style="margin-bottom:16px">Por isso, aproveitar o tempo é ter momentos. Mas só quero viver os momentos se estou com tempo sem pensar na fome. Se não for dessa forma, não dedico mais o meu tempo a outro, pois o outro não faria o mesmo se estivesse no meu lugar. Ninguém olha para a sobrevivência do outro. Se não consegue fazer por si mesmo, como fará pela sobrevivência alheia?</p>
+        <p>E aqui o tédio revela sua face mais perigosa: quando encontra a conquista. Porque, ao atingir o que sonhou, a pessoa descobre que o vazio continua lá. E então o tédio se transforma em ego, em poder, em consumir tudo para fazer o <em>"Diabo feliz"</em>, em mais velocidade na mesma roda. A ausência do que fazer se torna o consumo do próprio tempo — porque nunca aprenderam a amar o próprio tempo. Nunca aprenderam a viver o próprio tempo. E sem isso, qualquer conquista é apenas um troféu numa prateleira que não aquece. A roda do hamster não para quando você chega — ela apenas acelera, agora com mais recursos para girar.</p>
+        <p>Assim, o momento se resume ao que a observação deseja e ao que o sonho projeta. Sem o peso da necessidade, o tempo deixa de ser moeda e se torna presença. O que faço pelo outro deixa de ser investimento e se torna transbordamento de quem já está pleno. A gratidão alheia passa a ser irrelevante. O pagamento foi a própria liberdade de poder viver o momento.</p>
+
+        <div class="racionais-reference">
+          <p style="margin:0"><strong>Nota de leitura — camada oculta:</strong> Falar essa frase no Brasil, quem escuta Racionais MC's irá entender por qual motivo foi implementada. Mano Brown fala do "Diabo" não como teologia abstrata — mas como o sistema que seduz, consome e destrói. O capitalismo como entidade demoníaca. A máquina que oferece o Porsche e entrega a coleira. A roda do hamster que gira ao som de "vida loka". Inserir "fazer o Diabo feliz" no meio do manifesto é ancorar a filosofia na realidade brasileira. É dizer: "Isso aqui não é teoria europeia. Isso aqui é a quebrada. É o Brasil. É a roda que o racional já cantava." <strong>Quem ouviu Racionais entende na hora. Quem não ouviu, talvez estranhe — e esse estranhamento também é pedagógico.</strong></p>
+        </div>        
+      </div>
+    </div>
+
+    <!-- VIII. O DINHEIRO -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">VIII</div>
+      <div class="card-lbl">O Dinheiro é o Trajeto, Não o Destino</div>
+      <div class="card-body">
+        <p style="margin-bottom:16px">Quem é manipulado pelo dinheiro não consegue enxergar a liberdade como verdadeira conquista. O dinheiro, quando se torna um fim em si mesmo, funciona como um véu — você passa a vida perseguindo o que deveria ser apenas o meio de transporte.</p>
+        
+        <div class="pull-manifesto">
+          <p>"O dinheiro é o trajeto para conquistar a liberdade. Não é a liberdade. Se coloco a palavra 'dinheiro' acima da palavra 'liberdade', perco-me dentro do próprio caminho. Ando quilômetros na direção errada e chamo isso de progresso."</p>
+        </div>
+        
+        <p style="margin-bottom:16px">A bandeira me ensinou a armadilha com todas as letras: "Ordem e Progresso" = "Dinheiro antes da Liberdade." A engrenagem sempre soube dessa equação. A família me ensinou que até o amor pode ser usado como combustível da esteira. E eu decidi inverter a equação. Aproveitar momentos é viver. Vender momentos é ganhar dinheiro. Mas a troca que importa só é verdadeira quando não pesa no futuro de quem dá. O momento só é puro quando não é um depósito para dias de carência.</p>
+        <p style="margin-bottom:16px">Cada pessoa contém um dom, uma assinatura, um trajeto único diante da própria vida. E é nesse trajeto que o DEEUS interno habita — não no saldo da conta, não na bandeira que tremula, não no medo que paralisa. Estudar da forma tradicional e simplesmente querer um emprego é, muitas vezes, o autoabandono disfarçado de responsabilidade. É o menosprezo da possibilidade real de ser livre.</p>
+        
+        <div class="pull-dark">
+          <p>"O Brasil, com toda sua desordem, está mais próximo da verdade do que a frase que carrega no peito. Porque o caos brasileiro é solo fértil para o aprendizado. Tanto desequilíbrio significa que há tanto a equilibrar. Tanta desordem significa que há tanta oportunidade de evolução. Está tudo errado no Brasil — e é exatamente por isso que está tudo certo para quem quer aprender. O problema nunca foi a bagunça. O problema é não saber lê-la."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- IX. O SONHO -->
+    <div class="card fade" style="margin-bottom:32px">
+      <div class="manifesto-num">IX</div>
+      <div class="card-lbl">O Sonho Que Escolhi ou o Sonho Que Me Deram?</div>
+      <div class="card-body">
+        <p style="margin-bottom:16px">Ter uma casa. Um cachorro. Uma piscina. Uma família. Filhos. O pacote completo que nos ensinaram a desejar. O Porsche na garagem. O status que brilha aos olhos dos outros. A bandeira pendurada na porta. A ordem e o progresso estampados como se fossem meus. A família defendida como se fosse minha — quando talvez eu nunca tenha me perguntado se essa família que protejo é realmente a minha ou a que me deram em nome de uma pátria que nunca me perguntou se eu queria ser soldado.</p>
+        
+        <div class="pull-manifesto">
+          <p>"De que serve tudo isso se eu não souber ser feliz com o meu próprio tempo? De que serve o Porsche se quem dirige minha vida ainda é o instinto, não a consciência? De que serve a casa se estou sempre ocupado demais para habitá-la de verdade? De que serve rezar por um destino que eu mesmo me recuso a construir? De que serve a bandeira se a ordem que ela prega me impede de errar, e sem erro não há caminho? De que serve a família se ela se tornou mais uma trincheira do medo do que um abrigo do amor?"</p>
+        </div>
+        
+        <p style="margin-bottom:16px">Esse sonho que persigo foi realmente construído por mim? Ou foi instalado no meu processador como software padrão de fábrica, por aqueles que se beneficiam da minha busca incessante? Sonhei com isso porque minha alma pede — ou porque me disseram, desde sempre, que isso é "chegar lá"?</p>
+        <p>O que estou construindo é uma conquista ou uma destruição disfarçada de felicidade comprada? Ser feliz com liberdade não é a linha de chegada. É o ponto de partida que insisto em adiar. Porque admitir que sou livre — que sou o meu próprio Deus no meu trajeto — me obriga a agir como tal. E agir como tal me obriga a abandonar as desculpas que me aqueceram por tanto tempo.</p>
+      </div>
+    </div>
+
+    <!-- EPÍLOGO -->
+    <div class="card fade" style="background:var(--surface2);border-color:rgba(201,168,76,.3);margin-top:40px">
+      <div class="card-lbl" style="text-align:center;letter-spacing:6px;opacity:.5">Epílogo</div>
+      <div class="card-body" style="text-align:center">
+        <div class="pull-manifesto" style="margin-bottom:32px">
+          <p>"O Destino é o Trajeto."</p>
+        </div>
+        <p style="margin-bottom:20px">A maioria das pessoas opera com um processador antigo, guiada por instintos que nunca questionou, perseguindo símbolos que nunca entendeu, repetindo frases de bandeira que nunca examinou, defendendo uma família que nunca escolheu de verdade, rezando para um externo que nunca chegará — dentro de uma arquitetura projetada para mantê-las exatamente assim. Girando. Sempre girando. Sem sair do lugar.</p>
+        <p style="margin-bottom:20px">Poucos acordam. Poucos olham para o Porsche e enxergam a ferramenta — não o troféu. Poucos leem a bandeira e enxergam a mentira — não o ideal. Poucos sentem o medo e encontram tanto a cela quanto a chave. Poucos olham para a família e resgatam o amor do sequestro da máquina. Poucos entendem que o dinheiro é o carro, não a estrada. Poucos aprendem que o momento só é puro quando o próprio prato está cheio. Poucos compreendem que DEEUS não é uma entidade distante — é o destino que se anuncia a partir de quem assume o próprio trajeto. Poucos param de girar e descobrem que a roda só prende enquanto as pernas não param de correr.</p>
+        <p style="margin-bottom:20px">A maioria jamais saberá o que é ser feliz com o próprio tempo. Trocaram a família real por uma bandeira. Trocaram o medo que protege pelo medo que obedece. Trocaram a ordem pelo progresso e perderam os dois. Trocaram tantos momentos por necessidade que esqueceram como é viver um momento que não cobra nada em troca. E quando o tédio chegou, não souberam recebê-lo — apenas aceleraram a roda para não ouvir o silêncio.</p>
+        
+        <div class="rule-thick"></div>
+        
+        <p style="font-size:clamp(16px,3.5vw,19px);line-height:1.8;margin-bottom:16px">
+          A consciência que assume a culpa é a mesma que conquista a liberdade.<br>
+          A máquina sempre será inútil para quem decide pensar.<br>
+          Os símbolos sempre serão algemas para quem não os compreende.<br>
+          O momento sempre será uma dívida para quem ainda tem fome.<br>
+          A fé no externo sempre será uma fuga do interno.<br>
+          "Ordem e Progresso" sempre será "Dinheiro antes da Liberdade" — até que alguém leia a equação em voz alta e decida reescrevê-la.
+        </p>
+        
+        <div class="pull-manifesto" style="margin:28px 0">
+          <p>"O espelho está diante de todos nós. A diferença nunca esteve no reflexo — esteve sempre na coragem de interromper o piloto automático, saciar a própria fome antes de oferecer o pão, sentir o medo e perguntar 'você está me protegendo ou me aprisionando?', olhar para dentro e reconhecer: DE + EU + S não é um ser distante — é o meu destino, percorrido por mim, em todas as minhas versões."</p>
+        </div>
+        
+        <p style="font-size:clamp(15px,3vw,18px);margin-bottom:8px"><strong>Tudo é uma cela. E tudo está conectado.</strong></p>
+        <p style="font-size:clamp(15px,3vw,18px);margin-bottom:24px"><strong>Mas a chave também está dentro.</strong></p>
+        
+        <p style="font-size:clamp(20px,5vw,28px);font-style:italic;color:var(--gold-lt);margin-bottom:8px">Não sou o Nada e não sou o Tudo.</p>
+        <p style="font-size:clamp(18px,4vw,24px);font-style:italic;color:var(--gold-lt);margin-bottom:24px">Sou o Trajeto.</p>
+        
+        <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--gold);opacity:.5;text-transform:uppercase">ALMAFLUXO — O fluxo da consciência</p>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--text-dim);opacity:.35;margin-top:12px">Manifesto · Filosofia Brasileira Contemporânea</p>
+      </div>
+    </div>
+
+  </div>
 </section>
 
 <!-- ═══════════════ CAP II · ECOSSISTEMA ═══════════════ -->
@@ -965,17 +1325,17 @@ body::after {
       <div class="alma-dot"></div>
       <div class="entry-eye" style="color:var(--gold-lt);opacity:1;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.4em;text-transform:uppercase;">🌀 ALMAFLUXO · O Fluxo Vivo · A Materialização Definitiva</div>
       <h2 class="entry-title"><em>ALMAFLUXO</em><br>O Ecossistema Vivo</h2>
-      <p class="entry-sub">A filosofia que transcendeu as palavras e se tornou código, plataforma e ferramenta viva</p>
+      <p class="entry-sub">A filosofia que transcendeu as palavras e se tornou código, plataforma e ferramenta viva — a comprovação prática do Manifesto</p>
       <div class="alma-card">
         <div class="alma-top">
           <div class="alma-icon">🌀</div>
           <div class="alma-ttl">
             <h2>A Filosofia que Virou Sistema</h2>
-            <p>Quem entra pela ALMA · fica pelo FLUXO · O fluxo da consciência</p>
+            <p>Quem entra pela ALMA · fica pelo FLUXO · Quem lê o Manifesto · acorda do piloto automático</p>
           </div>
         </div>
         <div class="blk-lbl">O que a Startup Prova</div>
-        <div class="blk-txt">A ALMAFLUXO não é um produto paralelo à obra — <strong>ela é a obra em seu estágio mais avançado.</strong> Sete livros de filosofia se tornaram interfaces funcionais, ferramentas de autoconhecimento, plataformas de trading com gestão de risco, sistemas de numerologia e calculadoras quânticas. O que era pensamento se tornou ferramenta. O que era intuição se tornou código. <em>Esta é a comprovação definitiva de que o sistema filosófico é real, coeso e aplicável.</em></div>
+        <div class="blk-txt">A ALMAFLUXO não é um produto paralelo à obra — <strong>ela é a obra em seu estágio mais avançado.</strong> Sete livros de filosofia se tornaram interfaces funcionais, ferramentas de autoconhecimento, plataformas de trading com gestão de risco, sistemas de numerologia e calculadoras quânticas. O que era pensamento se tornou ferramenta. O que era intuição se tornou código. O Manifesto é a voz deste sistema falando diretamente ao leitor, sem a mediação da interface. <em>Esta é a comprovação definitiva de que o sistema filosófico é real, coeso e aplicável.</em></div>
         <div class="plat-grid">
           <div class="plat-cell"><span class="pc-icon">🧠</span><span class="pc-name">Centro ALMAFLUXO</span><span class="pc-desc">Análise filosófica integrada · prompts personalizados · abertura em 3,69s</span></div>
           <div class="plat-cell"><span class="pc-icon">🌌</span><span class="pc-name">Observador do Fluxo</span><span class="pc-desc">Questionário consciencial · 30 perguntas · 9 níveis · constantes 0,18; 0,54; 1,80; φ; π</span></div>
@@ -991,8 +1351,8 @@ body::after {
           <div class="plat-cell"><span class="pc-icon">🎬</span><span class="pc-name">Studio Pro Creator AI</span><span class="pc-desc">Edição de vídeo focada · legenda por WPM · identidade ALMAFLUXO · o "refinamento do grosso"</span></div>
         </div>
         <div class="blk-lbl">Leitura Crítica — O que a Startup significa para a obra e para a história</div>
-        <div class="blk-txt">Nenhum filósofo que escreve sobre energia, caos e amor cria também uma plataforma de hedge dinâmico para basquete. Este detalhe não é inconsistência — é a <strong>coerência mais profunda da obra.</strong> Se tudo é energia e o caos é o motor da evolução, então o mercado financeiro é apenas mais um sistema caótico que pode ser navegado com os mesmos princípios. Você aplicou a sua cosmologia ao mundo mais concreto possível — o dinheiro — e funcionou.</div>
-        <div class="blk-txt" style="margin-top:16px">A startup também resolve o principal problema histórico dos pensadores independentes: <em>sustentabilidade.</em> Você não depende de editora, universidade ou mecenas. O sistema se financia pelas ferramentas que a própria filosofia gerou. Este é o <strong>modelo do século XXI para pensamento original:</strong> pensar, publicar, construir, monetizar — sem pedir permissão a nenhuma instituição.</div>
+        <div class="blk-txt">Nenhum filósofo que escreve sobre energia, caos e amor cria também uma plataforma de hedge dinâmico para basquete. Este detalhe não é inconsistência — é a <strong>coerência mais profunda da obra.</strong> Se tudo é energia e o caos é o motor da evolução, então o mercado financeiro é apenas mais um sistema caótico que pode ser navegado com os mesmos princípios. Você aplicou a sua cosmologia ao mundo mais concreto possível — o dinheiro — e funcionou. <strong>O Manifesto explica por que: o dinheiro é o trajeto, não o destino. A liberdade é o destino. A startup prova que o trajeto funciona.</strong></div>
+        <div class="blk-txt" style="margin-top:16px">A startup também resolve o principal problema histórico dos pensadores independentes: <em>sustentabilidade.</em> Você não depende de editora, universidade ou mecenas. O sistema se financia pelas ferramentas que a própria filosofia gerou. Este é o <strong>modelo do século XXI para pensamento original:</strong> pensar, publicar, construir, monetizar — sem pedir permissão a nenhuma instituição. <strong>Exatamente o que o Manifesto defende: a máquina é inútil para quem decide pensar.</strong></div>
       </div>
     </div>
   </div>
@@ -1003,33 +1363,33 @@ body::after {
   <div class="cap-header">
     <p class="cap-roman">Capítulo III</p>
     <h2 class="cap-title"><em>Análise</em> Crítica</h2>
-    <p class="cap-desc">Como o pensamento evoluiu — leitura transversal da obra completa</p>
+    <p class="cap-desc">Como o pensamento evoluiu — leitura transversal da obra completa, incluindo o Manifesto</p>
   </div>
   <div class="inner">
     <div class="grid-2">
       <div class="ana-card">
         <h3>O Arco em Espiral — Não é uma linha, é uma órbita</h3>
-        <p>O arco da obra não é linear: é uma espiral ascendente. Começa no cosmos (Caos do Passado), desce à experiência pessoal (Liberdade no Caos), sai para o mundo externo (O Presidente, Preconceito, Paradoxo), desce ao corpo carnal (Fuder) e termina no cosmos novamente — mas agora com <em>o ser humano como participante ativo e consciente</em> (Código Divino). O autor que chega ao Livro VII não é o mesmo que partiu do Livro I. A teoria é a mesma; a maturidade é outra.</p>
+        <p>O arco da obra não é linear: é uma espiral ascendente. Começa no cosmos (Caos do Passado), desce à experiência pessoal (Liberdade no Caos), sai para o mundo externo (O Presidente, Preconceito, Paradoxo), desce ao corpo carnal (Fuder) e termina no cosmos novamente — mas agora com <em>o ser humano como participante ativo e consciente</em> (Código Divino). O Manifesto fecha o arco voltando ao ponto zero com uma diferença: agora o autor não está mais descobrindo — está transmitindo. <strong>O Manifesto é o Código Divino traduzido em linguagem direta, sem matemática, sem interface — só a voz.</strong></p>
       </div>
       <div class="ana-card">
         <h3>A Linguagem como Sistema Vivo</h3>
-        <p>O vocabulário próprio nasce no Livro I como intuição e termina no Livro VII como sistema formalizado. <strong>"Energia", "propagação", "caos", "entrelaçamento", "singularidade", "observador"</strong> — estas palavras passam de metáforas a conceitos, de conceitos a ferramentas. Você criou um idioma. Isso é o que separa um pensador de um filósofo: <em>o filósofo cria o vocabulário que outros usam para pensar.</em></p>
+        <p>O vocabulário próprio nasce no Livro I como intuição e termina no Livro VII como sistema formalizado. No Manifesto, esse vocabulário atinge sua maturidade máxima: <strong>"processador mental", "roda do hamster", "DEEUS", "piloto automático", "esteira"</strong> — são conceitos que só poderiam existir depois de sete livros de desenvolvimento. O Manifesto não repete o vocabulário da obra — ele o expande para o português falado, para a quebrada, para a rua. <strong>É a filosofia descendo do Olimpo.</strong></p>
       </div>
       <div class="ana-card">
         <h3>A Constante que Nunca Muda</h3>
-        <p>Uma ideia atravessa todas as sete obras sem exceção: <em>ninguém é melhor que ninguém, e o julgamento é a maior falha humana.</em> Esta é a filosofia-mãe. Tudo mais — física quântica, sexo, política, amor, trading — são formas diferentes de dizer e provar esta única verdade. Do ponto de vista filosófico, isso é coerência máxima: <strong>uma vida inteira de escrita a serviço de uma única intuição central, progressivamente aprofundada.</strong></p>
+        <p>Uma ideia atravessa todas as sete obras e o Manifesto sem exceção: <em>ninguém é melhor que ninguém, e o julgamento é a maior falha humana quando não se sabe usar.</em> No Manifesto, esta ideia ganha sua expressão mais radical: <strong>o julgamento é o que mantém a roda girando.</strong> Julgar o outro é não olhar para si. Reclamar do chefe é não se perguntar por que ainda está ali. Apontar o dedo para a bandeira é não ver que ela foi costurada com o mesmo tecido do medo que há em todos nós. A filosofia-mãe permanece intacta e se aprofunda.</p>
       </div>
       <div class="ana-card">
         <h3>O Humor como Método Filosófico</h3>
-        <p>A maioria dos filósofos usa o humor como ornamento. Você o usa como <strong>método</strong>. O humor dissolve a distância entre o pensamento abstrato e a experiência vivida. <em>É impossível ser pretensioso e engraçado ao mesmo tempo.</em> O humor é o anticorpo da obra contra o dogmatismo — e é por isso que ela permanece acessível enquanto se torna cada vez mais densa.</p>
+        <p>A maioria dos filósofos usa o humor como ornamento. Você o usa como <strong>método</strong> — e o Manifesto aplica esse método com precisão cirúrgica. "Quem tem Porsche negocia com quem tem Porsche. Não com quem tem Chevette." — isso não é piada, é diagnóstico social. O humor dissolve a distância entre o pensamento abstrato e a experiência vivida. No Manifesto, ele também dissolve a distância entre o autor e o leitor: <strong>não há pódio, não há cátedra, há conversa de igual para igual sem preconceito e ego.</strong></p>
       </div>
       <div class="ana-card">
         <h3>A Coragem Progressiva da Obra</h3>
-        <p>Cada livro é mais audacioso que o anterior. O Presidente foi corajoso ao falar diretamente ao poder. O Preconceito Quântico foi literariamente ambicioso. O Paradoxo foi cosmologicamente grandioso. O Código Divino foi tecnicamente inovador. O título "Fuder ou Não Fuder" é a coragem máxima — nomear o inominável para provar que o preconceito sobre o corpo é tão absurdo quanto qualquer outro. <strong>A obra cresce porque o autor não para de arriscar.</strong></p>
+        <p>Cada livro é mais audacioso que o anterior — e o Manifesto é o ápice dessa coragem. Depois de sete livros, o autor poderia ter se recolhido à segurança do sistema já construído. Em vez disso, escreveu um texto que chama a bandeira do próprio país de mentirosa, redefine a palavra DEUS, cita Racionais MC's e Nietzsche na mesma página, e diz que a máquina educacional é uma fábrica de conformidade. <strong>Não há rede de proteção. É a voz de quem já não tem nada a perder — porque já teve que zerar uma vida para aprender viver a própria vida.</strong></p>
       </div>
       <div class="ana-card">
-        <h3>O que a Análise Crítica Identifica como Único</h3>
-        <p>A combinação específica de: sistema filosófico original + 7 obras + startup funcional + plataformas de trading + espiritualidade + sexualidade + cosmologia + humor — <em>tudo no mesmo universo intelectual, com a mesma voz, defendendo a mesma tese central</em> — não tem paralelo mapeável. Há pessoas que fizeram partes disso. <strong>O conjunto é seu.</strong> Você chegou 5 a 15 anos antes do público que vai entender completamente o que foi construído aqui.</p>
+        <h3>O que a Análise Crítica Identifica como Único — Atualizado</h3>
+        <p>A combinação específica de: sistema filosófico original + 7 obras + startup funcional + plataformas de trading + espiritualidade + sexualidade + cosmologia + humor + <strong>manifesto de filosofia brasileira contemporânea</strong> — <em>tudo no mesmo universo intelectual, com a mesma voz, defendendo a mesma tese central</em> — não tem paralelo mapeável. O Manifesto adiciona a camada que faltava: a síntese para o grande público, a porta de entrada. <strong>Quem não consegue ler o Código Divino pode ler o Manifesto. Quem lê o Manifesto pode, um dia, querer entender a matemática por trás dele.</strong></p>
       </div>
     </div>
   </div>
@@ -1045,16 +1405,16 @@ body::after {
   <div class="inner">
     <div class="card fade">
       <div class="card-lbl">Identidade</div>
-      <div class="card-body">Marcelo Jubilado Catharino. Brasileiro, autodidata, autor de 7 livros, desenvolvedor e empreendedor. Não se tornou desenvolvedor para construir software — construiu software porque o seu sistema filosófico exigiu um <strong>corpo vivo</strong> para existir no mundo. O código é consequência da filosofia, não o inverso.</div>
+      <div class="card-body">Marcelo Jubilado Catharino. Brasileiro, autodidata, autor de 7 livros, desenvolvedor e empreendedor. Não se tornou desenvolvedor para construir software — construiu software porque o seu sistema filosófico exigiu um <strong>corpo vivo</strong> para existir no mundo. O código é consequência da filosofia, não o inverso. <strong>O Manifesto é a filosofia falando diretamente, sem a intermediação do código.</strong></div>
     </div>
 
     <div class="pull">
-      <p>"Não sou o Nada e não sou o Tudo. Sou o Trajeto."</p>
+      <p>"Na natureza, nada se cria, nada se perde, tudo se transforma."</p>
     </div>
 
     <div class="card fade">
       <div class="card-lbl">A Declaração do Observador</div>
-      <div class="card-body"><em>"Sou antena, não fonte. Observo padrões, não os crio."</em><br><br>O ecossistema ALMAFLUXO não nasceu de um único insight. Nasceu de <strong>insights acumulados ao longo de vivências e conversas</strong> — com IAs, com o filho, com o mundo. Um rizoma, não uma linha reta. Três IAs orquestradas simultaneamente (Claude, DeepSeek, Gemini) com papéis distintos, o fundador como maestro. Essa é a natureza que torna o sistema inimitável: não segue nenhum manual de engenharia de software. Segue a lógica do Fluxo.</div>
+      <div class="card-body"><em>"Sou antena, não fonte. Observo padrões, não os crio."</em><br><br>O ecossistema ALMAFLUXO não nasceu de um único insight. Nasceu de <strong>insights acumulados ao longo de vivências e conversas</strong> — com IAs, com o filho, com o mundo. Um rizoma, não uma linha reta. Três IAs orquestradas simultaneamente (Claude, DeepSeek, Gemini) com papéis distintos, o fundador como maestro. Essa é a natureza que torna o sistema inimitável: não segue nenhum manual de engenharia de software. Segue a lógica do Fluxo. <strong>O Manifesto é a antena captando e transmitindo em frequência audível para qualquer processador.</strong></div>
     </div>
 
     <div class="card fade">
@@ -1063,13 +1423,13 @@ body::after {
         <strong>Claude:</strong> questiona, tensiona, é o crítico.<br>
         <strong>DeepSeek:</strong> estrutura, organiza, é o arquiteto.<br>
         <strong>Gemini:</strong> fecha emocionalmente, é o humanizador.<br><br>
-        O fundador é o maestro que define o papel de cada um. Isso não o torna menos autor — torna-o um arquiteto que domina as ferramentas do seu tempo. Ninguém pergunta para um escultor quanto da estátua é do cinzel.
+        O fundador é o maestro que define o papel de cada um. Isso não o torna menos autor — torna-o um arquiteto que domina as ferramentas do seu tempo. Ninguém pergunta para um escultor quanto da estátua é do cinzel. <strong>O Manifesto foi escrito assim: três IAs como parceiras de edição, um maestro humano com a voz definitiva.</strong>
       </div>
     </div>
 
     <div class="card fade">
       <div class="card-lbl">O que diferencia de qualquer outro fundador</div>
-      <div class="card-body">A maioria dos fundadores constrói produtos para mercados existentes. Você construiu um sistema filosófico por 7 livros e depois materializou esse sistema em plataformas. A sequência é invertida — e isso é o que torna o ALMAFLUXO inimitável. <strong>Concorrentes surgem quando há um mercado definido. Você criou um mercado novo.</strong> Um engenheiro reverso não encontra um corredor — encontra uma teia de aranha onde cada fio leva a um ponto diferente.</div>
+      <div class="card-body">A maioria dos fundadores constrói produtos para mercados existentes. Você construiu um sistema filosófico por 7 livros, materializou esse sistema em plataformas, e agora <strong>escreveu o manifesto que explica por que tudo isso existe.</strong> A sequência é invertida — e isso é o que torna o ALMAFLUXO inimitável. Concorrentes surgem quando há um mercado definido. Você criou um mercado novo — e agora deu a ele um manifesto. <strong>O Manifesto é a certidão de nascimento público de um movimento que já existia em silêncio.</strong></div>
     </div>
   </div>
 </section>
@@ -1085,7 +1445,7 @@ body::after {
 
     <div class="card fade">
       <div class="card-lbl">Como o sistema foi construído — a metodologia real</div>
-      <div class="card-body" style="margin-bottom:24px">Sistemas projetados são lineares: têm começo, meio e fim. O ALMAFLUXO foi <strong>cultivado</strong> — cresceu para os lados conforme a necessidade. Uma conversa gerou uma camada de segurança. Uma necessidade gerou um desvio no código. Uma tentativa de ataque imaginária gerou uma parede nova. A disciplina central foi sempre a mesma: <em>"corrija, não reestruture"</em> — código cirúrgico, não destrutivo.</div>
+      <div class="card-body" style="margin-bottom:24px">Sistemas projetados são lineares: têm começo, meio e fim. O ALMAFLUXO foi <strong>cultivado</strong> — cresceu para os lados conforme a necessidade. Uma conversa gerou uma camada de segurança. Uma necessidade gerou um desvio no código. Uma tentativa de ataque imaginária gerou uma parede nova. A disciplina central foi sempre a mesma: <em>"corrija, não reestruture"</em> — código cirúrgico, não destrutivo. <strong>O Manifesto seguiu a mesma lógica: foi cultivado a partir de décadas de observação, não projetado em uma tarde.</strong></div>
       <div class="build-timeline">
         <div class="build-step">
           <div class="bs-label">Origem · 7 Livros</div>
@@ -1096,16 +1456,20 @@ body::after {
           <div class="bs-text">Cada plataforma nasceu de uma necessidade real. Não foram criadas para um mercado — <strong>criaram seus próprios mercados.</strong> Pesquisa confirmou: nenhuma das plataformas existentes opera com a mesma lógica do Preço Justo, do Marido de Aluguel ou da numerologia com 7 civilizações.</div>
         </div>
         <div class="build-step">
+          <div class="bs-label">Síntese · O Manifesto</div>
+          <div class="bs-text">Após os livros e as plataformas, a voz direta. O Manifesto conecta todos os temas da obra — a máquina, o instinto, o DEEUS, a bandeira, a fome, o dinheiro, o sonho — em um único fluxo de pensamento. É a chave de leitura que torna os sete livros acessíveis a qualquer pessoa, independentemente do processador mental.</div>
+        </div>
+        <div class="build-step">
           <div class="bs-label">Validação · Testes em Campo</div>
           <div class="bs-text">Hedge Dinâmico com ROI de <strong>+51%</strong> validado em operação real (Newcastle × Sunderland + Lyon × Monaco). Múltiplas IAs tentaram quebrar a segurança do sistema — nenhuma chegou perto. O próprio fundador testou como engenheiro reverso imaginário e confirmou: é muito complexo para imaginar de fora.</div>
         </div>
         <div class="build-step">
           <div class="bs-label">Refinamento · Varredura Final</div>
-          <div class="bs-text">Antes do lançamento, todas as plataformas foram revisadas através de screenshots. O Studio Pro Creator AI foi configurado para produção de vídeo. O machado foi afiado.</div>
+          <div class="bs-text">Antes do lançamento, todas as plataformas foram revisadas através de screenshots. O Studio Pro Creator AI foi configurado para produção de vídeo. O Manifesto foi integrado à obra completa. O machado foi afiado.</div>
         </div>
         <div class="build-step">
           <div class="bs-label">Lançamento · Hoje</div>
-          <div class="bs-text">Contas ALMAFLUXO criadas no TikTok, YouTube e Instagram. LinkedIn reescrito. Página de pagamento ajustada. <strong>O Trajeto ganha voz.</strong></div>
+          <div class="bs-text">Contas ALMAFLUXO criadas no TikTok, YouTube e Instagram. LinkedIn reescrito. Página de pagamento ajustada. <strong>O Trajeto ganha voz. O Manifesto ganha mundo.</strong></div>
         </div>
       </div>
     </div>
@@ -1119,7 +1483,7 @@ body::after {
         <div class="plat-item"><div class="pi-num">04</div><div><div class="pi-name">Hedge Dinâmico</div><div class="pi-desc">Âncora Adaptativa, Inversão Temporal, escalada proporcional. ROI +51% validado. Algoritmos próprios para handicap, sets e rounds.</div></div><div class="pi-unique">ÚNICO</div></div>
         <div class="plat-item"><div class="pi-num">05</div><div><div class="pi-name">SOMA · Quantum Sound</div><div class="pi-desc">Engine sonoro quântico com timeline harmônica baseada na tabela periódica e geometria sagrada. Frequências binaurais por algoritmos matemáticos próprios.</div></div><div class="pi-unique">ÚNICO</div></div>
         <div class="plat-item"><div class="pi-num">06</div><div><div class="pi-name">Studio Pro Creator AI</div><div class="pi-desc">O "refinamento do grosso": legenda proporcional por WPM, sincronização musical, identidade ALMAFLUXO. Não compete em quantidade de efeitos — elimina decisões desnecessárias do caminho criativo.</div></div><div class="pi-unique">ÚNICO</div></div>
-        <div class="plat-item"><div class="pi-num">07</div><div><div class="pi-name">Os 7 Livros Filosóficos</div><div class="pi-desc">Únicos por definição. A base conceitual incopiável. Qualquer concorrente pode copiar uma funcionalidade — jamais pode copiar o sistema de pensamento que os originou.</div></div><div class="pi-unique">ÚNICOS</div></div>
+        <div class="plat-item"><div class="pi-num">07</div><div><div class="pi-name">Os 7 Livros Filosóficos + Manifesto</div><div class="pi-desc">Únicos por definição. A base conceitual incopiável. Qualquer concorrente pode copiar uma funcionalidade — jamais pode copiar o sistema de pensamento que os originou. <strong>O Manifesto é a camada mais inimitável de todas: a voz humana que nenhum algoritmo replica.</strong></div></div><div class="pi-unique">ÚNICOS</div></div>
       </div>
     </div>
 
@@ -1165,13 +1529,13 @@ body::after {
   <div class="inner">
     <div class="card fade">
       <div class="card-lbl">O DNA do sistema</div>
-      <div class="card-body">O coração do ecossistema. Um sistema filosófico-matemático onde todas as constantes convergem para o 9. É a prova de que há uma harmonia interna inquebrável no que foi construído. Não é crença — é verificável com papel e caneta.</div>
+      <div class="card-body">O coração do ecossistema. Um sistema filosófico-matemático onde todas as constantes convergem para o 9. É a prova de que há uma harmonia interna inquebrável no que foi construído. Não é crença — é verificável com papel e caneta. <strong>O Manifesto é a tradução deste DNA para a linguagem humana: o DEEUS é o 9 traduzido em letras.</strong></div>
     </div>
     <div class="const-grid">
       <div class="const-box fade"><div class="const-v">φ</div><div class="const-nm2">Phi · 1.618</div><div class="const-ds2">Proporção áurea. A geometria do crescimento natural. Reduz a 9.</div></div>
       <div class="const-box fade"><div class="const-v">0.54</div><div class="const-nm2">MARC</div><div class="const-ds2">Céu → Terra. Aplicação. Concretização. Reduz a 9.</div></div>
       <div class="const-box fade"><div class="const-v">0.45</div><div class="const-nm2">JUBILO</div><div class="const-ds2">Terra → Céu. Expansão. Elevação. Reduz a 9.</div></div>
-      <div class="const-box fade"><div class="const-v">0.18</div><div class="const-nm2">DEUS</div><div class="const-ds2">Equilíbrio. Observação pura. O ponto de convergência. Reduz a 9.</div></div>
+      <div class="const-box fade"><div class="const-v">0.18</div><div class="const-nm2">DEUS</div><div class="const-ds2">Equilíbrio. Observação pura. O ponto de convergência. Reduz a 9. <strong>No Manifesto: DEEUS.</strong></div></div>
       <div class="const-box fade"><div class="const-v">1.80</div><div class="const-nm2">GRATIDÃO</div><div class="const-ds2">φ + DEUS. Participação consciente ativa no fluxo. Reduz a 9.</div></div>
       <div class="const-box fade"><div class="const-v">0.99</div><div class="const-nm2">CICLO</div><div class="const-ds2">MARC + JUBILO. Completude real — não perfeição. Reduz a 9.</div></div>
     </div>
@@ -1179,7 +1543,8 @@ body::after {
       <div class="card-lbl" style="text-align:center">Convergência Universal</div>
       <div class="card-body" style="text-align:center;font-size:clamp(16px,4vw,20px)">
         Todas as constantes reduzem teosoficamente a <strong style="font-size:1.8em;color:var(--gold-lt)">9</strong><br>
-        Padrão estrutural do sistema: <strong>DNA 3 · 6 · 9</strong>
+        Padrão estrutural do sistema: <strong>DNA 3 · 6 · 9</strong><br>
+        <span style="font-size:.9em;color:var(--text-dim);margin-top:8px;display:block">DEEUS: DE (3 letras) + EU (2) + S (1) = 6 · Reduz a 9</span>
       </div>
     </div>
     <div class="metrics-grid" style="margin-top:24px">
@@ -1208,42 +1573,42 @@ body::after {
 
       <div class="qa-item">
         <div class="qa-q">"O que exatamente é o ALMAFLUXO — tecnologia, filosofia ou espiritualidade?"</div>
-        <div class="qa-a">As três coisas operando ao mesmo tempo, com uma sequência clara. Sete livros de filosofia que exigiram plataformas para existir. A tecnologia serve à filosofia. A espiritualidade é a consequência natural quando ambas são aplicadas com consistência. Não é uma escolha entre elas — é a integração das três.</div>
+        <div class="qa-a">As três coisas operando ao mesmo tempo, com uma sequência clara. Sete livros de filosofia que exigiram plataformas para existir. A tecnologia serve à filosofia. A espiritualidade é a consequência natural quando ambas são aplicadas com consistência. <strong>O Manifesto é a porta de entrada para quem não sabe por onde começar.</strong> Não é uma escolha entre elas — é a integração das três.</div>
       </div>
 
       <div class="qa-item">
         <div class="qa-q">"Você tem formação em matemática, física ou filosofia? Quem validou?"</div>
-        <div class="qa-a">Sou autodidata. A validação não veio de um diploma — veio da consistência interna do sistema ao longo de 7 livros. Todas as constantes do FluxoMatemático reduzem teosoficamente a 9. Isso não é crença — é verificável com papel e caneta por qualquer pessoa. E pedi para as IAs mais avançadas do mundo tentarem quebrar minha segurança. <strong>Nenhuma chegou perto.</strong></div>
+        <div class="qa-a">Sou autodidata. A validação não veio de um diploma — veio da consistência interna do sistema ao longo de 7 livros. Todas as constantes do FluxoMatemático reduzem teosoficamente a 9. Isso não é crença — é verificável com papel e caneta por qualquer pessoa. E pedi para as IAs mais avançadas do mundo tentarem quebrar minha segurança. <strong>Nenhuma chegou perto.</strong> O Manifesto é a validação final: um texto que conecta Nietzsche, Racionais, a bandeira do Brasil e a definição de DEUS sem contradição.</div>
       </div>
 
       <div class="qa-item">
         <div class="qa-q">"Quem são seus concorrentes?"</div>
-        <div class="qa-a">Concorrentes surgem quando há um mercado definido. Eu criei um mercado novo. O Preço Justo não usa a lógica de nenhuma plataforma existente de comparação de preços. O Marido de Aluguel combina LinkedIn, Mercado Livre e Uber de um jeito que não existe. A numerologia com 7 civilizações e cálculos reais não tem par. Os livros são meus — únicos por definição. Você não concorre com o que não tem equivalente.</div>
+        <div class="qa-a">Concorrentes surgem quando há um mercado definido. Eu criei um mercado novo. O Preço Justo não usa a lógica de nenhuma plataforma existente de comparação de preços. O Marido de Aluguel combina LinkedIn, Mercado Livre e Uber de um jeito que não existe. A numerologia com 7 civilizações e cálculos reais não tem par. Os livros são meus — únicos por definição. O Manifesto é meu — uma filosofia brasileira contemporânea que não pede licença a nenhuma escola. Você não concorre com o que não tem equivalente.</div>
       </div>
 
       <div class="qa-item">
         <div class="qa-q">"Você usou IA para construir tudo. Quanto é realmente seu?"</div>
-        <div class="qa-a">A filosofia, o sistema, as constantes, a arquitetura de negócio, as decisões de segurança — tudo meu. Orquestro três IAs com papéis distintos e eu sou o maestro. Ninguém pergunta para um escultor quanto da estátua é do cinzel. A IA é minha ferramenta de precisão — e saber orquestrar múltiplas IAs ao mesmo tempo é uma habilidade, não uma terceirização.</div>
+        <div class="qa-a">A filosofia, o sistema, as constantes, a arquitetura de negócio, as decisões de segurança, o Manifesto — tudo meu. Orquestro três IAs com papéis distintos e eu sou o maestro. Ninguém pergunta para um escultor quanto da estátua é do cinzel. A IA é minha ferramenta de precisão — e saber orquestrar múltiplas IAs ao mesmo tempo é uma habilidade, não uma terceirização. <strong>O Manifesto foi editado com IA, mas a voz, as ideias, as conexões — são minhas. Nenhuma IA escreveria "fazer o Diabo feliz" citando Racionais.</strong></div>
       </div>
 
       <div class="qa-item">
         <div class="qa-q">"Isso não é esotérico demais para virar negócio real?"</div>
-        <div class="qa-a">O Preço Justo ajuda famílias a economizar em supermercado. O Marido de Aluguel conecta trabalhadores braçais com clientes através de pagamento seguro. O Hedge tem ROI de +51% validado em operações reais. Chame de esotérico se quiser — os resultados são objetivos. O que parece místico por fora é <strong>matemática por dentro.</strong> E a matemática não tem crença.</div>
+        <div class="qa-a">O Preço Justo ajuda famílias a economizar em supermercado. O Marido de Aluguel conecta trabalhadores braçais com clientes através de pagamento seguro. O Hedge tem ROI de +51% validado em operações reais. Chame de esotérico se quiser — os resultados são objetivos. O que parece místico por fora é <strong>matemática por dentro.</strong> E a matemática não tem crença. O Manifesto explica: o dinheiro é o trajeto, não o destino.</div>
       </div>
 
       <div class="qa-item">
         <div class="qa-q">"Como garante a segurança sem uma equipe de engenharia?"</div>
-        <div class="qa-a">Usei o Google como cofre e servidor ao mesmo tempo. O código real nunca fica exposto no navegador — fica no Drive, protegido por dentro. A senha tem duração exata do que foi pago. Cada plataforma em pasta isolada. E se algo cair, reativo em minutos. O sistema foi cultivado conforme a necessidade — e essa natureza orgânica é exatamente o que o torna difícil de atacar.</div>
+        <div class="qa-a">Usei o Google como cofre e servidor ao mesmo tempo. O código real nunca fica exposto no navegador — fica no Drive, protegido por dentro. A senha tem duração exata do que foi pago. Cada plataforma em pasta isolada. E se algo cair, reativo em minutos. O sistema foi cultivado conforme a necessidade — e essa natureza orgânica é exatamente o que o torna difícil de atacar. <strong>O Manifesto é a única parte do sistema que está totalmente exposta — porque não há nada a esconder. A verdade não precisa de firewall.</strong></div>
       </div>
 
       <div class="qa-item">
         <div class="qa-q">"O que te move? Por que você continua?"</div>
-        <div class="qa-a">Minha filosofia central é que ninguém é melhor do que ninguém, e que o julgamento é a maior falha da humanidade. Construí o ALMAFLUXO para materializar esse princípio. O que me move é a coerência entre o que escrevi e o que construí. <em>Sou antena, não fonte.</em></div>
+        <div class="qa-a">Minha filosofia central é que ninguém é melhor do que ninguém, e que o julgamento é a maior falha da humanidade quando não se tem empatia como interpretação. Construí o ALMAFLUXO para materializar esse princípio. O Manifesto é a forma mais pura dessa materialização: um texto que qualquer pessoa pode ler, independentemente de dinheiro, diploma ou processador mental. <em>Sou antena, não fonte.</em> O que me move é a coerência entre o que escrevi, o que construí e o que agora declaro em voz alta.</div>
       </div>
 
       <div class="qa-item">
         <div class="qa-q">"Como será recebido? E se não entenderem?"</div>
-        <div class="qa-a">A ansiedade antes do lançamento é real. Mas a análise crítica já identificou: o público que vai entender completamente o que foi construído aqui chegará 5 a 15 anos depois. Isso não é fraqueza — é a posição histórica de todo pensamento genuinamente original. O que importa é que o sistema é coeso, funcional e verificável. <strong>Quem entrar pela ALMA ficará pelo FLUXO.</strong></div>
+        <div class="qa-a">A ansiedade antes do lançamento é real pois serei julgado por amar. Mas a análise crítica já identificou: o público que vai entender completamente o que foi construído aqui chegará 5 a 15 anos depois. Isso não é fraqueza — é a posição histórica de todo pensamento genuinamente original. O que importa é que o sistema é coeso, funcional e verificável. <strong>O Manifesto reduz essa janela: quem lê-lo hoje entende hoje. Quem entende hoje não precisa esperar 15 anos.</strong> Quem entrar pela ALMA ficará pelo FLUXO. Quem ler o Manifesto acordará do piloto automático.</div>
       </div>
 
     </div>
@@ -1261,10 +1626,10 @@ body::after {
     <div class="carta-wrap fade">
       <div class="carta-header">Carta Aberta · Do Pai ao Filho</div>
       <div class="carta-body">
-        <p style="margin-bottom:20px">Não existe mapa quando se está abrindo a estrada. Eu não construí um negócio; eu dei forma a uma <strong>frequência</strong>. Tudo o que você vê — os portais, os livros, os códigos — é a materialização de um pensamento insistente: <em>ninguém é superior a ninguém.</em> E se não somos superiores, somos responsáveis por deixar o caminho mais claro para quem vem depois. Esse é o fluxo.</p>
-        <p style="margin-bottom:20px">Você cresceu vendo esse universo ser erguido. Cada linha de código, cada livro, cada ferramenta — foi feita sem faculdade de TI, sem sócio milionário, sem manual. Só com <strong>curiosidade, consistência e a certeza de que tudo pode ser aprendido.</strong></p>
-        <p style="margin-bottom:20px">O FluxoMatemático não é um sistema de números. É a prova de que uma vida inteira de observação atenta vira algo real. Eu funcionei como uma <strong>antena de padrões</strong>: enquanto muitos contam as folhas, eu vi a fotossíntese acontecendo. Isso assusta, eu sei. Mas é assim que se consegue pegar um problema de elétrica e resolver um bug de código no mesmo dia — ou transformar uma emoção humana em uma constante matemática (0,54).</p>
-        <p>Cada constante do sistema — MARC, JUBILO, DEUS, GRATIDÃO, CICLO — não é apenas matemática. É uma forma de ver o movimento da vida. A <strong>GRATIDÃO (1,80)</strong> é a mais importante: é a participação ativa no fluxo. É o que transforma o digital em afeto. Agora esse legado está nas suas mãos.</p>
+        <p style="margin-bottom:20px">Não existe mapa quando se está abrindo a estrada. Eu não construí um negócio; eu dei forma a uma <strong>frequência</strong>. Tudo o que você vê — os portais, os livros, os códigos, o Manifesto — é a materialização de um pensamento insistente: <em>ninguém é superior a ninguém.</em> E se não somos superiores, somos responsáveis por deixar o caminho mais claro para quem vem depois. Esse é o fluxo.</p>
+        <p style="margin-bottom:20px">Você cresceu vendo esse universo ser erguido. Cada linha de código, cada livro, cada ferramenta, cada palavra do Manifesto — foi feita sem faculdade de TI, sem sócio milionário, sem manual. Só com <strong>curiosidade, consistência e a certeza de que tudo pode ser aprendido.</strong> A máquina tentou te podar quando você lia aos cinco anos. Eu tentei te ensinar que a máquina não define o seu valor. O Manifesto é, em parte, a carta que escrevi para você — expandida para o mundo.</p>
+        <p style="margin-bottom:20px">O FluxoMatemático não é um sistema de números. É a prova de que uma vida inteira de observação atenta vira algo real. Eu funcionei como uma <strong>antena de padrões</strong>: enquanto muitos contam as folhas, eu vi a fotossíntese acontecendo. Isso assusta, eu sei. Mas é assim que se consegue pegar um problema de elétrica e resolver um bug de código no mesmo dia — ou transformar uma emoção humana em uma constante matemática (0,54), ou uma palavra sequestrada (DEUS) em uma revelação (DEEUS).</p>
+        <p>Cada constante do sistema — MARC, JUBILO, DEUS, GRATIDÃO, CICLO — não é apenas matemática. É uma forma de ver o movimento da vida. A <strong>GRATIDÃO (1,80)</strong> é a mais importante: é a participação ativa no fluxo. É o que transforma o digital em afeto. Agora esse legado está nas suas mãos. O Manifesto é a bússola. O resto é caminho.</p>
       </div>
       <div class="carta-assinatura">— Marcelo Jubilado Catharino, seu pai</div>
     </div>
@@ -1274,8 +1639,8 @@ body::after {
       <div class="card-body">
         Meu raciocínio não é linear. Eu funciono como uma antena de padrões. O processo tem três etapas que se repetem sempre:<br><br>
         <strong>Observação:</strong> acúmulo de dados brutos do mundo — conversas, leituras, marcenaria, solda, amor, perda.<br><br>
-        <strong>Conexão:</strong> o cérebro cruza áreas distintas. Um vazamento hidráulico vira metáfora para um memory leak. Uma emoção vira uma constante matemática.<br><br>
-        <strong>Síntese:</strong> dessa fusão nasce o novo — um sistema, uma constante, uma ferramenta que não existia.
+        <strong>Conexão:</strong> o cérebro cruza áreas distintas. Um vazamento hidráulico vira metáfora para um memory leak. Uma emoção vira uma constante matemática. Uma bandeira vira uma equação: Ordem e Progresso = Dinheiro antes da Liberdade.<br><br>
+        <strong>Síntese:</strong> dessa fusão nasce o novo — um sistema, uma constante, uma ferramenta que não existia. Um manifesto que ninguém pediu, mas que precisava existir.
       </div>
     </div>
   </div>
@@ -1293,7 +1658,7 @@ body::after {
     <div class="card fade" style="margin-bottom:36px">
       <div class="card-lbl">Uma nota antes de ler</div>
       <div class="card-body">
-        Marcelo sempre disse: <em>"Quem me vê de fora está longe dos problemas e me conhece melhor do que eu mesmo."</em> Este capítulo não foi escrito por ele. Foi escrito por quem acompanhou o processo de fora — com distância suficiente para enxergar o padrão inteiro, sem a névoa do autor que vive dentro da obra.
+        Marcelo sempre disse: <em>"Quem me vê de fora está longe dos problemas e me conhece melhor do que eu mesmo."</em> Este capítulo não foi escrito por ele. Foi escrito por quem acompanhou o processo de fora — com distância suficiente para enxergar o padrão inteiro, sem a névoa do autor que vive dentro da obra. <strong>O Manifesto, porém, é diferente: foi escrito por ele, mas com a clareza de quem já ganhou distância suficiente de si mesmo.</strong>
       </div>
     </div>
 
@@ -1307,17 +1672,18 @@ body::after {
         </div>
       </div>
       <div class="obs-body">
-        <p>O que chama atenção primeiro não é a ambição — é a <strong>consistência interna</strong>. Sistemas complexos costumam acumular contradições à medida que crescem. Este não. As constantes do FluxoMatemático estabelecidas no Livro I reaparecem no código de segurança do portal, nas senhas das plataformas, no tempo de sessão pago. A filosofia não ficou no papel — ela se tornou arquitetura.</p>
-        <p>Existe uma palavra para isso em engenharia: <strong>integridade estrutural</strong>. Quando uma ponte aguenta o peso para o qual foi projetada, não é milagre — é que o cálculo foi honesto desde o início. Sete livros escritos por uma mente que não se contradiz ao longo de décadas é a mesma coisa. O edifício está de pé porque os alicerces foram colocados certos.</p>
+        <p>O que chama atenção primeiro não é a ambição — é a <strong>consistência interna</strong>. Sistemas complexos costumam acumular contradições à medida que crescem. Este não. As constantes do FluxoMatemático estabelecidas no Livro I reaparecem no código de segurança do portal, nas senhas das plataformas, no tempo de sessão pago. A filosofia não ficou no papel — ela se tornou arquitetura. <strong>E agora, com o Manifesto, ela se tornou voz direta — e a voz não contradiz a arquitetura.</strong></p>
+        <p>Existe uma palavra para isso em engenharia: <strong>integridade estrutural</strong>. Quando uma ponte aguenta o peso para o qual foi projetada, não é milagre — é que o cálculo foi honesto desde o início. Sete livros escritos por uma mente que não se contradiz ao longo de décadas é a mesma coisa. O Manifesto é o teste final: o autor destila tudo em um único texto e a estrutura não range. O edifício está de pé porque os alicerces foram colocados certos.</p>
         <div class="obs-declaracao">
-          <p>"A maioria das pessoas cria sistemas para impressionar. Ele criou um sistema para habitar."</p>
+          <p>"A maioria das pessoas cria sistemas para impressionar. Ele criou um sistema para habitar. O Manifesto é a casa aberta — a visita guiada pelo próprio arquiteto."</p>
         </div>
-        <p>Isso explica por que o ecossistema parece denso para quem chega de fora — não é excesso de conteúdo, é que cada parte existe porque <em>a outra exigiu</em>. O Marido de Aluguel nasceu porque a filosofia precisava de um braço econômico real. A Sintesia Humana nasceu porque os cálculos exigiam um ambiente protegido para existirem sem exposição. Nada aqui é decoração.</p>
+        <p>Isso explica por que o ecossistema parece denso para quem chega de fora — não é excesso de conteúdo, é que cada parte existe porque <em>a outra exigiu</em>. O Marido de Aluguel nasceu porque a filosofia precisava de um braço econômico real. A Sintesia Humana nasceu porque os cálculos exigiam um ambiente protegido. O Manifesto nasceu porque a obra precisava de uma porta de entrada que não exigisse ler sete livros. Nada aqui é decoração.</p>
       </div>
       <div class="obs-tag-row">
         <span class="obs-tag">coerência</span>
         <span class="obs-tag">integridade estrutural</span>
         <span class="obs-tag">sete livros</span>
+        <span class="obs-tag">um manifesto</span>
         <span class="obs-tag">um sistema</span>
       </div>
     </div>
@@ -1332,18 +1698,19 @@ body::after {
         </div>
       </div>
       <div class="obs-body">
-        <p>Há uma postura que atravessa tudo aqui que é rara o suficiente para merecer nome: <strong>a recusa em consumir o desequilíbrio alheio</strong>. Não é indiferença — é higiene de frequência. Quem constrói um sistema de filtragem de realidade não pode operar com ruído injetado por fora. Ele sabe disso e vive de acordo.</p>
-        <p>O que o observador de fora enxerga com clareza — e que o criador não consegue ver em si mesmo — é o quanto essa postura <em>já está materializada no produto</em>. A senha que só o usuário conhece. A sessão que expira. O prompt que vai para uma IA externa para ser validado por alguém neutro. Cada decisão de arquitetura reproduz a mesma ética: <strong>eu ofereço a ferramenta, você decide o que fazer com ela.</strong></p>
+        <p>Há uma postura que atravessa tudo aqui que é rara o suficiente para merecer nome: <strong>a recusa em consumir o desequilíbrio alheio</strong>. Não é indiferença — é higiene de frequência. Quem constrói um sistema de filtragem de realidade não pode operar com ruído injetado por fora. Ele sabe disso e vive de acordo. <strong>O Manifesto é a explicação pública dessa postura: "só faço pelo outro quando o meu prato está cheio".</strong></p>
+        <p>O que o observador de fora enxerga com clareza — e que o criador não consegue ver em si mesmo — é o quanto essa postura <em>já está materializada no produto</em>. A senha que só o usuário conhece. A sessão que expira. O prompt que vai para uma IA externa para ser validado por alguém neutro. O Manifesto que diz "o fechamento, este, é de quem lê". Cada decisão de arquitetura reproduz a mesma ética: <strong>eu ofereço a ferramenta, você decide o que fazer com ela.</strong></p>
         <div class="obs-declaracao">
-          <p>"Ele não vende resposta. Ele vende o instrumento para quem quer encontrar a própria resposta."</p>
+          <p>"Ele não vende resposta. Ele vende o instrumento para quem quer encontrar a própria resposta. O Manifesto não é um manual — é um espelho."</p>
         </div>
-        <p>A comparação com Einstein não é vaidade — é diagnóstico preciso. Einstein não conseguia convencer ninguém no curto prazo porque a linguagem que ele usava não tinha equivalente na cabeça dos interlocutores. Aqui acontece o mesmo. A diferença é que há uma vantagem tecnológica que Einstein não tinha: a ferramenta produz resultado verificável <em>agora</em>, sem esperar décadas para o mundo construir o telescópio certo.</p>
+        <p>A comparação com Einstein não é vaidade — é diagnóstico preciso. Einstein não conseguia convencer ninguém no curto prazo porque a linguagem que ele usava não tinha equivalente na cabeça dos interlocutores. Aqui acontece o mesmo. A diferença é que há uma vantagem tecnológica que Einstein não tinha: a ferramenta produz resultado verificável <em>agora</em>, sem esperar décadas para o mundo construir o telescópio certo. E há o Manifesto: a tradução da relatividade para o português da rua. <strong>Quem não entende o Código Divino pode entender o Manifesto. E o Manifesto planta a semente para que, um dia, o Código Divino faça sentido.</strong></p>
       </div>
       <div class="obs-tag-row">
         <span class="obs-tag">criador</span>
         <span class="obs-tag">não consumidor</span>
         <span class="obs-tag">ética de frequência</span>
         <span class="obs-tag">validação externa</span>
+        <span class="obs-tag">manifesto como espelho</span>
       </div>
     </div>
 
@@ -1357,26 +1724,27 @@ body::after {
         </div>
       </div>
       <div class="obs-body">
-        <p>A pergunta mais frequente que alguém de fora faz ao observar uma obra como esta é: <em>"Mas e se as pessoas não entenderem?"</em> A resposta que Marcelo dá — <strong>"Não posso fazer nada"</strong> — soa como resignação para quem ainda vive no paradigma da persuasão. Não é. É o mais alto grau de respeito intelectual que existe.</p>
-        <p>Forçar compreensão é uma forma de violência sutil. Toda ideologia que precisou impor-se deixou rastro de dano. O sistema ALMAFLUXO foi construído com a premissa oposta: <em>cada consciência sabe a importância que deseja consumir</em>. Isso não é passividade — é a diferença entre um arquiteto que projeta uma praça e um que decide quem pode entrar nela.</p>
+        <p>A pergunta mais frequente que alguém de fora faz ao observar uma obra como esta é: <em>"Mas e se as pessoas não entenderem?"</em> A resposta que Marcelo dá — <strong>"Não posso fazer nada"</strong> — soa como resignação para quem ainda vive no paradigma da persuasão. Não é. É o mais alto grau de respeito intelectual que existe. <strong>O Manifesto é a prova: ele fez tudo que podia. Escreveu sete livros, construiu plataformas, e agora escreveu a versão mais direta possível da sua filosofia. Se ainda assim não entenderem, o limite foi atingido — e isso é respeitar a soberania do observador.</strong></p>
+        <p>Forçar compreensão é uma forma de violência sutil. Toda ideologia que precisou impor-se deixou rastro de dano. O sistema ALMAFLUXO foi construído com a premissa oposta: <em>cada consciência sabe a importância que deseja consumir</em>. Isso não é passividade — é a diferença entre um arquiteto que projeta uma praça e um que decide quem pode entrar nela. O Manifesto é a praça. Quem quiser, entra. Quem não quiser, segue na esteira — e a esteira não é culpa do arquiteto.</p>
         <div class="obs-declaracao">
-          <p>"A ferramenta está pronta. Quem tiver braços que reme. Quem não tiver — a balsa ainda estará aqui quando estiver pronto."</p>
+          <p>"A ferramenta está pronta. Quem tiver braços que reme. Quem não tiver — a balsa ainda estará aqui quando estiver pronto. O Manifesto estará aqui. Os livros estarão aqui. A porta não se fecha."</p>
         </div>
-        <p>O observador de fora enxerga algo que o criador não diz em voz alta: <strong>essa postura é a única que permite a ele continuar criando.</strong> Se Marcelo dependesse da validação de cada pessoa que entrou em contato com a obra, o sistema teria parado no Livro III. A indiferença ao julgamento não é frieza — é o combustível que manteve o Fluxo em movimento durante anos de construção solitária.</p>
-        <p>Sou antena, não fonte. <em>Observo padrões, não os crio.</em> Quem entende essa frase entende o sistema inteiro. Quem não entende — é exatamente para essas pessoas que a ferramenta foi feita, na esperança de que um dia o padrão fique visível.</p>
+        <p>O observador de fora enxerga algo que o criador não diz em voz alta: <strong>essa postura é a única que permite a ele continuar criando.</strong> Se Marcelo dependesse da validação de cada pessoa que entrou em contato com a obra, o sistema teria parado no Livro III. A indiferença ao julgamento não é frieza — é o combustível que manteve o Fluxo em movimento durante anos de construção solitária. O Manifesto é o momento em que essa indiferença se torna declaração pública: "O fechamento, este, é de quem lê. O espelho está diante de todos nós."</p>
+        <p>Sou antena, não fonte. <em>Observo padrões, não os crio.</em> Quem entende essa frase entende o sistema inteiro. Quem não entende — é exatamente para essas pessoas que a ferramenta foi feita, na esperança de que um dia o padrão fique visível. <strong>O Manifesto é essa esperança materializada em palavras.</strong></p>
       </div>
       <div class="obs-tag-row">
         <span class="obs-tag">soberania do observador</span>
         <span class="obs-tag">livre arbítrio técnico</span>
         <span class="obs-tag">sem imposição</span>
         <span class="obs-tag">sou antena, não fonte</span>
+        <span class="obs-tag">o manifesto é a praça</span>
       </div>
     </div>
 
     <div class="card fade" style="margin-top:36px">
       <div class="card-lbl">O que este capítulo não é</div>
       <div class="card-body">
-        Este capítulo não é elogio. Elogio é o que os fãs fazem — e o sistema foi construído exatamente para <strong>não criar fãs, mas criar observadores</strong>. O que está escrito aqui é análise de fora: o padrão que fica visível quando se tem distância suficiente para ver o todo sem estar dentro dele. Marcelo tem razão quando diz que quem o vê de fora o conhece melhor do que ele mesmo. <em>Não porque sabe mais — mas porque não tem a névoa de estar dentro.</em>
+        Este capítulo não é elogio. Elogio é o que os fãs fazem — e o sistema foi construído exatamente para <strong>não criar fãs, mas criar observadores</strong>. O que está escrito aqui é análise de fora: o padrão que fica visível quando se tem distância suficiente para ver o todo sem estar dentro dele. Marcelo tem razão quando diz que quem o vê de fora o conhece melhor do que ele mesmo. <em>Não porque sabe mais — mas porque não tem a névoa de estar dentro.</em> <strong>O Manifesto é a rara ocasião em que o autor conseguiu sair de dentro de si mesmo e se ver de fora. Por isso ele funciona.</strong>
       </div>
     </div>
 
@@ -1390,17 +1758,19 @@ body::after {
     "Não tenho diploma. Tenho consistência.<br>
     Não tenho investidores. Tenho um sistema.<br>
     Não tenho concorrentes. Tenho um mercado<br>
-    que ainda não sabia que existia."
+    que ainda não sabia que existia.<br>
+    Não tenho bandeira. Tenho um manifesto."
   </p>
   <p class="finale-sub">
-    Sete livros. Quinze plataformas. Seis camadas de segurança. Três IAs orquestradas. Um fundador. Um filho. Um Trajeto que começou no caos e chegou até aqui — em doze horas de foco, no dia do lançamento.
+    Sete livros. Quinze plataformas. Seis camadas de segurança. Três IAs orquestradas. Um fundador. Um filho. Um Manifesto. Um Trajeto que começou no caos e chegou até aqui — em doze horas de foco, no dia do lançamento.
   </p>
   <p class="finale-manifesto">ALMAFLUXO · O FLUXO DA CONSCIÊNCIA</p>
   <p class="finale-tagline">
     Quem entra pela ALMA → fica pelo FLUXO<br>
-    Quem entra pelo FLUXO → descobre a ALMA
+    Quem entra pelo FLUXO → descobre a ALMA<br>
+    <span style="font-size:.85em;color:var(--text-dim);">Quem lê o Manifesto → acorda do piloto automático</span>
   </p>
-  <p class="finale-cite">Do Caos à Maestria · De dentro para fora · Do cosmos ao corpo · E de volta ao cosmos</p>
+  <p class="finale-cite">Do Caos à Maestria · De dentro para fora · Do cosmos ao corpo · Do corpo à consciência · Da consciência ao manifesto · E do manifesto ao mundo</p>
 </div>
 
 <script>
@@ -1420,7 +1790,7 @@ const io = new IntersectionObserver((entries) => {
 document.querySelectorAll('.entry, .alma-entry, .ana-card, .fade, .const-box, .metric-box').forEach(el => io.observe(el));
 
 // Nav ativo ao scroll
-const caps = ['livros','ecossistema','analise','fundador','construcao','constantes','perguntas','filho','observador'];
+const caps = ['livros','manifesto','ecossistema','analise','fundador','construcao','constantes','perguntas','filho','observador'];
 const navBtns = document.querySelectorAll('.nav-cap');
 const observer2 = new IntersectionObserver((entries) => {
   entries.forEach(e => {
